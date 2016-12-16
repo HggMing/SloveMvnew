@@ -1,0 +1,123 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+    defaultConfig {
+        applicationId "com.ming.slove.mvnew"
+        minSdkVersion 15
+        targetSdkVersion 24
+        versionCode 1
+        versionName "1.0.2"
+        //指定打包成Jar文件时候的文件名称
+        archivesBaseName = "slove-$versionName"
+
+        manifestPlaceholders = [
+                GETUI_APP_ID    : "o9Pxlf1lfH7yUHC8nGpDH8",
+                GETUI_APP_KEY   : "UyiZPy1YHX9Zop0KYP8EQ3",
+                GETUI_APP_SECRET: "eesppnBSrw5m6XSpB4UA35",
+                PACKAGE_NAME    : applicationId
+        ]
+        ndk {
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
+        }
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+//        debug {
+//            minifyEnabled false
+//            zipAlignEnabled true
+//            shrinkResources true // 移除无用的resource文件
+//            debuggable true
+//            jniDebuggable true
+//
+//            useProguard false
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//        }
+//        release {
+//            zipAlignEnabled true  //是否支持zip
+//            shrinkResources true  // 移除无用的resource文件
+//            minifyEnabled true    //是否进行混淆
+//            debuggable false  //是否支持调试
+//
+//            //采用动态替换字符串的方式生成不同的release.apk
+//            applicationVariants.all { variant ->
+//                variant.outputs.each { output ->
+//                    def outputFile = output.outputFile
+//                    if (outputFile != null && outputFile.name.endsWith('release.apk')) {
+//                        def timeStamp = new Date().format('yyyyMMddHH');
+//                        def fileName = "WeShare-${defaultConfig.versionName}" + "-" + timeStamp + "-lj-" + ".apk";
+//                        output.outputFile = file("${outputFile.parent}/${fileName}")
+//                    }
+//                }
+//            }
+//
+//            jniDebuggable false  //关闭jni调试
+//            useProguard true
+//            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
+//        }
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    dependencies {
+        compile fileTree(include: ['*.jar'], dir: 'libs')
+        androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+            exclude group: 'com.android.support', module: 'support-annotations'
+        })
+        testCompile 'junit:junit:4.12'
+        //log工具
+        compile 'com.orhanobut:logger:1.15'
+        compile 'com.androidadvance:topsnackbar:1.1.1'
+        //主题选择
+        compile 'com.bilibili:magicasakura:0.1.4@aar'
+        // 快速构造view插件依赖
+        compile 'com.jakewharton:butterknife:7.0.1'
+        //滑动返回
+        compile 'com.jude:swipebackhelper:3.1.2'
+        //随滚动显示与消失的fab
+        compile 'com.melnykov:floatingactionbutton:1.3.0'
+        //数据储存
+        compile 'com.orhanobut:hawk:2.0.1'
+        //权限管理
+        compile 'com.tbruyelle.rxpermissions:rxpermissions:0.9.0@aar'
+        // 事件总线
+        compile 'org.greenrobot:eventbus:3.0.0'
+        // google官方
+        compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
+        compile "com.android.support:design:$rootProject.supportLibraryVersion"
+        compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+
+//    compile 'com.google.guava:guava:19.0'
+        compile "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+        compile "com.squareup.retrofit2:converter-gson:$rootProject.retrofitVersion"
+        compile "com.squareup.retrofit2:adapter-rxjava:$rootProject.retrofitVersion"
+        compile 'com.squareup.okhttp3:okhttp:3.4.1'
+        compile 'io.reactivex:rxjava:1.2.3'
+        compile 'io.reactivex:rxandroid:1.2.1'
+        // 图片处理
+        compile 'com.github.bumptech.glide:glide:3.7.0'
+        compile 'com.github.bumptech.glide:okhttp3-integration:1.4.0@aar'
+        compile 'jp.wasabeef:glide-transformations:2.0.1'
+        //Android viewpager指示器
+        compile 'com.commit451:PhotoView:1.2.5'
+        compile 'me.relex:circleindicator:1.1.8@aar'
+        //个推
+        compile 'com.getui:sdk:2.9.0.0'
+        //实现SearchView的第三方库
+        compile 'com.miguelcatalan:materialsearchview:1.4.0'
+        //二维码扫描
+        compile 'me.dm7.barcodescanner:zxing:1.9'
+        compile files('lib/tbs_sdk_thirdapp_v2.4.0.1073_36840_sharewithdownload_obfs_20161011_194834.jar')
+        compile files('lib/lite-orm-1.9.2.jar')
+        compile files('lib/alipaySdk-20160825.jar')
+        //表情键盘 maven { url "https://jitpack.io" }
+        compile 'com.github.w446108264:XhsEmoticonsKeyboard:2.0.2'
+        compile 'com.github.w446108264:AndroidEmoji:1.0.0'
+        // 下拉刷新 、分页加载的RecyclerView解决方案
+        compile 'com.jcodecraeer:xrecyclerview:1.2.7'
+    }
+}

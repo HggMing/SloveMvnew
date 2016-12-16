@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <android.support.v7.widget.DialogTitle
+        android:id="@+id/title"
+        style="?android:attr/windowTitleStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start"
+        android:ellipsize="end"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="@dimen/abc_dialog_padding_top_material"
+        android:text="更换主题"
+        android:textAlignment="viewStart"
+        android:textSize="@dimen/textsize_large"
+        android:maxLines="1" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="?attr/dialogPreferredPadding">
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_01"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color01" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_02"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color02" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_03"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color03" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_04"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color04" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:paddingLeft="?attr/dialogPreferredPadding"
+        android:paddingRight="?attr/dialogPreferredPadding"
+        android:paddingTop="?attr/dialogPreferredPadding">
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_05"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color05" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_06"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color06" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_07"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color07" />
+
+        <android.support.v4.widget.Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:id="@+id/theme_08"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@mipmap/ic_card"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_pick_item"
+            app:backgroundTint="@color/color08" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="45dp"
+        android:orientation="horizontal">
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.bilibili.magicasakura.widgets.TintButton
+            android:id="@+id/button_cancel"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_white"
+            android:textColor="@color/theme_color_primary"
+            android:textSize="@dimen/textsize_normal"
+            android:text="取消"
+            android:maxLines="1" />
+
+        <View
+            android:id="@+id/is_show"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+
+        <com.bilibili.magicasakura.widgets.TintButton
+            android:id="@+id/button_ok"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/button_theme"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_normal"
+            android:text="确定"
+            android:maxLines="1" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>
+

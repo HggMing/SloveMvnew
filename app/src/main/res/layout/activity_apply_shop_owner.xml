@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".tab4.applyshoper.ApplyShopOwnerActivity">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/divide">
+
+        <LinearLayout
+            android:id="@+id/rootLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:id="@+id/click_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_item_selector"
+                android:foreground="?attr/selectableItemBackground"
+                android:padding="12dp">
+
+                <ImageView
+                    android:id="@+id/icon_head"
+                    android:layout_width="54dp"
+                    android:layout_height="54dp"
+                    android:layout_marginRight="12dp"
+                    android:background="@mipmap/user_detail_sharow"
+                    tools:src="@mipmap/icon" />
+
+                <LinearLayout
+                    android:id="@+id/layout1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_toRightOf="@id/icon_head">
+
+                    <TextView
+                        android:id="@+id/name"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ellipsize="end"
+                        android:maxLines="2"
+                        android:textColor="@color/font_black_4"
+                        android:textSize="18sp"
+                        tools:text="备注名" />
+
+                    <ImageView
+                        android:id="@+id/apply_state"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="6dp"
+                        android:layout_marginTop="3dp"
+                        tools:ignore="ContentDescription"
+                        tools:src="@mipmap/ic_apply_no" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/name2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/layout1"
+                    android:layout_marginTop="2dp"
+                    android:layout_toEndOf="@id/icon_head"
+                    android:layout_toRightOf="@id/icon_head"
+                    android:textSize="14sp"
+                    tools:text="账号：123" />
+            </RelativeLayout>
+
+            <include layout="@layout/divide_1_12" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:text="姓名"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <com.bilibili.magicasakura.widgets.TintEditText
+                        android:id="@+id/et_name"
+                        style="@style/EditTextStyle_common"
+                        android:layout_width="0dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_weight="1"
+                        android:hint="真实姓名" />
+
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:text="性别"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <com.ming.slove.mvnew.common.widgets.MySpinner
+                        android:id="@+id/my_sp_sex"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:text="出生日期"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <com.bilibili.magicasakura.widgets.TintLinearLayout
+                        android:id="@+id/et_date"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinner_background"
+                        android:gravity="center_vertical"
+                        android:padding="13dp">
+
+                        <TextView
+                            android:id="@+id/tv_date"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="选择生日"
+                            android:textColor="@color/font_black_2"
+                            android:textSize="@dimen/textsize_normal" />
+
+                        <com.bilibili.magicasakura.widgets.TintImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="2dp"
+                            android:background="@drawable/list_item_selector"
+                            android:src="@drawable/ic_apply_et_village"
+                            app:imageTint="@color/theme_color_primary" />
+                    </com.bilibili.magicasakura.widgets.TintLinearLayout>
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:text="手机号"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <com.bilibili.magicasakura.widgets.TintEditText
+                        android:id="@+id/et_phone"
+                        style="@style/EditTextStyle_phone"
+                        android:layout_width="0dp"
+                        android:layout_marginTop="0dp"
+                        android:layout_weight="1"
+                        android:hint="手机号码" />
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:text="学历"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <com.ming.slove.mvnew.common.widgets.MySpinner
+                        android:id="@+id/my_sp_edu"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:minWidth="80dp"
+                        android:text="所属村"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <com.bilibili.magicasakura.widgets.TintLinearLayout
+                        android:id="@+id/et_village"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="@drawable/spinner_background"
+                        android:gravity="center_vertical"
+                        android:padding="13dp">
+
+                        <TextView
+                            android:id="@+id/tv_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:hint="选择管理的店所在的村"
+                            android:textColor="@color/font_black_2"
+                            android:textSize="@dimen/textsize_normal" />
+
+                        <com.bilibili.magicasakura.widgets.TintImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_marginLeft="5dp"
+                            android:layout_marginRight="2dp"
+                            android:background="@drawable/list_item_selector"
+                            android:src="@drawable/ic_apply_et_village"
+                            app:imageTint="@color/theme_color_primary" />
+                    </com.bilibili.magicasakura.widgets.TintLinearLayout>
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxEms="4"
+                        android:text="身份证照片（正反两面）"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/img_photo0"
+                        android:layout_width="75dp"
+                        android:layout_height="56dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/add_photo_bg" />
+
+                    <ImageView
+                        android:id="@+id/img_photo1"
+                        android:layout_width="75dp"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="6dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/add_photo_bg" />
+                </LinearLayout>
+
+                <include layout="@layout/divide_1_12" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:minHeight="48dp"
+                    android:padding="@dimen/padding_6">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:maxEms="4"
+                        android:text="其它证明文件（非必须项）"
+                        android:textColor="@color/font_black_2"
+                        android:textSize="16sp" />
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1" />
+
+                    <ImageView
+                        android:id="@+id/img_photo2"
+                        android:layout_width="75dp"
+                        android:layout_height="56dp"
+                        android:scaleType="centerCrop"
+                        android:visibility="invisible"
+                        tools:src="@mipmap/add_photo_bg" />
+
+                    <ImageView
+                        android:id="@+id/img_photo3"
+                        android:layout_width="75dp"
+                        android:layout_height="56dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="6dp"
+                        android:scaleType="centerCrop"
+                        android:src="@mipmap/add_photo_bg" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <include layout="@layout/divide_15_top" />
+
+            <RelativeLayout
+                android:id="@+id/fd_send"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/divide"
+                android:paddingLeft="@dimen/margin_16"
+                android:paddingRight="@dimen/margin_16">
+
+                <com.bilibili.magicasakura.widgets.TintButton
+                    android:id="@+id/btn_send"
+                    style="@style/ButtonStyle_1"
+                    android:layout_marginTop="20dp"
+                    android:text="申请" />
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

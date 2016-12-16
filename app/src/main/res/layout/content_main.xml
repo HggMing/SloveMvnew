@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:ignore="ContentDescription">
+
+    <android.support.v7.widget.LinearLayoutCompat
+        android:id="@+id/content_main_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.AppBarOverlay">
+
+            <com.bilibili.magicasakura.widgets.TintToolbar
+                android:id="@+id/toolbar_main"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/theme_color_primary"
+                app:popupTheme="@style/AppTheme.PopupOverlay">
+
+                <TextView
+                    android:id="@+id/toolbar_title_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:layout_gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    tools:text="爱简单" />
+            </com.bilibili.magicasakura.widgets.TintToolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <com.ming.slove.mvnew.ui.main.MainViewPager
+            android:id="@+id/viewPager_main"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:visibility="visible"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <View
+            android:id="@+id/view_line_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="0.5dp"
+            android:background="@color/line_bottom" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/white"
+            android:baselineAligned="true"
+            android:paddingBottom="@dimen/tab_image_padding"
+            android:paddingTop="@dimen/tab_image_padding">
+
+            <RelativeLayout
+                android:id="@+id/tab1Layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:id="@+id/img_tab1_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
+                    <com.bilibili.magicasakura.widgets.TintImageView
+                        android:id="@+id/img_tab1_main_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab1_btn1"
+                        app:imageTint="@color/theme_color_primary" />
+
+                    <ImageView
+                        android:id="@+id/img_tab1_main_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab1_btn0"
+                        android:visibility="gone" />
+                </FrameLayout>
+
+                <com.bilibili.magicasakura.widgets.TintTextView
+                    android:id="@+id/text_tab1_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_tab1_main"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/tab1_main"
+                    android:textColor="@color/theme_color_primary"
+                    android:textSize="@dimen/tab_text_size" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tab2Layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:id="@+id/img_tab2_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
+                    <com.bilibili.magicasakura.widgets.TintImageView
+                        android:id="@+id/img_tab2_main_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab2_btn1"
+                        android:visibility="gone"
+                        app:imageTint="@color/theme_color_primary" />
+
+                    <ImageView
+                        android:id="@+id/img_tab2_main_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab2_btn0" />
+                </FrameLayout>
+
+                <com.bilibili.magicasakura.widgets.TintTextView
+                    android:id="@+id/text_tab2_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_tab2_main"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/tab2_main"
+                    android:textColor="@color/selector_tab_text"
+                    android:textSize="@dimen/tab_text_size" />
+
+                <TextView
+                    android:id="@+id/badge"
+                    android:layout_width="17dp"
+                    android:layout_height="16dp"
+                    android:layout_alignRight="@id/img_tab2_main"
+                    android:layout_marginRight="-8dp"
+                    android:background="@drawable/shape_red_circle"
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="8sp"
+                    android:visibility="gone"
+                    tools:text="99" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tab3Layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:id="@+id/img_tab3_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
+                    <com.bilibili.magicasakura.widgets.TintImageView
+                        android:id="@+id/img_tab3_main_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab3_btn1"
+                        android:visibility="gone"
+                        app:imageTint="@color/theme_color_primary" />
+
+                    <ImageView
+                        android:id="@+id/img_tab3_main_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab3_btn0" />
+                </FrameLayout>
+
+                <com.bilibili.magicasakura.widgets.TintTextView
+                    android:id="@+id/text_tab3_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_tab3_main"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/tab3_main"
+                    android:textColor="@color/selector_tab_text"
+                    android:textSize="@dimen/tab_text_size" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tab5Layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:visibility="visible">
+
+                <FrameLayout
+                    android:id="@+id/img_tab5_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
+                    <com.bilibili.magicasakura.widgets.TintImageView
+                        android:id="@+id/img_tab5_main_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab5_btn1"
+                        android:visibility="gone"
+                        app:imageTint="@color/theme_color_primary" />
+
+                    <ImageView
+                        android:id="@+id/img_tab5_main_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab5_btn0" />
+                </FrameLayout>
+
+                <com.bilibili.magicasakura.widgets.TintTextView
+                    android:id="@+id/text_tab5_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_tab5_main"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/tab5_main"
+                    android:textColor="@color/selector_tab_text"
+                    android:textSize="@dimen/tab_text_size" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/tab4Layout"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <FrameLayout
+                    android:id="@+id/img_tab4_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true">
+
+                    <com.bilibili.magicasakura.widgets.TintImageView
+                        android:id="@+id/img_tab4_main_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab4_btn1"
+                        android:visibility="gone"
+                        app:imageTint="@color/theme_color_primary" />
+
+                    <ImageView
+                        android:id="@+id/img_tab4_main_0"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:scaleType="centerInside"
+                        android:src="@mipmap/tab4_btn0" />
+                </FrameLayout>
+
+                <com.bilibili.magicasakura.widgets.TintTextView
+                    android:id="@+id/text_tab4_main"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/img_tab4_main"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/tab4_main"
+                    android:textColor="@color/selector_tab_text"
+                    android:textIsSelectable="false"
+                    android:textSize="@dimen/tab_text_size" />
+            </RelativeLayout>
+        </LinearLayout>
+    </android.support.v7.widget.LinearLayoutCompat>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/tab3_guide"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="fitXY"
+            android:src="@mipmap/tab3_guide"
+            android:visibility="gone" />
+    </FrameLayout>
+</android.support.design.widget.CoordinatorLayout>

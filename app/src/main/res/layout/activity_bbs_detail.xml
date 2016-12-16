@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".tab3.villagebbs.bbsdetail.BbsDetailActivity">
+
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/tab3_bbs_detail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/comment_input" />
+
+    <LinearLayout
+        android:id="@+id/comment_input"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#cfcfcf" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.bilibili.magicasakura.widgets.TintEditText
+                android:id="@+id/comment_edit"
+                style="@style/EditTextStyle_common"
+                android:layout_width="0dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
+                android:layout_marginTop="0dp"
+                android:layout_weight="1"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:hint="评论帖子"
+                android:maxLength="250"
+                android:maxLines="4"
+                android:padding="8dp" />
+
+
+            <com.bilibili.magicasakura.widgets.TintButton
+                android:id="@+id/comment_post"
+                android:layout_width="48dp"
+                android:layout_height="30dp"
+                android:layout_marginBottom="7dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/button_theme"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="发送"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="0.5dp"
+            android:background="#cfcfcf" />
+    </LinearLayout>
+</RelativeLayout>

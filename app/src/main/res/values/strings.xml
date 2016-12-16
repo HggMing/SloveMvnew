@@ -1,0 +1,130 @@
+<resources>
+    <string name="app_name">爱简单base</string>
+    <string name="action_settings">设置</string>
+    <string name="tab1_main">主页</string>
+    <string name="tab1_main_1">我们村</string>
+    <string name="tab2_main">消息</string>
+    <string name="tab3_main">我的村</string>
+    <string name="tab4_main">设置</string>
+    <string name="tab5_main">我的店</string>
+
+    <!--Back2Activity-->
+    <string name="btn_text_speak">按住 说话</string>
+    <!--网络相关-->
+    <string name="search_hint">请输入要搜索的村名</string>
+    <!--Activity页面lable-->
+
+    <!--galleryfinal相关-->
+    <string name="all_photo">全部图片</string>
+    <string name="crop_fail">裁剪失败</string>
+    <string name="crop_suc">裁剪成功</string>
+    <string name="edit_letoff_photo_format">该图片格式不支持此操作</string>
+    <string name="empty_sdcard">没有SD卡</string>
+    <string name="folder_photo_size">共%1$d张</string>
+    <string name="gallery">手机相册</string>
+    <string name="maxsize_zero_tip">maxsize 应该大于0</string>
+    <string name="no_photo">无图片</string>
+    <string name="open_gallery_fail">相册初始化失败!</string>
+    <string name="permissions_denied_tips">无法获取图片</string>
+    <string name="permissions_tips_gallery">这个App请求访问你的相册</string>
+    <string name="photo_crop">图片裁剪</string>
+    <string name="photo_edit">图片编辑</string>
+    <string name="photo_list_empty">获取图片失败!</string>
+    <string name="please_reopen_gf">请重新打开图片浏览器</string>
+    <string name="preview">预览</string>
+    <string name="saving">正在保存照片…</string>
+    <string name="select_max_tips">已达到最大选择数量</string>
+    <string name="selected">已选(%1$s/%2$s)</string>
+    <string name="take_photo_fail">拍照失败</string>
+    <string name="waiting">请稍等…</string>
+
+    <!--升级下载相关-->
+    <string name="title">下载</string>
+    <string name="download_prepare">准备下载</string>
+    <string name="download_started">正在下载</string>
+    <string name="download_failed">下载失败</string>
+    <string name="download_completed">下载完成,点击安装</string>
+    <string name="download_paused">下载已暂停</string>
+
+    <string name="re_download">重新下载</string>
+    <string name="cancel_download">取消</string>
+    <string name="pause_download">暂停</string>
+    <string name="continue_download">继续</string>
+
+    <!--activity标题-->
+    <string name="title_activity_splash">爱简单</string>
+    <string name="title_activity_login">登录页</string>
+    <string name="title_activity_facelogin">人脸登录</string>
+    <string name="title_activity_register">用户注册</string>
+    <string name="title_activity_reset_password">找回密码</string>
+    <string name="title_activity_test_phone_number">验证手机号</string>
+    <string name="title_activity_main">首页</string>
+
+    <string name="title_activity_new_friend">新的朋友</string>
+    <string name="title_activity_friend_detail">详细资料</string>
+    <string name="title_activity_remark_name">备注信息</string>
+    <string name="title_activity_friend_more">更多</string>
+    <string name="title_activity_friend_list">老乡</string>
+
+    <string name="title_activity_follow_village">村圈设置</string>
+    <string name="title_activity_village_bbs">村圈帖子</string>
+    <string name="title_activity_bbs_detail">帖子详情</string>
+    <string name="title_activity_big_imageview">查看大图</string>
+    <string name="title_activity_new_post">发布帖子</string>
+    <string name="title_activity_government_affairs">政务</string>
+    <string name="title_activity_village_situation">村况</string>
+
+    <string name="title_activity_user_detail">个人信息</string>
+    <string name="title_activity_update_uname">设置用户名</string>
+    <string name="title_activity_update_idcard">填写身份证号</string>
+    <string name="title_activity_update_adress">设置详细地址</string>
+
+    <string name="title_activity_mysetting">我的</string>
+    <string name="title_activity_my_purse">我的钱包</string>
+    <string name="title_activity_set_purse_pwd">设置钱包密码</string>
+    <string name="title_activity_reset_purse_pwd">找回钱包密码</string>
+    <string name="title_activity_take_money">余额提现</string>
+    <string name="title_activity_bind_card">我的银行卡</string>
+    <string name="title_activity_add_cards">添加银行卡</string>
+    <string name="title_activity_shopping_address">我的收货地址</string>
+    <string name="title_activity_my_order">我的订单</string>
+
+    <string name="title_activity_apply_shop_owner">申请店长</string>
+    <string name="title_activity_show_applying">申请结果</string>
+
+    <string name="title_activity_my_shop">我的店</string>
+    <string name="title_activity_express_take">快递收件</string>
+    <string name="title_activity_edit_express_take">添加收件快递</string>
+    <string name="title_activity_express_send">快递寄件</string>
+    <string name="title_activity_edit_express_send">编辑寄件快递</string>
+    <string name="title_activity_books">图书租借</string>
+    <string name="title_activity_add_book">添加图书</string>
+    <string name="title_activity_phone_recharge_order">话费流量订单</string>
+    <string name="title_activity_sales_order">村实惠订单</string>
+    <string name="title_activity_insurance_order">汽车保险订单</string>
+    <string name="title_activity_travel_order">旅游业务订单</string>
+    <string name="title_activity_villager_info">用户档案管理</string>
+
+    <string name="title_activity_safe_setting">账号安全</string>
+    <string name="title_activity_real_name_binging">实名认证</string>
+    <string name="title_activity_change_pwd">修改登录密码</string>
+    <string name="title_activity_change_purse_pwd">修改钱包密码</string>
+
+    <string name="title_activity_setting_common">通用</string>
+    <string name="title_activity_advice">意见反馈</string>
+    <string name="title_activity_about">关于我们</string>
+
+    <string name="title_activity_product_pay">购买商品</string>
+
+    <!--list为空时，文字提示语句-->
+    <string name="empty_shopping_address">暂无收货地址，请点击右下角按钮添加！</string>
+    <string name="empty_express_take">暂无未领取快递，可点击右下角按钮添加！</string>
+    <string name="empty_express_send_0">该店暂没有待寄送快递。</string>
+    <string name="empty_express_send_1">该店还没有已寄送快递！</string>
+    <string name="empty_my_village_user">本村暂无用户，请推荐村民加入！</string>
+    <string name="empty_book_tab1">暂无书籍，请点击+按钮进行添加！</string>
+    <string name="empty_orders">订单列表为空</string>
+    <string name="empty_village_info">暂无相关信息！</string>
+    <string name="empty_products">亲，目前该村还没有商品信息。</string>
+    <string name="empty_choose_address">暂无收货地址，请先添加！</string>
+</resources>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/message_list_list_item_right"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="10dp">
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="33dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:textColor="@color/font_black_8"
+        android:textSize="12sp"
+        tools:text="7月8日 15:33" />
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/time"
+        android:layout_marginRight="12dp"
+        tools:src="@mipmap/icon" />
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time"
+        android:layout_marginLeft="57dp"
+        android:layout_marginRight="5dp"
+        android:layout_toLeftOf="@+id/icon"
+        android:background="@drawable/message_right"
+        android:gravity="right"
+        android:orientation="vertical"
+        android:visibility="visible">
+
+        <ImageView
+            android:id="@+id/voice_play"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="80dp"
+            android:layout_marginRight="17dp"
+            android:layout_marginTop="10dp"
+            android:visibility="gone"
+            tools:ignore="ContentDescription" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="9dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginRight="6dp"
+            android:layout_marginTop="9dp"
+            android:background="@drawable/content_pressed_selector"
+            android:textColor="@color/font_black_4"
+            android:textSize="16sp"
+            android:visibility="gone"
+            tools:text="这是我自己说的话，啦啦" />
+
+        <ImageView
+            android:id="@+id/msg_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            tools:ignore="ContentDescription"
+            tools:src="@mipmap/default_village" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/linearLayout"
+        android:layout_marginRight="-42dp"
+        android:layout_marginTop="3dp"
+        android:layout_toLeftOf="@id/linearLayout">
+
+        <TextView
+            android:id="@+id/resend"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_red_circle"
+            android:gravity="center"
+            android:text="!"
+            android:textColor="@color/white"
+            android:visibility="gone" />
+    </FrameLayout>
+</RelativeLayout>

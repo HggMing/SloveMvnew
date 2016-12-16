@@ -1,0 +1,31 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_settings"
+        android:orderInCategory="100"
+        android:title="@string/action_settings"
+        android:visible="false"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_friendlist"
+        android:icon="@mipmap/main_action_friendlist"
+        android:orderInCategory="1"
+        android:title="好友列表"
+        android:visible="false"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_follow"
+        android:icon="@mipmap/main_action_add"
+        android:orderInCategory="1"
+        android:title="关注村圈"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_theme"
+        android:icon="@mipmap/main_action_theme"
+        android:orderInCategory="1"
+        android:title="更换主题"
+        android:visible="false"
+        app:showAsAction="ifRoom" />
+</menu>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="swipe_back">#777777</color>
+    <color name="btn_select">#D9D9D9</color>
+
+    <!--tab4文字-->
+    <color name="font_black_2">#ff222222</color>
+    <color name="font_black_4">#ff444444</color>
+    <color name="font_black_6">#ff666666</color>
+    <color name="font_black_8">#ff888888</color>
+
+    <!--首页tab按钮颜色-->
+    <color name="tab_bnt0">#676767</color>
+    <!--tab分割线颜色-->
+    <color name="line_bottom">#c7c7c7</color>
+    <!--tab4背景-->
+    <color name="divide">#ffeeeeee</color>
+    <color name="black">#ff000000</color>
+    <color name="stand_bg">#ffffffff</color>
+    <color name="divider_color">#dedede</color>
+    <color name="card">#d2ba04</color>
+
+    <color name="divide_line">#ffdddddd</color>
+    <color name="font_green">#ff3bbd79</color>
+    <color name="font_green2">#309b63</color>
+    <color name="white_pressed">#ffd5d5d5</color>
+    <!--发布消息界面颜色-->
+    <color name="input_background">#ffe8e8e8</color>
+    <!--about界面-->
+    <color name="task_list_head">#ffe4e4e4</color>
+    <!--动态页面-->
+
+    <color name="alpha_village">#46000000</color>
+    <!--tab2-->
+    <color name="side_bar_text">#4A4A4A</color>
+    <color name="shadow_bg">#66000000</color>
+    <color name="edit_bg">#EFEFF4</color>
+    <color name="white_pressed1">#ffdfdfdf</color>
+    <color name="darker_gray">#7a7a7a</color>
+    <color name="golden">#bbaa15</color>
+
+    <color name="itemback">#efefef</color>
+</resources>

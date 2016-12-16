@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--系统颜色-->
+    <color name="colorPrimary">#53ACE5</color>
+    <color name="colorPrimaryDark">#53ACE5</color>
+    <color name="colorAccent">#53ACE5</color>
+    <color name="colorAccent2">#2075ab</color>
+    <!--主题切换颜色-->
+    <color name="theme_color_primary">#009688</color>
+    <color name="theme_color_primary_dark">#00796B</color>
+    <color name="theme_color_primary_trans">#99049184</color>
+    <color name="theme_color_secondary">#009688</color>
+
+    <color name="text_primary_color">#2d2d2d</color>
+    <color name="window_background">#eaeaea</color>
+
+    <color name="black_light">#333333</color>
+
+    <color name="white">#ffffff</color>
+    <color name="white_trans">#99ffffff</color>
+
+    <color name="gray_dark">#999999</color>
+    <color name="gray_trans">#44999999</color>
+    <color name="gray_light">#dcdcdc</color>
+
+    <!-- theme color -->
+    <!--color01=green-->
+    <color name="color01">#009688</color>
+    <color name="color01_dark">#00796B</color>
+    <color name="color01_trans">#99049184</color>
+    <!--color02=green_light-->
+    <color name="color02">#8BC34A</color>
+    <color name="color02_dark">#558B2F</color>
+    <color name="color02_trans">#998BC34A</color>
+    <!--color03=blue-->
+    <color name="color03">#53ACE5</color>
+    <color name="color03_dark">#2075ab</color>
+    <color name="color03_trans">#9953ACE5</color>
+    <!--color04=pruple-->
+    <color name="color04">#673AB7</color>
+    <color name="color04_dark">#311B92</color>
+    <color name="color04_trans">#99673AB7</color>
+    <!--color05=yellow-->
+    <color name="color05">#FDD835</color>
+    <color name="color05_dark">#FBC02D</color>
+    <color name="color05_trans">#99FDD835</color>
+    <!--color06=orange-->
+    <color name="color06">#FF9800</color>
+    <color name="color06_dark">#EF6C00</color>
+    <color name="color06_trans">#99FF9800</color>
+    <!--color07=pink-->
+    <color name="color07">#fb7299</color>
+    <color name="color07_dark">#b85671</color>
+    <color name="color07_trans">#99f0486c</color>
+    <!--color08=red-->
+    <color name="color08">#F44336</color>
+    <color name="color08_dark">#C62828</color>
+    <color name="color08_trans">#99F44336</color>
+    <!--全透明背景-->
+    <color name="transparent">#00000000</color>
+
+    <string-array name="theme_colors">
+        <item>theme_color_primary</item>
+        <item>color02</item>
+        <item>color03</item>
+        <item>color04</item>
+        <item>color05</item>
+        <item>color06</item>
+        <item>color07</item>
+        <item>color08</item>
+    </string-array>
+</resources>

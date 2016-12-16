@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_selector"
+    android:foreground="?attr/selectableItemBackground"
+    android:paddingBottom="10dp"
+    android:paddingTop="10dp">
+
+    <ImageView
+        android:id="@+id/icon"
+        android:layout_width="47dp"
+        android:layout_height="47dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        tools:src="@mipmap/defalt_user_circle" />
+
+    <TextView
+        android:id="@+id/time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="2dp"
+        android:singleLine="true"
+        android:textColor="@color/font_black_8"
+        android:textSize="12sp"
+        tools:text="2017-09-16" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toEndOf="@id/icon"
+        android:layout_toLeftOf="@id/time"
+        android:layout_toRightOf="@id/icon"
+        android:layout_toStartOf="@id/time"
+        android:singleLine="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/font_black_4"
+        android:textSize="@dimen/textsize_large"
+        tools:text="昵称" />
+
+
+    <!--...只能针对文字，表情图片是没有的，singleLine=false-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_alignLeft="@id/name"
+        android:layout_alignStart="@id/name"
+        android:layout_below="@id/name">
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="2dp"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:scrollHorizontally="true"
+            android:textColor="@color/font_black_8"
+            tools:text="消息内容，消息内容，消息内容，消息内容，消息内容" />
+
+        <TextView
+            android:id="@+id/badge"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="12dp"
+            android:layout_gravity="center"
+            android:background="@drawable/shape_red_circle"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="10sp"
+            android:visibility="visible"
+            tools:text="999" />
+    </LinearLayout>
+</RelativeLayout>
