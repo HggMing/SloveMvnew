@@ -44,7 +44,7 @@ public class MyPurseActivity extends BackActivity {
 
     private MyPurseAdapter mAdapter;
     List<MoneyDetail.DataBean.ListBean> mList = new ArrayList<>();
-    String auth;
+    private String auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -186,12 +186,16 @@ public class MyPurseActivity extends BackActivity {
 
             //显示获得方式备注
             holder.content.setText(data.getMemo());
-            //显示收支
-            if (type == 2 || type == 4 || type == 5) {
-                holder.pointsChange.setText("-" + data.getMoney());
+            //显示收支（type245为负）
+            String money=data.getMoney();
+            if (money.contains("-")) {
+                holder.pointsChange.setText(money);
                 holder.pointsChange.setTextColor(mContext.getResources().getColor(R.color.color08));
-            } else {
-                holder.pointsChange.setText("+" + data.getMoney());
+            } else if(money.contains("+")){
+                holder.pointsChange.setText(money);
+                holder.pointsChange.setTextColor(mContext.getResources().getColor(R.color.font_green));
+            }else {
+                holder.pointsChange.setText("+" + money);
                 holder.pointsChange.setTextColor(mContext.getResources().getColor(R.color.font_green));
             }
         }

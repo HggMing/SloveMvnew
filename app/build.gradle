@@ -8,7 +8,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0.2"
+        versionName "1.0.5"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 
@@ -119,5 +119,7 @@ android {
         compile 'com.github.w446108264:AndroidEmoji:1.0.0'
         // 下拉刷新 、分页加载的RecyclerView解决方案
         compile 'com.jcodecraeer:xrecyclerview:1.2.7'
+        //社会化分享（qq、微博、微信）
+//        compile 'me.shaohui:shareutil:1.3.5'
     }
 }

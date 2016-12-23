@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.app.APP;
@@ -345,7 +346,7 @@ public class BrowserActivity extends BaseActivity {
         }
 
         @JavascriptInterface
-        public String goInVill(String village_id,String village_name) {
+        public String goInVill(String village_id, String village_name) {
 //            Toast.makeText(BrowserActivity.this, "vid:" + village_id, Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(mContext, ProductListActivity.class);
             intent.putExtra(ProductListActivity.VILLAGE_ID, village_id);
@@ -357,10 +358,14 @@ public class BrowserActivity extends BaseActivity {
         @JavascriptInterface
         public String talk2Shopper(String shopper_id, String shopper_name, String shopper_head_url) {
 //            Toast.makeText(BrowserActivity.this, "s_id:"+shopper_id, Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(mContext, ChatActivity.class);
-            intent.putExtra(ChatActivity.UID, shopper_id);
-            intent.putExtra(ChatActivity.USER_NAME, shopper_name);
-            startActivity(intent);
+            if (!StringUtils.isBlank(shopper_id)) {
+                Intent intent = new Intent(mContext, ChatActivity.class);
+                intent.putExtra(ChatActivity.UID, shopper_id);
+                intent.putExtra(ChatActivity.USER_NAME, shopper_name);
+                startActivity(intent);
+            }else {
+                Toast.makeText(mContext, "本村暂无客服。", Toast.LENGTH_SHORT).show();
+            }
             return "{\"err\":\"0\"}";
         }
     }

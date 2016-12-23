@@ -2,6 +2,8 @@ package com.ming.slove.mvnew.ui.login;
 
 import android.support.annotation.NonNull;
 
+import com.ming.slove.mvnew.api.MyService;
+import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.api.login.LoginApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -71,14 +73,14 @@ public class LoginPresenter implements LoginContract.Presenter {
     @Override
     public void setTest() {
         String baseUrl_Test = "http://product1.yibanke.com/";
-        APPS.BASE_URL = baseUrl_Test;
+        MyServiceClient.setIsApiChange(baseUrl_Test);//修改api后，重建retrofit实例
         mModel.saveTest(true, baseUrl_Test);
     }
 
     @Override
     public void setNotTest() {
         String baseUrl = "http://product.yibanke.com/";
-        APPS.BASE_URL = baseUrl;
+        MyServiceClient.setIsApiChange(baseUrl);//修改api后，重建retrofit实例
         mModel.saveTest(false, baseUrl);
     }
 

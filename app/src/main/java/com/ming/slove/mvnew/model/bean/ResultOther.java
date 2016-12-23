@@ -11,6 +11,9 @@ public class ResultOther {
     //接口：amount/balance
     private String money;
     private int is_bind;//0未绑定银行卡，1、已绑定
+    private String jifen;
+    private String pingfen;
+
 
     //接口：amount/bind;express/add
     private String insert_id;
@@ -30,6 +33,22 @@ public class ResultOther {
 
     public void setIs_bind(int is_bind) {
         this.is_bind = is_bind;
+    }
+
+    public String getJifen() {
+        return jifen;
+    }
+
+    public void setJifen(String jifen) {
+        this.jifen = jifen;
+    }
+
+    public String getPingfen() {
+        return pingfen;
+    }
+
+    public void setPingfen(String pingfen) {
+        this.pingfen = pingfen;
     }
 
     public int getIs_pwd() {

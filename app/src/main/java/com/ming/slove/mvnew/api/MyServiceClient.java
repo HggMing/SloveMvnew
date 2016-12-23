@@ -2,6 +2,7 @@ package com.ming.slove.mvnew.api;
 
 import android.content.Context;
 
+import com.ming.slove.mvnew.api.login.LoginApi;
 import com.ming.slove.mvnew.app.APP;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -32,15 +33,28 @@ public class MyServiceClient {
 
     private static MyService mService;
 
+    private static boolean isApiChange;
+    private static boolean isNewRetrofit;//BaseUrl改变时,新建一个Retrofit实例
+
+    //baseUrl改变时，重建retrofit实例
+    public static void setIsApiChange(String baseUrl) {
+        APPS.BASE_URL=baseUrl;
+        isNewRetrofit = true;
+        //base改变后，所有接口重新生成实例 
+        isApiChange = true;
+        LoginApi.isApiChanged = true;
+    }
+
     public static MyService getService() {
-        if (mService == null) {
-            mService = MyServiceClient.createService(MyService.class);
+        if (mService == null || isApiChange) {
+            mService = createService(MyService.class);
+            isApiChange = false;
         }
         return mService;
     }
 
     public static <T> T createService(Class<T> service) {
-        if (mRetrofit == null) {
+        if (mRetrofit == null || isNewRetrofit) {
             createRetrofit();
         }
         return mRetrofit.create(service);
@@ -56,6 +70,7 @@ public class MyServiceClient {
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .client(mOkClient)
                 .build();
+        isNewRetrofit = false;
     }
 
     private static void createOkHttp() {

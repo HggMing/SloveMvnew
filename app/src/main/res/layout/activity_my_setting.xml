@@ -45,6 +45,56 @@
                 listItem1:itemIcon="@mipmap/tab4_shipping_address"
                 listItem1:itemTitle="我的收货地址" />
 
+            <include layout="@layout/divide_15_top_bottom" />
+
+            <com.ming.slove.mvnew.common.widgets.CustomItem
+                android:id="@+id/click_my_auction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="false"
+                listItem1:itemIcon="@mipmap/tab4_my_purse"
+                listItem1:itemTitle="我的拍卖" />
+
+            <include layout="@layout/divide_15_top_bottom" />
+
+            <LinearLayout
+                android:id="@+id/click_my_credit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/list_item_selector"
+                android:foreground="?attr/selectableItemBackground"
+                android:gravity="center_vertical"
+                android:paddingBottom="13dp"
+                android:paddingLeft="15sp"
+                android:paddingRight="15sp"
+                android:paddingTop="13dp">
+
+                <View
+                    android:layout_width="@dimen/project_icon_width"
+                    android:layout_height="@dimen/project_icon_width"
+                    android:layout_marginRight="15dp"
+                    android:background="@mipmap/tab4_identity_binding" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="我的信誉"
+                    android:textColor="#222222"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tv_credit_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="6dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:textSize="16sp"
+                    tools:text="100分" />
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

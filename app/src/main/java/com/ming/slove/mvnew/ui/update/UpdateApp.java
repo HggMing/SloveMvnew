@@ -7,12 +7,11 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.common.widgets.dialog.Dialog_UpdateApp;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.UpdateAppBack;
-import com.ming.slove.mvnew.tab4.scommon.AboutActivity;
+import com.orhanobut.hawk.Hawk;
 
 import retrofit2.Response;
 import rx.Subscriber;
@@ -26,6 +25,8 @@ import rx.schedulers.Schedulers;
 public class UpdateApp {
 
     private static String showMsg;
+    private static String id = "585385d9959d693068002c9e";
+    private static String id2 = "6ca6a446496800dabbe4c95f4f9cc4d1";
 
 
     public interface DoOnActivity {
@@ -39,8 +40,6 @@ public class UpdateApp {
      */
     public static void updateAuto(final Context context, final DoOnActivity mDoOnActivity) {
 
-        String id = "585385d9959d693068002c9e";
-        String id2 = "6ca6a446496800dabbe4c95f4f9cc4d1";
 
         MyServiceClient.getService()
                 .get_UpdateApp(id, id2)
@@ -90,10 +89,6 @@ public class UpdateApp {
      * @param context A
      */
     public static void updateCheck(final Context context) {
-
-        String id = "57f9d66a959d690397000963";
-        String id2 = "6ca6a446496800dabbe4c95f4f9cc4d1";
-
         MyServiceClient.getService()
                 .get_UpdateApp(id, id2)
                 .subscribeOn(Schedulers.io())

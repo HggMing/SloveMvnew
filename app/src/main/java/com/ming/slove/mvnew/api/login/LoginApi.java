@@ -24,10 +24,12 @@ import rx.schedulers.Schedulers;
 
 public class LoginApi {
     private static LoginService mService;
+    public static boolean isApiChanged;
 
     private static LoginService getService() {
-        if (mService == null) {
+        if (mService == null||isApiChanged) {
             mService = MyServiceClient.createService(LoginService.class);
+            isApiChanged=false;
         }
         return mService;
     }
