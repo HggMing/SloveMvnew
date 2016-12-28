@@ -1,11 +1,7 @@
 package com.ming.slove.mvnew.shop.shoptab1.books;
 
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,6 +19,7 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.model.bean.Book2List;
 import com.orhanobut.hawk.Hawk;
@@ -41,7 +38,7 @@ import rx.schedulers.Schedulers;
 /**
  * 已借图书
  */
-public class BooksTab2Fragment extends Fragment {
+public class BooksTab2Fragment extends LazyLoadFragment {
 
     @Bind(R.id.m_x_recyclerview)
     XRecyclerView mXRecyclerView;
@@ -52,31 +49,23 @@ public class BooksTab2Fragment extends Fragment {
     @Bind(R.id.fab)
     FloatingActionButton fab;
 
-    AppCompatActivity mActivity;
     private BooksAdapter mAdapter;
     private List<Book2List.DataBean.ListBean> mList = new ArrayList<>();
 
     final private static int PAGE_SIZE = 10;
     private int page = 1;
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_books, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+    public int getLayout() {
+        return R.layout.fragment_books;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void initViews(View view) {
         config();
-        initData(page);
-
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(mActivity);
-        int themeColorRes = getResources().getIdentifier(theme, "color", mActivity.getPackageName());
+        String theme = ThemeHelper.getThemeColorName(getContext());
+        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
         mRefreshLayout.setColorSchemeResources(themeColorRes);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -90,18 +79,16 @@ public class BooksTab2Fragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public void loadData() {
+        initData(page);
     }
 
     private void config() {
-        mActivity = (AppCompatActivity) getActivity();
         //设置fab
         fab.setVisibility(View.GONE);
         //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        mXRecyclerView.addItemDecoration(new NoDecoration(mActivity));//添加空白分割线
+        mXRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mXRecyclerView.addItemDecoration(new NoDecoration(getContext()));//添加空白分割线
         mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
         mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
 

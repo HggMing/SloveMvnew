@@ -67,12 +67,12 @@ public class FaceLoginPresenter implements FaceLoginContract.Presenter {
     public void userLogin(String phone, String photoPath) {
         tPhone = phone;
         if (StringUtils.isEmpty(phone)) {
-            mView.toast("请输入认证的手机号码");
+            mView.toast2("请输入认证的手机号码");
             return;
         }
         if (!hasFacePhoto) {
             mView.setBtnOk(true, "确定");
-            mView.toast("请拍摄正面免冠照片");
+            mView.toast2("请拍摄正面免冠照片");
             return;
         }
         mView.setBtnOk(false, "认证中,请稍等");
@@ -90,7 +90,7 @@ public class FaceLoginPresenter implements FaceLoginContract.Presenter {
 
                 @Override
                 public void onError(Throwable e) {
-                    mView.toast("验证超时，建议重新拍摄清晰正面免冠照片，再次尝试登陆。");
+                    mView.toast2("验证超时，建议重新拍摄清晰正面免冠照片，再次尝试登陆。");
                     mView.setBtnOk(true, "确定");
                 }
 
@@ -108,7 +108,7 @@ public class FaceLoginPresenter implements FaceLoginContract.Presenter {
                     if (result.getErr() == 0) {
                         faceLogin(result.getSign());
                     } else {
-                        mView.toast(result.getErr() + "：" + result.getMsg());
+                        mView.toast2(result.getErr() + "：" + result.getMsg());
                         mView.setBtnOk(true, "确定");
                     }
                 }
@@ -117,7 +117,7 @@ public class FaceLoginPresenter implements FaceLoginContract.Presenter {
     }
 
     private void faceLogin(String sign) {
-        mView.toast("人脸认证成功！");
+        mView.toast2("人脸认证成功！");
         LoginApi.faceLogin(sign)
                 .subscribe(new Subscriber<Login>() {
                     @Override

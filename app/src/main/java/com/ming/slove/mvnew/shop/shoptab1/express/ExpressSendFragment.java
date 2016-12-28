@@ -1,13 +1,8 @@
 package com.ming.slove.mvnew.shop.shoptab1.express;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +17,7 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -42,8 +38,7 @@ import rx.schedulers.Schedulers;
 /**
  * Created by Ming on 2016/8/22.
  */
-public class ExpressSendFragment extends Fragment implements BaseRecyclerViewAdapter.OnItemClickListener {
-    AppCompatActivity mActivity;
+public class ExpressSendFragment extends LazyLoadFragment implements BaseRecyclerViewAdapter.OnItemClickListener {
     @Bind(R.id.m_x_recyclerview)
     RecyclerView mXRecyclerView;
     @Bind(R.id.content_empty)
@@ -58,40 +53,13 @@ public class ExpressSendFragment extends Fragment implements BaseRecyclerViewAda
     private int expressStatus;
     private final int REQUEST_CODE = 1231;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab4_express_send, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mActivity = (AppCompatActivity) getActivity();
-
-        configXRecyclerView();//XRecyclerView配置
-        initData();//获取数据
-
-        // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(mActivity);
-        int themeColorRes = getResources().getIdentifier(theme, "color", mActivity.getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                initData();
-            }
-        });
-    }
-
     //配置RecyclerView
     private void configXRecyclerView() {
         mAdapter.setOnItemClickListener(ExpressSendFragment.this);
         mXRecyclerView.setAdapter(mAdapter);//设置adapter
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));//设置布局管理器
+        mXRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));//设置布局管理器
 
-        mXRecyclerView.addItemDecoration(new MyItemDecoration2(mActivity));//添加分割线
+        mXRecyclerView.addItemDecoration(new MyItemDecoration2(getContext()));//添加分割线
         mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
         mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
     }
@@ -185,14 +153,34 @@ public class ExpressSendFragment extends Fragment implements BaseRecyclerViewAda
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public int getLayout() {
+        return R.layout.fragment_tab4_express_send;
+    }
+
+    @Override
+    public void initViews(View view) {
+        configXRecyclerView();//XRecyclerView配置
+
+        // 刷新时，指示器旋转后变化的颜色
+        String theme = ThemeHelper.getThemeColorName(getContext());
+        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
+        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                initData();
+            }
+        });
+    }
+
+    @Override
+    public void loadData() {
+        initData();//获取数据
     }
 
     @Override
     public void onItemClick(View view, int position) {
-        Intent intent = new Intent(mActivity, EditExpressSendActivity.class);
+        Intent intent = new Intent(getContext(), EditExpressSendActivity.class);
         if (expressStatus == 0) {
             intent.putExtra(EditExpressSendActivity.EXPRESS_SEND_DATA, mList0.get(position));
             getActivity().startActivityForResult(intent, ExpressSendActivity.REQUEST_CODE);//刷新整个activity
@@ -226,8 +214,7 @@ public class ExpressSendFragment extends Fragment implements BaseRecyclerViewAda
         }
 
         @Override
-        public void onBindViewHolder(final ViewHolder holder, final int position) {
-            final Context mContext = holder.itemView.getContext();
+        public void onBindViewHolder(final ViewHolder holder, int position) {
             ExpressList.DataBean.ListBean data = mList.get(position);
 
             boolean waitSend = StringUtils.isEmpty(data.getNumber());//待寄快递
@@ -249,7 +236,7 @@ public class ExpressSendFragment extends Fragment implements BaseRecyclerViewAda
             holder.mItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    mOnItemClickListener.onItemClick(holder.mItem, position);
+                    mOnItemClickListener.onItemClick(holder.mItem, holder.getAdapterPosition());
                 }
             });
         }

@@ -125,6 +125,7 @@ public class UserDetailActivity extends BackActivity {
                 break;
             case R.id.set_id_card:
                 Intent intent2 = new Intent(this, UpdateIdcardActivity.class);
+                intent2.putExtra(UpdateIdcardActivity.OLD_CID, userInfo.getCid());
                 startActivityForResult(intent2, 22);
                 break;
             case R.id.set_address:

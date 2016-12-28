@@ -31,7 +31,7 @@
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!--下载文件RxDownload-->
+    <!-- 下载文件RxDownload -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -44,7 +44,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
 
-        <!--更新APP相关-->
+        <!-- 更新APP相关 -->
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -131,7 +131,6 @@
             android:name=".ui.facelogin.FaceLoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".tab4.scommon.AboutActivity"
             android:label="@string/title_activity_about"
@@ -285,13 +284,13 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".tab4.mysetting.mypurse.TakeMoneyActivity"
+            android:name=".tab4.mysetting.mypurse.tab1.TakeMoneyActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".tab4.mysetting.mypurse.BindCardActivity"
+            android:name=".tab4.mysetting.mypurse.tab1.BindCardActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".tab4.mysetting.mypurse.AddCardsActivity"
+            android:name=".tab4.mysetting.mypurse.tab1.AddCardsActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -376,6 +375,10 @@
         <activity
             android:name=".tab4.mysetting.myorder.MyOrderListActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".tab4.mysetting.mypurse.tab2.IncomeBaseActivity" />
+        <activity android:name=".tab4.mysetting.mypurse.tab2.IncomeRewardActivity" />
+        <activity android:name=".tab4.mysetting.mypurse.tab2.IncomeHistoryActivity" />
+        <activity android:name=".tab4.mysetting.mypurse.MyPurse2Activity"></activity>
     </application>
 
 </manifest>

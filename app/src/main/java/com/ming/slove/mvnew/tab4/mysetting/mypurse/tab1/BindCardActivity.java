@@ -1,4 +1,4 @@
-package com.ming.slove.mvnew.tab4.mysetting.mypurse;
+package com.ming.slove.mvnew.tab4.mysetting.mypurse.tab1;
 
 import android.app.Activity;
 import android.content.DialogInterface;

@@ -26,7 +26,6 @@ public class BooksActivity extends TabsActivity {
         mFragments.add(0, new BooksTab1Fragment());
         mFragments.add(1, new BooksTab2Fragment());
 
-
         mAdapter.setItem(mTitles, mFragments);
     }
 

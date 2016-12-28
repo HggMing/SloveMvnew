@@ -19,6 +19,10 @@ import com.ming.slove.mvnew.model.bean.ExpressList;
 import com.ming.slove.mvnew.model.bean.FollowVillageList;
 import com.ming.slove.mvnew.model.bean.FriendDetail;
 import com.ming.slove.mvnew.model.bean.FriendList;
+import com.ming.slove.mvnew.model.bean.IncomeBase;
+import com.ming.slove.mvnew.model.bean.IncomeHistory;
+import com.ming.slove.mvnew.model.bean.IncomeMonth;
+import com.ming.slove.mvnew.model.bean.IncomeReward;
 import com.ming.slove.mvnew.model.bean.InsuranceOrderList;
 import com.ming.slove.mvnew.model.bean.IpPort;
 import com.ming.slove.mvnew.model.bean.Login;
@@ -963,6 +967,35 @@ public interface MyService {
      */
     @GET("amount/money_detail")
     Observable<MoneyDetail> get_MoneyDetail(
+            @Query("auth") String auth);
+
+    //本月收入（总）
+    @GET("account/income_currentmonth")
+    Observable<ResultOther> get_Money_Month(
+            @Query("auth") String auth);
+
+    //本月：基础、返点、提成（简）
+    @GET("account/get_threekindmony")
+    Observable<IncomeMonth> get_Income_Month(
+            @Query("auth") String auth);
+
+    //本月：基础收入（详）
+    @GET("account/get_currentmmoneylist")
+    Observable<IncomeBase> get_Income_Base(
+            @Query("auth") String auth);
+
+    //本月：业务提成（详）
+    @GET("account/get_currentMyewuList")
+    Observable<IncomeBase> get_Income_Business(
+            @Query("auth") String auth);
+
+    //本月：返点奖励（详）
+    @GET("account/get_currentmprofitlist")
+    Observable<IncomeReward> get_Income_Reward(
+            @Query("auth") String auth);
+    //历史收入（简）
+    @GET("account/get_lastsixmmony")
+    Observable<IncomeHistory> get_Income_History(
             @Query("auth") String auth);
 
     /**

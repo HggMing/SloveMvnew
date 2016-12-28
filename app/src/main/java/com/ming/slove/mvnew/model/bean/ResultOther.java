@@ -14,10 +14,19 @@ public class ResultOther {
     private String jifen;
     private String pingfen;
 
-
     //接口：amount/bind;express/add
     private String insert_id;
 
+    //接口：account/income_currentmonth
+    private String account;//本月收入
+
+    public String getAccount() {
+        return account;
+    }
+
+    public void setAccount(String account) {
+        this.account = account;
+    }
 
     public String getMoney() {
         return money;

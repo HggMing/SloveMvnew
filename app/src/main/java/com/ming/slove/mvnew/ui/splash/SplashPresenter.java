@@ -44,7 +44,7 @@ public class SplashPresenter implements SplashContract.Presenter {
     @Override
     public void requestPermission(final RxPermissions rxPermissions) {
         rxPermissions
-                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                .request(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,Manifest.permission.READ_PHONE_STATE)
                 .subscribe(new Subscriber<Boolean>() {
                     @Override
                     public void onCompleted() {
@@ -91,8 +91,9 @@ public class SplashPresenter implements SplashContract.Presenter {
                                         @Override
                                         public void onNext(Boolean aBoolean) {
                                             if (aBoolean) {
-                                                String msg = "储存空间权限，用于储存用户信息;\n" +
-                                                        "相机权限，用于发帖时，发布照片。";
+                                                String msg = "1、储存空间权限，用于储存用户信息;\n" +
+                                                        "2、相机权限，用于发帖时，发布照片。\n"+
+                                                        "3、电话权限，购物支付及消息接收。";
                                                 mView.showDialog(msg, new ClickDialog.OnClickDialog() {
                                                     @Override
                                                     public void dialogOk() {

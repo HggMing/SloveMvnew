@@ -13,7 +13,7 @@ import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.Result;
-import com.ming.slove.mvnew.tab4.mysetting.mypurse.TakeMoneyActivity;
+import com.ming.slove.mvnew.tab4.mysetting.mypurse.tab1.TakeMoneyActivity;
 import com.orhanobut.hawk.Hawk;
 
 import butterknife.Bind;

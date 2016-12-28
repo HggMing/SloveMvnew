@@ -1,4 +1,4 @@
-package com.ming.slove.mvnew.tab4.mysetting.mypurse;
+package com.ming.slove.mvnew.tab4.mysetting.mypurse.tab1;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -35,8 +35,6 @@ public class TakeMoneyActivity extends BackActivity {
     TextView bankName;
     @Bind(R.id.bank_number)
     TextView bankNumber;
-    @Bind(R.id.line_12)
-    View line12;
     @Bind(R.id.total_money)
     TextView totalMoney;
     @Bind(R.id.et_money)

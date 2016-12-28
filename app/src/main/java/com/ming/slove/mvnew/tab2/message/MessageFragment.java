@@ -2,22 +2,17 @@ package com.ming.slove.mvnew.tab2.message;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.FriendList;
@@ -39,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,8 +44,7 @@ import rx.schedulers.Schedulers;
 /**
  * 动态
  */
-public class MessageFragment extends Fragment implements MessageAdapter.OnItemClickListener {
-    AppCompatActivity mActivity;
+public class MessageFragment extends LazyLoadFragment implements MessageAdapter.OnItemClickListener {
 
     @Bind(R.id.m_x_recyclerview)
     RecyclerView mXRecyclerView;
@@ -71,26 +64,6 @@ public class MessageFragment extends Fragment implements MessageAdapter.OnItemCl
 
     final private static int PAGE_SIZE = 10;
     private int page = 1;
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab1, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mActivity = (AppCompatActivity) getActivity();
-
-        configXRecyclerView();//XRecyclerView配置
-
-        initFriendInfo();//加载用户好友信息
-        initDatas();//加载动态列表
-//        initData2(page);//加载产品推荐列表
-        EventBus.getDefault().register(this);
-    }
 
     private void initFriendInfo() {
         page = 1;
@@ -115,7 +88,7 @@ public class MessageFragment extends Fragment implements MessageAdapter.OnItemCl
 
                         //生成欢迎语动态
                         FriendList.DataBean.ListBean user2 = mFList.get(1);//我们村客服
-                        InstantMsgModel user2_msg = MyDB.createDb(mActivity).queryById(user2.getUid(), InstantMsgModel.class);
+                        InstantMsgModel user2_msg = MyDB.createDb(getContext()).queryById(user2.getUid(), InstantMsgModel.class);
                         if (user2_msg == null) {//动态不存在才添加
                             String user2_icon = APPS.BASE_URL + user2.getHead();
                             String time = String.valueOf(System.currentTimeMillis()).substring(0, 10);//13位时间戳，截取前10位，主要统一
@@ -224,8 +197,8 @@ public class MessageFragment extends Fragment implements MessageAdapter.OnItemCl
 
     //配置RecyclerView
     private void configXRecyclerView() {
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));//设置布局管理器
-        mXRecyclerView.addItemDecoration(new MyItemDecoration2(mActivity));//添加分割线
+        mXRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));//设置布局管理器
+        mXRecyclerView.addItemDecoration(new MyItemDecoration2(getContext()));//添加分割线
         mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
         mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
 
@@ -263,18 +236,35 @@ public class MessageFragment extends Fragment implements MessageAdapter.OnItemCl
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
-        ButterKnife.unbind(this);
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_tab1;
+    }
+
+    @Override
+    public void initViews(View view) {
+        configXRecyclerView();//XRecyclerView配置
+        EventBus.getDefault().register(this);
+        initFriendInfo();//加载用户好友信息
+    }
+
+    @Override
+    public void loadData() {
+        initDatas();//加载动态列表
+//        initData2(page);//加载产品推荐列表
     }
 
 
     @Override
     public void onItemClick(View view, int position) {
         if (APPS.NEW_FRIEND.equals(view.getTag())) {
-            Intent intent0 = new Intent(mActivity, NewFriendActivity.class);
+            Intent intent0 = new Intent(getContext(), NewFriendActivity.class);
             startActivity(intent0);
         } else {
             //点击动态，进入聊天界面
-            Intent intent2 = new Intent(mActivity, ChatActivity.class);
+            Intent intent2 = new Intent(getContext(), ChatActivity.class);
             intent2.putExtra(ChatActivity.UID, mList.get(position).getUid());
             intent2.putExtra(ChatActivity.USER_NAME, mList.get(position).getUname());
             startActivity(intent2);
@@ -284,7 +274,7 @@ public class MessageFragment extends Fragment implements MessageAdapter.OnItemCl
     @Override
     public void onItemLongClick(View view, final int position) {
         //长按删除此条动态
-        MyDialog.Builder builder = new MyDialog.Builder(mActivity);
+        MyDialog.Builder builder = new MyDialog.Builder(getContext());
         builder.setTitle("提示")
                 .setMessage("删除该聊天？")
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
@@ -305,7 +295,7 @@ public class MessageFragment extends Fragment implements MessageAdapter.OnItemCl
                         dialog.dismiss();
                     }
                 });
-        if (!mActivity.isFinishing()) {
+        if (!getActivity().isFinishing()) {
             builder.create().show();
         }
     }

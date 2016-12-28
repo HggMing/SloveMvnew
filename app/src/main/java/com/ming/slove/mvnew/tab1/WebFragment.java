@@ -2,14 +2,8 @@ package com.ming.slove.mvnew.tab1;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.webkit.JavascriptInterface;
@@ -18,6 +12,7 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintProgressBar;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.orhanobut.hawk.Hawk;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -28,13 +23,12 @@ import com.tencent.smtt.sdk.WebViewClient;
 import java.io.File;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 /**
  * 主页
  */
-public class WebFragment extends Fragment {
+public class WebFragment extends LazyLoadFragment {
     @Bind(R.id.webView)
     WebView webView;
     @Bind(R.id.progressBar)
@@ -43,29 +37,20 @@ public class WebFragment extends Fragment {
     TextView contentEmpty;
 
     private String auth;
-    AppCompatActivity mActivity;
-
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_news_detail, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+    public int getLayout() {
+        return R.layout.activity_news_detail;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mActivity = (AppCompatActivity) getActivity();
+    public void initViews(View view) {
         auth = Hawk.get(APPS.USER_AUTH);
-
-        initData();
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public void loadData() {
+        initData();
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -201,7 +186,7 @@ public class WebFragment extends Fragment {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 //            view.loadUrl(url);
-            Intent intent = new Intent(mActivity, BrowserActivity.class);
+            Intent intent = new Intent(getContext(), BrowserActivity.class);
             intent.putExtra(BrowserActivity.KEY_URL, url);
             startActivity(intent);
             //如果不需要其他对点击链接事件的处理返回true，否则返回false

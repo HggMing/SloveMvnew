@@ -1,4 +1,4 @@
-package com.ming.slove.mvnew.tab4.mysetting.mypurse;
+package com.ming.slove.mvnew.tab4.mysetting.mypurse.tab1;
 
 import android.os.Bundle;
 import android.view.Menu;

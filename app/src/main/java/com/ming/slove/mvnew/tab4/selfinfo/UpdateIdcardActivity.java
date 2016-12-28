@@ -23,6 +23,8 @@ import retrofit2.Response;
 
 public class UpdateIdcardActivity extends BackActivity {
 
+    public static String OLD_CID = "oldCid";
+
     @Bind(R.id.et_idcard)
     EditText etIdcard;
 
@@ -32,6 +34,10 @@ public class UpdateIdcardActivity extends BackActivity {
         setContentView(R.layout.activity_update_idcard);
         ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_update_idcard);
+
+        String text = getIntent().getStringExtra(OLD_CID);
+        etIdcard.setText(text);
+        etIdcard.setSelection(text.length());//光标移到文字最后
     }
 
     @Override

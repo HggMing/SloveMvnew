@@ -1,5 +1,6 @@
 package com.ming.slove.mvnew.ui.register;
 
+import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -18,6 +19,7 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.api.login.LoginApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
+import com.ming.slove.mvnew.common.base.ClickDialog;
 import com.ming.slove.mvnew.common.base.WebViewActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.sms_autofill.SmsObserver;
@@ -26,7 +28,9 @@ import com.ming.slove.mvnew.common.widgets.sms_autofill.VerificationCodeSmsFilte
 import com.ming.slove.mvnew.model.bean.Login;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.ui.main.MainActivity;
+import com.ming.slove.mvnew.ui.update.UpdateApp;
 import com.orhanobut.hawk.Hawk;
+import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -76,8 +80,35 @@ public class RegisterActivity extends BackActivity {
         regPhone = getIntent().getStringExtra(PHONE);
         sign = getIntent().getStringExtra(SIGN);
         read.setText(Html.fromHtml("<u>免责条款</u>"));//使用html实现下划线样式
-        getRCode();//获取验证码
-        autoFillRCode();//自动填写验证码
+
+        requestPermission();
+    }
+
+    private void requestPermission() {
+        new RxPermissions(this)
+                .request(Manifest.permission.READ_SMS)
+                .subscribe(new Subscriber<Boolean>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(Boolean aBoolean) {
+                        if (aBoolean) {
+                            //已获得全部权限
+                            getRCode();//获取验证码
+                            autoFillRCode();//自动填写验证码
+                        } else {
+                            getRCode();//获取验证码
+                        }
+                    }
+                });
     }
 
     private void autoFillRCode() {

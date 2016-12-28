@@ -1,4 +1,5 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -9,7 +10,7 @@
         android:layout_height="match_parent"
         android:background="@color/divide">
 
-        <LinearLayout xmlns:listItem1="http://schemas.android.com/apk/res-auto"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/stand_bg"
@@ -22,9 +23,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                listItem1:itemIcon="@mipmap/ic_wifi"
-                listItem1:itemTitle="上网认证"
-                listItem1:showArrow="false" />
+                app:itemIcon="@mipmap/ic_wifi"
+                app:itemTitle="上网认证"
+                app:showArrow="false" />
 
             <include layout="@layout/divide_15_top_bottom" />
 
@@ -33,9 +34,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                listItem1:itemIcon="@mipmap/tab4_check_version"
-                listItem1:itemTitle="检查新版本"
-                listItem1:showArrow="false" />
+                app:itemIcon="@mipmap/tab4_check_version"
+                app:itemTitle="检查新版本"
+                app:showArrow="false" />
 
             <include layout="@layout/divide_1_12" />
 
@@ -44,9 +45,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                listItem1:itemIcon="@mipmap/tab4_clear_cache"
-                listItem1:itemTitle="清理缓存"
-                listItem1:showArrow="false" />
+                app:itemIcon="@mipmap/tab4_clear_cache"
+                app:itemTitle="清理缓存"
+                app:showArrow="false" />
 
             <include layout="@layout/divide_1_12" />
 
@@ -55,8 +56,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:focusable="false"
-                listItem1:itemIcon="@mipmap/tab4_advice"
-                listItem1:itemTitle="意见反馈" />
+                app:itemIcon="@mipmap/tab4_advice"
+                app:itemTitle="意见反馈" />
 
             <include layout="@layout/divide_15_top_bottom" />
 
@@ -66,8 +67,8 @@
                 android:layout_height="wrap_content"
                 android:focusable="false"
                 android:visibility="visible"
-                listItem1:itemIcon="@mipmap/tab4_about"
-                listItem1:itemTitle="关于我们" />
+                app:itemIcon="@mipmap/tab4_about"
+                app:itemTitle="关于我们" />
         </LinearLayout>
         <!--<include layout="@layout/divide_15_top" />
         <RelativeLayout

@@ -20,6 +20,7 @@ public class CustomItem extends FrameLayout {
 
     private View mIcon;
     private TextView mText;
+    private TextView mText2;
 
     public CustomItem(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -30,9 +31,11 @@ public class CustomItem extends FrameLayout {
         View.inflate(context, R.layout.view_custom_item, this);
         mIcon = findViewById(R.id.icon);
         mText = (TextView) findViewById(R.id.title);
+        mText2 = (TextView) findViewById(R.id.content);
 
         TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.CustomItem);
         String title = array.getString(R.styleable.CustomItem_itemTitle);
+        String content = array.getString(R.styleable.CustomItem_itemContent);
         int icon = array.getResourceId(R.styleable.CustomItem_itemIcon, R.mipmap.user_home_project);
         boolean center = array.getBoolean(R.styleable.CustomItem_itemCenter, false);
         boolean showArrow=array.getBoolean(R.styleable.CustomItem_showArrow,true);
@@ -40,6 +43,8 @@ public class CustomItem extends FrameLayout {
 
         if (title == null) title = "";
         mText.setText(title);
+        if (content == null) content = "";
+        mText2.setText(content);
         mIcon.setBackgroundResource(icon);
 
         if(!showArrow){
@@ -61,6 +66,12 @@ public class CustomItem extends FrameLayout {
             return;
         }
         mText.setText(s);
+    }
+    public void setContent(String s) {
+        if (s == null) {
+            return;
+        }
+        mText2.setText(s);
     }
     public void setIcon(int icon) {
         if (icon ==0) {

@@ -1,15 +1,11 @@
 package com.ming.slove.mvnew.shop;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -22,6 +18,7 @@ import com.bilibili.magicasakura.widgets.TintView;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.model.event.ChangeThemeColorEvent;
 import com.ming.slove.mvnew.model.event.UpdataShopOwnerHeadEvent;
 import com.ming.slove.mvnew.shop.shoptab1.ShopTab1Fragment;
@@ -39,11 +36,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-public class MyShopFragment extends Fragment {
+public class MyShopFragment extends LazyLoadFragment {
     @Bind(R.id.icon_head)
     ImageView iconHead;
     @Bind(R.id.shop_address)
@@ -77,31 +73,28 @@ public class MyShopFragment extends Fragment {
     @Bind(R.id.tab4Layout)
     RelativeLayout tab4Layout;
 
-    private AppCompatActivity mActivity;
     private List<Fragment> fragments = new ArrayList<>();
     private FragmentManager fragmentManager;
-
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_my_shop, container, false);
-        ButterKnife.bind(this, view);
-        return view;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mActivity = (AppCompatActivity) getActivity();
-        initData();
-        EventBus.getDefault().register(this);
-    }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        ButterKnife.unbind(this);
         EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.fragment_my_shop;
+    }
+
+    @Override
+    public void initViews(View view) {
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void loadData() {
+        initData();
     }
 
     private void initData() {
@@ -109,7 +102,7 @@ public class MyShopFragment extends Fragment {
         String headUrl = Hawk.get(APPS.ME_HEAD);
         Glide.with(this)
                 .load(headUrl)
-                .bitmapTransform(new CropCircleTransformation(mActivity))
+                .bitmapTransform(new CropCircleTransformation(getContext()))
                 .error(R.mipmap.defalt_user_circle)
                 .into(iconHead);
         //地址
@@ -122,7 +115,7 @@ public class MyShopFragment extends Fragment {
         fragments.add(new ShopTab3Fragment());
         fragments.add(new ShopTab4Fragment());
 
-        fragmentManager = mActivity.getSupportFragmentManager();
+        fragmentManager = getActivity().getSupportFragmentManager();
 
         viewPager.setSlipping(true);//设置ViewPager是否可以滑动
         viewPager.setOffscreenPageLimit(4);
@@ -134,7 +127,7 @@ public class MyShopFragment extends Fragment {
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void changeThemeColor(ChangeThemeColorEvent event) {
         //更改主题后，我的店上方Tab页，文字颜色改变
-        int themeColor = ThemeUtils.getColorById(mActivity, R.color.theme_color_primary);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
         int arg0 = viewPager.getCurrentItem();
         switch (arg0) {
             case 0:
@@ -163,7 +156,7 @@ public class MyShopFragment extends Fragment {
         String headUrl = event.getHeadUrl();
         Glide.with(this)
                 .load(headUrl)
-                .bitmapTransform(new CropCircleTransformation(mActivity))
+                .bitmapTransform(new CropCircleTransformation(getContext()))
                 .error(R.mipmap.defalt_user_circle)
                 .into(iconHead);
     }
@@ -172,11 +165,11 @@ public class MyShopFragment extends Fragment {
      * 页卡切换监听,点击改变图标外观
      */
     public class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
-        int white = ContextCompat.getColor(mActivity, R.color.white);
+        int white = ContextCompat.getColor(getContext(), R.color.white);
 
         @Override
         public void onPageSelected(int arg0) {
-            int themeColor = ThemeUtils.getColorById(mActivity, R.color.theme_color_primary);
+            int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
             switch (arg0) {
                 case 0:
                     tTab1.setTextColor(themeColor);   //选中时的字体颜色
@@ -214,25 +207,25 @@ public class MyShopFragment extends Fragment {
         }
 
         private void setTab1ToB() {
-            tTab1.setTextColor(ContextCompat.getColor(mActivity, R.color.tab_bnt0));
+            tTab1.setTextColor(ContextCompat.getColor(getContext(), R.color.tab_bnt0));
             vTab1.setBackgroundColor(white);
             tab1Layout.setBackgroundColor(white);
         }
 
         private void setTab2ToB() {
-            tTab2.setTextColor(ContextCompat.getColor(mActivity, R.color.tab_bnt0));
+            tTab2.setTextColor(ContextCompat.getColor(getContext(), R.color.tab_bnt0));
             vTab2.setBackgroundColor(white);
             tab2Layout.setBackgroundColor(white);
         }
 
         private void setTab3ToB() {
-            tTab3.setTextColor(ContextCompat.getColor(mActivity, R.color.tab_bnt0));
+            tTab3.setTextColor(ContextCompat.getColor(getContext(), R.color.tab_bnt0));
             vTab3.setBackgroundColor(white);
             tab3Layout.setBackgroundColor(white);
         }
 
         private void setTab4ToB() {
-            tTab4.setTextColor(ContextCompat.getColor(mActivity, R.color.tab_bnt0));
+            tTab4.setTextColor(ContextCompat.getColor(getContext(), R.color.tab_bnt0));
             vTab4.setBackgroundColor(white);
             tab4Layout.setBackgroundColor(white);
         }

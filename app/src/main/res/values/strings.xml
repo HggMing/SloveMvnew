@@ -89,6 +89,11 @@
     <string name="title_activity_shopping_address">我的收货地址</string>
     <string name="title_activity_my_order">我的订单</string>
 
+    <string name="title_activity_income_base">基础收入</string>
+    <string name="title_activity_income_business">业务提成</string>
+    <string name="title_activity_income_reward">返点奖励</string>
+    <string name="title_activity_income_history">历史收入</string>
+
     <string name="title_activity_apply_shop_owner">申请店长</string>
     <string name="title_activity_show_applying">申请结果</string>
 

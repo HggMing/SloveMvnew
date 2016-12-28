@@ -2,10 +2,10 @@ package com.ming.slove.mvnew.common.base;
 
 import android.content.DialogInterface;
 import android.graphics.Color;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidadvance.topsnackbar.TSnackbar;
 import com.bilibili.magicasakura.utils.ThemeUtils;
@@ -66,8 +66,6 @@ public class BaseFragment extends Fragment {
     }
 
     public void toast(CharSequence text) {
-//        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
-
         TSnackbar snackbar = TSnackbar
                 .make(getView(), text, TSnackbar.LENGTH_LONG);
         snackbar.setActionTextColor(Color.WHITE);
@@ -78,6 +76,10 @@ public class BaseFragment extends Fragment {
         TextView textView = (TextView) snackbarView.findViewById(com.androidadvance.topsnackbar.R.id.snackbar_text);
         textView.setTextColor(Color.WHITE);
         snackbar.show();
+    }
+
+    public void toast2(CharSequence text) {
+        Toast.makeText(getContext(), text, Toast.LENGTH_SHORT).show();
     }
 
     public void closeActivity() {

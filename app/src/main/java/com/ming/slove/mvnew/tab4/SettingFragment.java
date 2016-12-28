@@ -6,14 +6,9 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Base64;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -21,13 +16,11 @@ import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.igexin.sdk.PushManager;
-import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.ui.login.LoginActivity;
-import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.app.APP;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.app.ThemeHelper;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.CustomItem;
@@ -48,13 +41,14 @@ import com.ming.slove.mvnew.tab4.safesetting.RealNameBindingActivity;
 import com.ming.slove.mvnew.tab4.safesetting.SafeSettingActivity;
 import com.ming.slove.mvnew.tab4.scommon.SettingCommonActivity;
 import com.ming.slove.mvnew.tab4.selfinfo.UserDetailActivity;
+import com.ming.slove.mvnew.ui.login.LoginActivity;
+import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.io.IOException;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.MediaType;
@@ -67,8 +61,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class SettingFragment extends Fragment implements CardPickerDialog.ClickListener {
-    AppCompatActivity mActivity;
+public class SettingFragment extends LazyLoadFragment implements CardPickerDialog.ClickListener {
 
     @Bind(R.id.icon_head)
     ImageView iconHead;
@@ -93,30 +86,24 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
     private final int REQUEST_APPLY_PASSED = 123;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab4, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+    public int getLayout() {
+        return R.layout.fragment_tab4;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mActivity = (AppCompatActivity) getActivity();
+    public void initViews(View view) {
         auth = Hawk.get(APPS.USER_AUTH);
 
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
 
         setHasOptionsMenu(true);
-        getUserInfoDetail();//在线获取用户信息
 
         initView();//界面初始化
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public void loadData() {
+        getUserInfoDetail();//在线获取用户信息
     }
 
     private void initView() {
@@ -145,7 +132,7 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
             //更换主题
             CardPickerDialog dialog = new CardPickerDialog();
             dialog.setClickListener(this);
-            dialog.show(mActivity.getSupportFragmentManager(), CardPickerDialog.TAG);
+            dialog.show(getActivity().getSupportFragmentManager(), CardPickerDialog.TAG);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -180,7 +167,7 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
      * 点击退出登录
      */
     private void logout() {
-        MyDialog.Builder builder = new MyDialog.Builder(mActivity);
+        MyDialog.Builder builder = new MyDialog.Builder(getContext());
         builder.setTitle("提示")
                 .setMessage("确定退出登录？")
                 .setPositiveButton("确定",
@@ -194,14 +181,14 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                                 Hawk.delete(APPS.MANAGER_ADDRESS);
                                 Hawk.delete(APPS.MANAGER_VID);
                                 //停止个推SDK服务
-                                PushManager.getInstance().stopService(mActivity.getApplicationContext());
+                                PushManager.getInstance().stopService(getContext());
                                 //关闭数据库
-                                MyDB.createDb(mActivity).close();
+                                MyDB.createDb(getContext()).close();
                                 MyDB.setLiteOrm(null);
 
-                                Intent intent = new Intent(mActivity, LoginActivity.class);
+                                Intent intent = new Intent(getContext(), LoginActivity.class);
                                 startActivity(intent);
-                                mActivity.finish();
+                                getActivity().finish();
                                 dialog.dismiss();
                             }
                         })
@@ -211,7 +198,7 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                         dialog.dismiss();
                     }
                 });
-        if (!mActivity.isFinishing()) {
+        if (!getActivity().isFinishing()) {
             builder.create().show();
         }
     }
@@ -240,9 +227,9 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                         String sexNumber = dataEntity.getSex();
                         String accountNo = dataEntity.getLogname();
                         //头像
-                        Glide.with(mActivity)
+                        Glide.with(getContext())
                                 .load(headUrl)
-                                .bitmapTransform(new CropCircleTransformation(mActivity))
+                                .bitmapTransform(new CropCircleTransformation(getContext()))
                                 .error(R.mipmap.defalt_user_circle)
                                 .into(iconHead);
                         //昵称
@@ -282,7 +269,7 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                 break;
             case R.id.click_user://点击编辑用户
                 if (dataEntity != null) {
-                    Intent intent1 = new Intent(mActivity, UserDetailActivity.class);
+                    Intent intent1 = new Intent(getContext(), UserDetailActivity.class);
                     Bundle bundle = new Bundle();
                     bundle.putParcelable(UserDetailActivity.USER_INFO, dataEntity);
                     intent1.putExtras(bundle);
@@ -290,13 +277,13 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                 }
                 break;
             case R.id.click_my_setting://我的
-                Intent intent2 = new Intent(mActivity, MySettingActivity.class);
+                Intent intent2 = new Intent(getContext(), MySettingActivity.class);
                 startActivity(intent2);
                 break;
 
             case R.id.click_store_manager:
                 if (isShopOwner == 1) {//进入店长管理页面
-                    Intent intent3 = new Intent(mActivity, MyShopActivity.class);
+                    Intent intent3 = new Intent(getContext(), MyShopActivity.class);
                     startActivity(intent3);
                 } else {
                     //获取申请店长，当前状态
@@ -304,11 +291,11 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                 }
                 break;
             case R.id.click_safe_center://账号安全
-                Intent intent4 = new Intent(mActivity, SafeSettingActivity.class);
+                Intent intent4 = new Intent(getContext(), SafeSettingActivity.class);
                 startActivity(intent4);
                 break;
             case R.id.click_setting_common://通用
-                Intent intent5 = new Intent(mActivity, SettingCommonActivity.class);
+                Intent intent5 = new Intent(getContext(), SettingCommonActivity.class);
                 startActivity(intent5);
                 break;
             case R.id.click_loyout://退出当前账号
@@ -355,19 +342,19 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                         Gson gson = new Gson();
                         CheckPhone result = gson.fromJson(new String(Base64.decode(s, Base64.DEFAULT)), CheckPhone.class);
                         if (result.getErr() == 0) {//已经实名认证,进入申请界面
-                            Intent intent4 = new Intent(mActivity, ApplyShopOwnerActivity.class);
+                            Intent intent4 = new Intent(getContext(), ApplyShopOwnerActivity.class);
                             intent4.putExtra(ApplyShopOwnerActivity.USER_INFO, dataEntity);
                             startActivity(intent4);
                         }
                         if (result.getErr() == 1002) {//还没有实名认证
-                            MyDialog.Builder builder1 = new MyDialog.Builder(mActivity);
+                            MyDialog.Builder builder1 = new MyDialog.Builder(getContext());
                             builder1.setTitle("提示")
                                     .setMessage("你的账号尚未实名认证，请先进行实名认证。")
                                     .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                         @Override
                                         public void onClick(DialogInterface dialog,
                                                             int which) {
-                                            Intent intent5 = new Intent(mActivity, RealNameBindingActivity.class);
+                                            Intent intent5 = new Intent(getContext(), RealNameBindingActivity.class);
                                             startActivity(intent5);
                                             dialog.dismiss();
                                         }
@@ -378,7 +365,7 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                                             dialog.dismiss();
                                         }
                                     });
-                            if (!mActivity.isFinishing()) {
+                            if (!getActivity().isFinishing()) {
                                 builder1.create().show();
                             }
                         }
@@ -410,11 +397,11 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
                         public void onNext(ApplyInfo applyInfo) {
                             ApplyInfo.DataBean data = applyInfo.getData();
                             if (data != null) {//已申请过，进入查看申请状态页面
-                                Intent intent = new Intent(mActivity, ShowApplyingActivity.class);
+                                Intent intent = new Intent(getContext(), ShowApplyingActivity.class);
                                 intent.putExtra(ShowApplyingActivity.STATUS_APPLY, data.getStats());
                                 startActivityForResult(intent, REQUEST_APPLY_PASSED);
                             } else {//已经选择申请的村（已实名通过），但没有申请就退出。点击申请后直接进入申请界面
-                                Intent intent4 = new Intent(mActivity, ApplyShopOwnerActivity.class);
+                                Intent intent4 = new Intent(getContext(), ApplyShopOwnerActivity.class);
                                 intent4.putExtra(ApplyShopOwnerActivity.USER_INFO, dataEntity);
                                 startActivity(intent4);
                             }
@@ -425,16 +412,16 @@ public class SettingFragment extends Fragment implements CardPickerDialog.ClickL
 
     @Override
     public void onConfirm(int currentTheme) {
-        if (ThemeHelper.getTheme(mActivity) != currentTheme) {
-            ThemeHelper.setTheme(mActivity, currentTheme);
-            ThemeUtils.refreshUI(mActivity, new ThemeUtils.ExtraRefreshable() {
+        if (ThemeHelper.getTheme(getContext()) != currentTheme) {
+            ThemeHelper.setTheme(getContext(), currentTheme);
+            ThemeUtils.refreshUI(getContext(), new ThemeUtils.ExtraRefreshable() {
                 @Override
                 public void refreshGlobal(Activity activity) {
                     if (Build.VERSION.SDK_INT >= 21) {
                         ActivityManager.TaskDescription taskDescription = new ActivityManager
-                                .TaskDescription(null, null, ThemeUtils.getThemeAttrColor(mActivity, android.R.attr.colorPrimary));
-                        mActivity.setTaskDescription(taskDescription);
-                        mActivity.getWindow().setStatusBarColor(ThemeUtils.getColorById(mActivity, R.color.theme_color_primary));
+                                .TaskDescription(null, null, ThemeUtils.getThemeAttrColor(getContext(), android.R.attr.colorPrimary));
+                        getActivity().setTaskDescription(taskDescription);
+                        getActivity().getWindow().setStatusBarColor(ThemeUtils.getColorById(getContext(), R.color.theme_color_primary));
                     }
                 }
 

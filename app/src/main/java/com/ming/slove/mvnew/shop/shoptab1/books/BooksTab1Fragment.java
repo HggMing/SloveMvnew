@@ -4,11 +4,7 @@ package com.ming.slove.mvnew.shop.shoptab1.books;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,6 +24,7 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.model.bean.BookList;
 import com.orhanobut.hawk.Hawk;
@@ -45,7 +42,7 @@ import rx.schedulers.Schedulers;
 /**
  * 图书列表
  */
-public class BooksTab1Fragment extends Fragment {
+public class BooksTab1Fragment extends LazyLoadFragment {
 
     @Bind(R.id.m_x_recyclerview)
     XRecyclerView mXRecyclerView;
@@ -56,7 +53,6 @@ public class BooksTab1Fragment extends Fragment {
     @Bind(R.id.fab)
     FloatingActionButton fab;
 
-    AppCompatActivity mActivity;
     private BooksAdapter mAdapter;
     private List<BookList.DataBean.ListBean> mList = new ArrayList<>();
 
@@ -64,24 +60,17 @@ public class BooksTab1Fragment extends Fragment {
     private int page = 1;
     private final int REQUEST_CODE = 12331;
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_books, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+    public int getLayout() {
+        return R.layout.fragment_books;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
+    public void initViews(View view) {
         config();
-        initData(page);
-
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(mActivity);
-        int themeColorRes = getResources().getIdentifier(theme, "color", mActivity.getPackageName());
+        String theme = ThemeHelper.getThemeColorName(getContext());
+        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
         mRefreshLayout.setColorSchemeResources(themeColorRes);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -95,23 +84,21 @@ public class BooksTab1Fragment extends Fragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public void loadData() {
+        initData(page);
     }
 
     private void config() {
-        mActivity = (AppCompatActivity) getActivity();
         //设置fab
         fab.attachToRecyclerView(mXRecyclerView);//fab随recyclerView的滚动，隐藏和出现
-        int themeColor = ThemeUtils.getColorById(mActivity, R.color.theme_color_primary);
-        int themeColor2 = ThemeUtils.getColorById(mActivity, R.color.theme_color_primary_dark);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
+        int themeColor2 = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary_dark);
         fab.setColorNormal(themeColor);//fab背景颜色
         fab.setColorPressed(themeColor2);//fab点击后背景颜色
         fab.setColorRipple(themeColor2);//fab点击后涟漪颜色
         //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));
-        mXRecyclerView.addItemDecoration(new MyItemDecoration(mActivity));//添加分割线
+        mXRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        mXRecyclerView.addItemDecoration(new MyItemDecoration(getContext()));//添加分割线
         mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
         mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
 
@@ -169,7 +156,7 @@ public class BooksTab1Fragment extends Fragment {
     @OnClick(R.id.fab)
     public void onClick() {
 //        Toast.makeText(mActivity, "添加图书", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(mActivity, AddBookActivity.class);
+        Intent intent = new Intent(getContext(), AddBookActivity.class);
         startActivityForResult(intent, REQUEST_CODE);
     }
 

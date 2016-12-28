@@ -3,42 +3,36 @@ package com.ming.slove.mvnew.tab3.villagelist;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.orhanobut.hawk.Hawk;
-import com.ming.slove.mvnew.R;
+import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.FollowVillageList;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.tab3.addfollow.FollowVillageActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.VillageBbsActivity;
+import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class VillageListFragment extends Fragment implements VillageListAdapter.OnItemClickListener {
-    AppCompatActivity mActivity;
+public class VillageListFragment extends LazyLoadFragment implements VillageListAdapter.OnItemClickListener {
 
     @Bind(R.id.listview_header_text)
     XRecyclerView mXRecyclerView;
@@ -53,27 +47,21 @@ public class VillageListFragment extends Fragment implements VillageListAdapter.
     private String auth;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_tab3, container, false);
-        ButterKnife.bind(this, view);
-        return view;
+    public int getLayout() {
+        return R.layout.fragment_tab3;
     }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        mActivity = (AppCompatActivity) getActivity();
+    public void initViews(View view) {
         auth = Hawk.get(APPS.USER_AUTH);
 
         setHasOptionsMenu(true);
         configXRecyclerView();//XRecyclerView配置
-        getDataList(page);//获取followList数据和cnt值
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public void loadData() {
+        getDataList(page);//获取followList数据和cnt值
     }
 
     @Override
@@ -81,7 +69,7 @@ public class VillageListFragment extends Fragment implements VillageListAdapter.
         int id = item.getItemId();
 
         if (id == R.id.action_follow) {
-            Intent intent = new Intent(mActivity, FollowVillageActivity.class);
+            Intent intent = new Intent(getContext(), FollowVillageActivity.class);
             startActivityForResult(intent, 12355);
             return true;
         }
@@ -106,12 +94,12 @@ public class VillageListFragment extends Fragment implements VillageListAdapter.
 
     //配置RecyclerView
     private void configXRecyclerView() {
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(mActivity));//设置布局管理器
+        mXRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));//设置布局管理器
         mAdapter = new VillageListAdapter();
         mXRecyclerView.setAdapter(mAdapter);//设置adapter
         mAdapter.setOnItemClickListener(VillageListFragment.this);
 
-        mXRecyclerView.addItemDecoration(new MyItemDecoration(mActivity));//添加分割线
+        mXRecyclerView.addItemDecoration(new MyItemDecoration(getContext()));//添加分割线
         mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
         mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
 
@@ -176,7 +164,7 @@ public class VillageListFragment extends Fragment implements VillageListAdapter.
         intent.putExtra(VillageBbsActivity.VILLAGE_ID, vid);
         intent.putExtra(VillageBbsActivity.VILLAGE_NAME, vname);
         intent.putExtra(VillageBbsActivity.VILLAGE_PIC, vpic);
-        intent.setClass(mActivity, VillageBbsActivity.class);
+        intent.setClass(getContext(), VillageBbsActivity.class);
         startActivity(intent);
     }
 
@@ -184,7 +172,7 @@ public class VillageListFragment extends Fragment implements VillageListAdapter.
     public void onItemLongClick(View view, final int position) {
         //长按选项操作
         String villageName = mList.get(position).getVillage_name();
-        MyDialog.Builder builder = new MyDialog.Builder(mActivity);
+        MyDialog.Builder builder = new MyDialog.Builder(getContext());
         builder.setTitle("提示")
                 .setMessage("取消关注" + villageName + "?" + "\n" + "(取消关注后，你将不再看到该村的任何信息，同时该村将会从“我的村”列表中移除！)")
                 .setPositiveButton("确定",
@@ -201,7 +189,7 @@ public class VillageListFragment extends Fragment implements VillageListAdapter.
                         dialog.dismiss();
                     }
                 });
-        if (!mActivity.isFinishing()) {
+        if (!getActivity().isFinishing()) {
             builder.create().show();
         }
     }
