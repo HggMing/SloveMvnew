@@ -8,7 +8,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 24
         versionCode 1
-        versionName "1.0.6"
+        versionName "1.0.8"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 

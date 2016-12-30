@@ -24,6 +24,8 @@ import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
+import com.ming.slove.mvnew.common.utils.MyItemDecoration;
+import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
 import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
 import com.ming.slove.mvnew.model.bean.SalesOrderList;
 import com.ming.slove.mvnew.shop.shoptab1.books.NoDecoration;
@@ -179,7 +181,7 @@ public class SalesOrderActivity extends BackActivity {
         public void onBindViewHolder(final ViewHolder holder, final int position) {
             Context mContext = holder.itemView.getContext();
             SalesOrderList.ListBean data = mList.get(position);
-            SalesOrderList.ListBean.ProductListBean product = data.getProduct_list().get(0);
+
             //购买人
             holder.tvBuyer.setText(data.getBuy_uname());
             //付款状态：1，未付款；2，已付款  3、退款申请中，4、退款成功'
@@ -207,18 +209,13 @@ public class SalesOrderActivity extends BackActivity {
                     break;
             }
             holder.tvStatus.setText(payStatus);
-            //商品图片
-            String imageUrl = APPS.BASE_URL + product.getPicurl();
-            Glide.with(mContext).load(imageUrl)
-                    .centerCrop()
-                    .into(holder.img);
-            //购买商品简略信息
-            holder.tvContent.setText(data.getProducts());
-            //购买数量
-            holder.tvNumber.setText("x" + product.getGoods_number());
+
             //价格显示
-            holder.tvPrice.setText("￥" + product.getGoods_price());
-            holder.tvTotalNumCost.setText("共计" + product.getGoods_number() + "件商品，合计:￥" + data.getOrder_amount());
+            int nums = 0;
+            for (SalesOrderList.ListBean.ProductListBean product : data.getProduct_list()) {
+                nums += Integer.parseInt(product.getGoods_number());
+            }
+            holder.tvTotalNumCost.setText("共计" + nums + "件商品，合计:￥" + data.getOrder_amount() + "(含运费￥" + data.getShipping_fee() + ")");
             //支付点击
             holder.btnOrderSend.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -226,6 +223,9 @@ public class SalesOrderActivity extends BackActivity {
                     mOnItemClickListener.onItemClick(holder.btnOrderSend, position);
                 }
             });
+
+            //内置recycleView配置
+            holder.mAdapter.setItem(data.getProduct_list());
         }
 
         static class ViewHolder extends RecyclerView.ViewHolder {
@@ -233,14 +233,6 @@ public class SalesOrderActivity extends BackActivity {
             TextView tvBuyer;
             @Bind(R.id.tv_status)
             TextView tvStatus;
-            @Bind(R.id.img)
-            ImageView img;
-            @Bind(R.id.tv_content)
-            TextView tvContent;
-            @Bind(R.id.tv_price)
-            TextView tvPrice;
-            @Bind(R.id.tv_number)
-            TextView tvNumber;
             @Bind(R.id.tv_total_num_cost)
             TextView tvTotalNumCost;
             @Bind(R.id.btn_order_send)
@@ -249,6 +241,68 @@ public class SalesOrderActivity extends BackActivity {
             RelativeLayout layoutButton;
             @Bind(R.id.m_item)
             RelativeLayout mItem;
+            @Bind(R.id.m_x_recyclerview)
+            RecyclerView mXRecyclerView2;
+
+            private SalesOrder2Adapter mAdapter;
+
+            ViewHolder(View view) {
+                super(view);
+                ButterKnife.bind(this, view);
+                configXRecyclerView(itemView.getContext());
+            }
+
+            //配置RecyclerView
+            private void configXRecyclerView(Context context) {
+                //设置布局和adapter
+                mXRecyclerView2.setLayoutManager(new LinearLayoutManager(context));
+                mAdapter = new SalesOrder2Adapter();
+                mXRecyclerView2.setAdapter(mAdapter);
+
+                mXRecyclerView2.addItemDecoration(new MyItemDecoration2(context));//添加分割线
+                mXRecyclerView2.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
+                mXRecyclerView2.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
+            }
+        }
+    }
+
+    static class SalesOrder2Adapter extends BaseRecyclerViewAdapter<SalesOrderList.ListBean.ProductListBean, SalesOrder2Adapter.ViewHolder> {
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_shop_tab2_sales_2, parent, false);
+            return new ViewHolder(mView);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, final int position) {
+            Context mContext = holder.itemView.getContext();
+            SalesOrderList.ListBean.ProductListBean data = mList.get(position);
+
+            //商品图片
+            String imageUrl = APPS.BASE_URL + data.getPicurl();
+            Glide.with(mContext).load(imageUrl)
+                    .centerCrop()
+                    .into(holder.img);
+            //购买商品简略信息
+            holder.tvContent.setText(data.getGoods_name());
+            //购买数量
+            holder.tvNumber.setText("x" + data.getGoods_number());
+            //价格显示
+            holder.tvPrice.setText("￥" + data.getGoods_price());
+
+        }
+
+
+        static class ViewHolder extends RecyclerView.ViewHolder {
+            @Bind(R.id.img)
+            ImageView img;
+            @Bind(R.id.tv_content)
+            TextView tvContent;
+            @Bind(R.id.tv_price)
+            TextView tvPrice;
+            @Bind(R.id.tv_number)
+            TextView tvNumber;
 
             ViewHolder(View view) {
                 super(view);

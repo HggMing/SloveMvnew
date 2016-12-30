@@ -16,10 +16,12 @@ import android.widget.TextView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.base.AddListActivity;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.ShoppingAddress;
+import com.ming.slove.mvnew.tab4.mysetting.shoppingaddress.EditShoppingAdressActivity;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ChooseAddressActivity extends BackActivity {
+public class ChooseAddressActivity extends AddListActivity {
 
     @Bind(R.id.content_empty)
     TextView contentEmpty;
@@ -40,23 +42,20 @@ public class ChooseAddressActivity extends BackActivity {
 
     private ChooseAddressAdapter mAdapter;
     List<ShoppingAddress.DataBean> mList = new ArrayList<>();
+    private String auth;
+
+    private final int REFRESH = 1200;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_list);
-        ButterKnife.bind(this);
-
         setToolbarTitle(R.string.title_activity_shopping_address);
         config();
         initData();
     }
 
     private void config() {
-        //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
+         auth = Hawk.get(APPS.USER_AUTH);
         //设置adapter
         mAdapter = new ChooseAddressAdapter(this);
         mXRecyclerView.setAdapter(mAdapter);
@@ -65,7 +64,6 @@ public class ChooseAddressActivity extends BackActivity {
             public void onItemClick(View view, int position) {
                 //修改设为默认地址
                 ShoppingAddress.DataBean data = mList.get(position);
-                String auth = Hawk.get(APPS.USER_AUTH);
                 String sd_is_def = data.getIs_def();
                 if ("1".equals(sd_is_def)) {
                     sd_is_def = "0";
@@ -101,10 +99,27 @@ public class ChooseAddressActivity extends BackActivity {
             }
         });
     }
+    @Override
+    public void onClick() {
+        super.onClick();
+//        Toast.makeText(ShoppingAddressActivity.this, "添加收货地址", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, EditShoppingAdressActivity.class);
+        startActivityForResult(intent, REFRESH);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REFRESH) {
+            if (resultCode == RESULT_OK) {
+                initData();
+            }
+        }
+    }
+
 
     private void initData() {
         //设置数据
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_ShoppingAddress(auth)
                 .subscribeOn(Schedulers.io())
@@ -212,10 +227,14 @@ public class ChooseAddressActivity extends BackActivity {
             CardView item;
             @Bind(R.id.is_default)
             CheckBox isDefault;
+            @Bind(R.id.arrow)
+            View arrow;
 
             ViewHolder(View view) {
                 super(view);
                 ButterKnife.bind(this, view);
+
+                arrow.setVisibility(View.GONE);
             }
         }
     }

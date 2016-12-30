@@ -52,59 +52,10 @@
                     tools:text="已付款" />
             </RelativeLayout>
 
-            <RelativeLayout
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/m_x_recyclerview"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@mipmap/pay_item_back"
-                android:padding="8dp">
-
-                <ImageView
-                    android:id="@+id/img"
-                    android:layout_width="80dp"
-                    android:layout_height="60dp"
-                    android:layout_centerVertical="true"
-                    android:layout_marginLeft="15dp"
-                    android:layout_marginTop="2dp"
-                    tools:src="@color/theme_color_primary" />
-
-                <TextView
-                    android:id="@+id/tv_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/img"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginRight="40dp"
-                    android:layout_toLeftOf="@id/tv_price"
-                    android:layout_toRightOf="@id/img"
-                    android:lines="2"
-                    android:ellipsize="end"
-                    android:textColor="#555555"
-                    android:textSize="@dimen/textsize_normal"
-                    tools:text="流量充值流量充值流量充值流量充值流量充值流量充值" />
-
-                <TextView
-                    android:id="@+id/tv_price"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@id/tv_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="10dp"
-                    android:textColor="#555555"
-                    android:textSize="@dimen/textsize_normal"
-                    tools:text="￥3" />
-
-                <TextView
-                    android:id="@+id/tv_number"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/tv_price"
-                    android:layout_marginRight="10dp"
-                    android:textColor="@color/font_black_8"
-                    android:textSize="@dimen/textsize_normal"
-                    tools:text="x3" />
-            </RelativeLayout>
+                android:layout_height="wrap_content" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

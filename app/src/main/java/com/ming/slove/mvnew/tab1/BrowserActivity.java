@@ -22,6 +22,8 @@ import android.widget.Toast;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.StringUtils;
+import com.ming.slove.mvnew.model.bean.ShoppingAddress;
+import com.ming.slove.mvnew.tab3.product.ChooseAddressActivity;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.app.APP;
@@ -43,6 +45,9 @@ import com.tencent.smtt.sdk.WebSettings.LayoutAlgorithm;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 
@@ -50,6 +55,8 @@ import butterknife.ButterKnife;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
+
+import static com.ming.slove.mvnew.tab3.product.ProductPayActivity.KEY_USER_ADDR_INFO;
 
 
 public class BrowserActivity extends BaseActivity {
@@ -65,6 +72,11 @@ public class BrowserActivity extends BaseActivity {
     private ProgressBar mPageLoadingProgressBar = null;
     private URL mIntentUrl;
     WebSettings webSetting;
+
+    private ShoppingAddress.DataBean userAddrInfo;//用户地址信息
+    private static final int REQUEST_ADD = 123;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -363,9 +375,17 @@ public class BrowserActivity extends BaseActivity {
                 intent.putExtra(ChatActivity.UID, shopper_id);
                 intent.putExtra(ChatActivity.USER_NAME, shopper_name);
                 startActivity(intent);
-            }else {
+            } else {
                 Toast.makeText(mContext, "本村暂无客服。", Toast.LENGTH_SHORT).show();
             }
+            return "{\"err\":\"0\"}";
+        }
+
+        @JavascriptInterface
+        public String ChooseAddress() {
+//            Toast.makeText(mContext, "点击", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(mContext, ChooseAddressActivity.class);
+            startActivityForResult(intent, REQUEST_ADD);
             return "{\"err\":\"0\"}";
         }
     }
@@ -403,5 +423,29 @@ public class BrowserActivity extends BaseActivity {
         if (mWebView != null)
             mWebView.destroy();
         super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_ADD://选择收货地址后，返回数据
+                    userAddrInfo = data.getParcelableExtra(KEY_USER_ADDR_INFO);
+
+                    String addrJson="{\"err\":0,\n" +
+                            "\"type\":1,\n" +
+                            "\"phone\":"+userAddrInfo.getTel()+",\n" +
+                            "\"name\":"+userAddrInfo.getUname()+",\n" +
+                            "\"addr\":"+userAddrInfo.getAddr()+"}";
+                    try {
+                        JSONObject addJSONObject = new JSONObject(addrJson);
+                        mWebView.loadUrl("javascript:RetChooseAddress(" + addJSONObject + ")");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
     }
 }

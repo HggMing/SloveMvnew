@@ -12,6 +12,7 @@ import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.widgets.CustomItem;
 import com.ming.slove.mvnew.model.bean.ResultOther;
 import com.ming.slove.mvnew.tab1.BrowserActivity;
+import com.ming.slove.mvnew.tab4.mysetting.myorder.MyOrderListActivity;
 import com.ming.slove.mvnew.tab4.mysetting.mypurse.MyPurse2Activity;
 import com.ming.slove.mvnew.tab4.mysetting.mypurse.MyPurseActivity;
 import com.ming.slove.mvnew.tab4.mysetting.shoppingaddress.ShoppingAddressActivity;
@@ -63,6 +64,7 @@ public class MySettingActivity extends BackActivity {
 
                     @Override
                     public void onNext(ResultOther resultOther) {
+                        //我的信誉
                         myCredit.setContent(resultOther.getPingfen() + "分");
                     }
                 });
@@ -71,8 +73,7 @@ public class MySettingActivity extends BackActivity {
     @OnClick({R.id.click_my_order, R.id.click_shopping_address, R.id.click_my_purse, R.id.click_my_auction})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.click_my_purse:
-//                Toast.makeText(MySettingActivity.this, "我的钱包", Toast.LENGTH_SHORT).show();
+            case R.id.click_my_purse://我的钱包
                 Intent intent = new Intent();
                 //若为店长,显示钱包包含本月收支
                 if (isShopOwner == 1) {
@@ -82,16 +83,15 @@ public class MySettingActivity extends BackActivity {
                 }
                 startActivity(intent);
                 break;
-            case R.id.click_my_order:
-                Toast.makeText(MySettingActivity.this, "我的订单", Toast.LENGTH_SHORT).show();
+            case R.id.click_my_order://我的订单
+                Intent intent1 = new Intent(MySettingActivity.this, MyOrderListActivity.class);
+                startActivity(intent1);
                 break;
-            case R.id.click_shopping_address:
-//                Toast.makeText(MySettingActivity.this, "我的收货地址", Toast.LENGTH_SHORT).show();
+            case R.id.click_shopping_address://我的收货地址
                 Intent intent2 = new Intent(MySettingActivity.this, ShoppingAddressActivity.class);
                 startActivity(intent2);
                 break;
-            case R.id.click_my_auction:
-//                Toast.makeText(MySettingActivity.this, "我的拍卖", Toast.LENGTH_SHORT).show();
+            case R.id.click_my_auction://我的拍卖
                 String url = APPS.BASE_URL + "/auction/my_auction?auth=" + auth;
                 Intent intent3 = new Intent(this, BrowserActivity.class);
                 intent3.putExtra(BrowserActivity.KEY_URL, url);

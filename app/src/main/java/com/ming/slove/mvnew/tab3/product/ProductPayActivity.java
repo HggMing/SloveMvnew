@@ -230,16 +230,12 @@ public class ProductPayActivity extends BackActivity {
                 });
     }
 
-    @OnClick({R.id.img_choose_add, R.id.img_edit_add, R.id.ly_pay_yu, R.id.ly_pay_online, R.id.btn_commit})
+    @OnClick({R.id.layout_choose_addr, R.id.ly_pay_yu, R.id.ly_pay_online, R.id.btn_commit})
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.img_choose_add://选择收货地址
+            case R.id.layout_choose_addr://选择收货地址
                 Intent intent = new Intent(this, ChooseAddressActivity.class);
                 startActivityForResult(intent, REQUEST_ADD);
-                break;
-            case R.id.img_edit_add://添加收货地址
-                Intent intent2 = new Intent(this, EditShoppingAdressActivity.class);
-                startActivityForResult(intent2, REQUEST_ADD);
                 break;
             case R.id.ly_pay_yu://余额支付方式
                 rbPayYu.setChecked(true);

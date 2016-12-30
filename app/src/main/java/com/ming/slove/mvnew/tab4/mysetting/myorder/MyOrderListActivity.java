@@ -12,6 +12,8 @@ import com.ming.slove.mvnew.common.base.TabsActivity;
 public class MyOrderListActivity extends TabsActivity {
 
 
+    public static String ORDER_TYPE = "order_type";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,9 +31,13 @@ public class MyOrderListActivity extends TabsActivity {
         //初始化填充到ViewPager中的Fragment集合
         mFragments.add(0, new MyOrderListFragment());
 
+        //将标记值传给fragment，0为待寄快递；1为已寄快递
+        for (int i = 0; i < mFragments.size(); i++) {
+            Bundle bundle = new Bundle();
+            bundle.putInt(ORDER_TYPE, i);
+            mFragments.get(i).setArguments(bundle);
+        }
 
         mAdapter.setItem(mTitles, mFragments);
     }
-
-
 }

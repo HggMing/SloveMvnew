@@ -18,7 +18,6 @@ public class GovernmentAffairsActivity extends TabsActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_government_affairs);
 
         // 初始化mTitles、mFragments等ViewPager需要的数据

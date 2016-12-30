@@ -119,7 +119,7 @@ public class RegisterActivity extends BackActivity {
                 //这里接收短信
                 etRcode.setText(smsContent);
             }
-        }, new VerificationCodeSmsFilter("10690498241618"));
+        }, new VerificationCodeSmsFilter("10659805502241618"));
         //注册短信变化监听器
         smsObserver.registerSMSObserver();
     }

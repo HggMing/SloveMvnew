@@ -24,6 +24,7 @@ public class AddListActivity extends BackActivity {
     @Bind(R.id.fab)
     FloatingActionButton fab;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
