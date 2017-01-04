@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.StringUtils;
+import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.model.bean.ShoppingAddress;
 import com.ming.slove.mvnew.tab3.product.ChooseAddressActivity;
 import com.orhanobut.hawk.Hawk;
@@ -383,11 +384,21 @@ public class BrowserActivity extends BaseActivity {
 
         @JavascriptInterface
         public String ChooseAddress() {
-//            Toast.makeText(mContext, "点击", Toast.LENGTH_SHORT).show();
+//            Toast.makeText(mContext, "点击选择收货地址", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(mContext, ChooseAddressActivity.class);
             startActivityForResult(intent, REQUEST_ADD);
             return "{\"err\":\"0\"}";
         }
+
+        @JavascriptInterface
+        public String getShareParameter(String shareUrl,String title,String content,String pic_surl_1) {
+//            Toast.makeText(mContext, "点击分享", Toast.LENGTH_SHORT).show();
+            Dialog_ShareBottom dialog=new Dialog_ShareBottom();
+            dialog.setShareContent(title,content,shareUrl,pic_surl_1);
+            dialog.show(getSupportFragmentManager());
+            return "{\"err\":\"0\"}";
+        }
+
     }
 
 

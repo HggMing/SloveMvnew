@@ -1,22 +1,24 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
+    compileSdkVersion 25
     buildToolsVersion "24.0.2"
     defaultConfig {
         applicationId "com.ming.slove.mvnew"
         minSdkVersion 15
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0.8"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 
+        multiDexEnabled true
         manifestPlaceholders = [
                 GETUI_APP_ID    : "o9Pxlf1lfH7yUHC8nGpDH8",
                 GETUI_APP_KEY   : "UyiZPy1YHX9Zop0KYP8EQ3",
                 GETUI_APP_SECRET: "eesppnBSrw5m6XSpB4UA35",
-                PACKAGE_NAME    : applicationId
+                PACKAGE_NAME    : applicationId,
+                qq_id           : "1105819027"
         ]
         ndk {
             abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
@@ -59,6 +61,7 @@ android {
 //        }
         release {
             minifyEnabled false
+            shrinkResources true // 移除无用的resource文件
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -120,6 +123,7 @@ android {
         // 下拉刷新 、分页加载的RecyclerView解决方案
         compile 'com.jcodecraeer:xrecyclerview:1.2.7'
         //社会化分享（qq、微博、微信）
-//        compile 'me.shaohui:shareutil:1.3.5'
+        compile 'me.shaohui.shareutil:shareutil:1.3.8'
+        compile 'me.shaohui:bottomdialog:1.1.9'
     }
 }

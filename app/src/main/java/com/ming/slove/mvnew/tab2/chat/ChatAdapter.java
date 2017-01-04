@@ -26,11 +26,13 @@ import com.ming.slove.mvnew.model.bean.BBSList;
 import com.ming.slove.mvnew.model.database.ChatMsgModel;
 import com.ming.slove.mvnew.model.database.FriendsModel;
 import com.ming.slove.mvnew.model.database.MyDB;
+import com.ming.slove.mvnew.tab1.BrowserActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.bbsdetail.BbsDetailActivity;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -267,43 +269,67 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                         case "100"://点击分享的消息
                             String s = data.getShare_link();
                             if (s != null) {
-                                int begin = s.indexOf("id=");
-                                String share_id = s.substring(begin + 3, s.length());
                                 String auth = Hawk.get(APPS.USER_AUTH);
-                                MyServiceClient.getService()
-                                        .get_BBSDetail(auth, share_id)
-                                        .map(new Func1<BBSDetail, BBSList.DataEntity.ListEntity>() {
-                                            @Override
-                                            public BBSList.DataEntity.ListEntity call(BBSDetail bbsDetail) {
-                                                return bbsDetail.getData();
-                                            }
-                                        })
-                                        .subscribeOn(Schedulers.io())
-                                        .observeOn(AndroidSchedulers.mainThread())
-                                        .subscribe(new Subscriber<BBSList.DataEntity.ListEntity>() {
-                                            @Override
-                                            public void onCompleted() {
+                                int isBbs = s.indexOf("bbs/bbsinfo");//分享我们村帖子
 
-                                            }
+                                if (isBbs != -1) {
+                                    int begin = s.indexOf("id=");
+                                    int end = s.indexOf("&");
+                                    String share_id;
+                                    if (end == -1) {
+                                        share_id = s.substring(begin + 3, s.length());
+                                    } else {
+                                        share_id = s.substring(begin + 3, end);
+                                    }
 
-                                            @Override
-                                            public void onError(Throwable e) {
+                                    MyServiceClient.getService()
+                                            .get_BBSDetail(auth, share_id)
+                                            .map(new Func1<BBSDetail, BBSList.DataEntity.ListEntity>() {
+                                                @Override
+                                                public BBSList.DataEntity.ListEntity call(BBSDetail bbsDetail) {
+                                                    return bbsDetail.getData();
+                                                }
+                                            })
+                                            .subscribeOn(Schedulers.io())
+                                            .observeOn(AndroidSchedulers.mainThread())
+                                            .subscribe(new Subscriber<BBSList.DataEntity.ListEntity>() {
+                                                @Override
+                                                public void onCompleted() {
 
-                                            }
+                                                }
 
-                                            @Override
-                                            public void onNext(BBSList.DataEntity.ListEntity listEntity) {
-                                                Intent intent = new Intent(mContext, BbsDetailActivity.class);
-                                                intent.putExtra(BbsDetailActivity.BBS_DETAIL, listEntity);
-                                                mContext.startActivity(intent);
-                                            }
-                                        });
+                                                @Override
+                                                public void onError(Throwable e) {
+
+                                                }
+
+                                                @Override
+                                                public void onNext(BBSList.DataEntity.ListEntity listEntity) {
+                                                    Intent intent = new Intent(mContext, BbsDetailActivity.class);
+                                                    intent.putExtra(BbsDetailActivity.BBS_DETAIL, listEntity);
+                                                    mContext.startActivity(intent);
+                                                }
+                                            });
+                                } else {//分享村特产
+                                    String url = s+"&auth="+auth+"&device_type=1";
+                                    Intent intent3 = new Intent(mContext, BrowserActivity.class);
+                                    intent3.putExtra(BrowserActivity.KEY_URL, url);
+                                    mContext.startActivity(intent3);
+                                }
                             }
                             break;
                     }
                 }
             });
 
+            ((LeftViewHolder) holder).item.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //长按删除消息
+                    mOnItemClickListener.onItemLongClick(((LeftViewHolder) holder).item, position);
+                    return true;
+                }
+            });
 
         } else if (holder instanceof RightViewHolder) {//发送消息布局
             //发送消息时间
@@ -424,6 +450,15 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
 
                             break;
                     }
+                }
+            });
+
+            ((RightViewHolder) holder).item.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    //长按删除消息
+                    mOnItemClickListener.onItemLongClick(((RightViewHolder) holder).item, position);
+                    return true;
                 }
             });
         }

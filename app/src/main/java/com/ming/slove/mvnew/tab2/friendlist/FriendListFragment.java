@@ -166,52 +166,57 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
 
     private void getDataList() {
         page = 1;
-        MyServiceClient.getService().getCall_FriendList(auth, page, PAGE_SIZE).enqueue(new Callback<FriendList>() {
-            @Override
-            public void onResponse(Call<FriendList> call, Response<FriendList> response) {
-                if (response.isSuccessful()) {
-                    FriendList friendList = response.body();
-                    if (friendList != null && friendList.getErr() == 0) {
-                        cnt = friendList.getData().getCnt();
+        MyServiceClient.getService().get_FriendList(auth, page, PAGE_SIZE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<FriendList>() {
+                    @Override
+                    public void onCompleted() {
 
-                        combinationLists(friendList);
+                    }
 
-                        //储存好友信息
-                        for (int i = 0; i < mList.size(); i++) {
-                            String uid = mList.get(i).getUid();
-                            if (uid != null) {
-                                friendUids.add(uid);
+                    @Override
+                    public void onError(Throwable e) {
+
+                    }
+
+                    @Override
+                    public void onNext(FriendList friendList) {
+                        if (friendList != null && friendList.getErr() == 0) {
+                            cnt = friendList.getData().getCnt();
+
+                            combinationLists(friendList);
+
+                            //储存好友信息
+                            for (int i = 0; i < mList.size(); i++) {
+                                String uid = mList.get(i).getUid();
+                                if (uid != null) {
+                                    friendUids.add(uid);
+                                }
+                            }
+                            Hawk.put(APPS.FRIEND_LIST_UID, friendUids);
+
+                            if (mAdapter == null) {
+                                mAdapter = new FriendListAdapter(mActivity, mList);
+                                configXRecyclerView();//XRecyclerView配置
+                                final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(mAdapter);
+                                mXRecyclerView.addItemDecoration(headersDecor);
+                                mXRecyclerView.addItemDecoration(new MyItemDecoration2(mActivity));//添加分割线
+                                mAdapter.setOnItemClickListener(FriendListFragment.this);
+                                mXRecyclerView.setAdapter(mAdapter);//设置adapter
+                                mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                                    @Override
+                                    public void onChanged() {
+                                        headersDecor.invalidateHeaders();
+                                    }
+                                });
+                                page = 2;
+                            } else {
+                                mAdapter.notifyDataSetChanged();
                             }
                         }
-                        Hawk.put(APPS.FRIEND_LIST_UID, friendUids);
-
-                        if (mAdapter == null) {
-                            mAdapter = new FriendListAdapter(mActivity, mList);
-                            configXRecyclerView();//XRecyclerView配置
-                            final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(mAdapter);
-                            mXRecyclerView.addItemDecoration(headersDecor);
-                            mXRecyclerView.addItemDecoration(new MyItemDecoration2(mActivity));//添加分割线
-                            mAdapter.setOnItemClickListener(FriendListFragment.this);
-                            mXRecyclerView.setAdapter(mAdapter);//设置adapter
-                            mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-                                @Override
-                                public void onChanged() {
-                                    headersDecor.invalidateHeaders();
-                                }
-                            });
-                            page = 2;
-                        } else {
-                            mAdapter.notifyDataSetChanged();
-                        }
                     }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<FriendList> call, Throwable t) {
-
-            }
-        });
+                });
     }
 
     /**

@@ -3,6 +3,7 @@ package com.ming.slove.mvnew.tab2.chat;
 import android.app.Activity;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -14,17 +15,21 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 
+import com.google.gson.Gson;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
+import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.NotifyUtil;
 import com.ming.slove.mvnew.common.utils.PhotoOperate;
 import com.ming.slove.mvnew.common.utils.StringUtils;
+import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.FriendDetail;
 import com.ming.slove.mvnew.model.bean.Result;
+import com.ming.slove.mvnew.model.bean.ShareMsg;
 import com.ming.slove.mvnew.model.database.ChatMsgModel;
 import com.ming.slove.mvnew.model.database.FriendsModel;
 import com.ming.slove.mvnew.model.database.InstantMsgModel;
@@ -67,7 +72,6 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
     ChatKeyBoard ekBar;
 
     private ChatAdapter mAdapter;
-    private List<ChatMsgModel> mList = new ArrayList<>();
     private ChatMsgModel chatMsg;
     private String me;//接收者uid
     private String other;//发送者uid
@@ -133,10 +137,73 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                 .whereAppendAnd()
                 .whereEquals("_type", 0);
 
-        List<ChatMsgModel> chatMsgModels = MyDB.createDb(this).query(qb);
-        mList.addAll(chatMsgModels);
-        mAdapter.addData(mList);
+        final List<ChatMsgModel> chatMsgModels = MyDB.createDb(this).query(qb);
+        mAdapter.addData(chatMsgModels);
         mXRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
+
+        //长按删除消息
+        mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+
+            }
+
+            @Override
+            public void onItemLongClick(View view, final int position) {
+                MyDialog.Builder builder = new MyDialog.Builder(ChatActivity.this);
+                builder.setTitle("提示")
+                        .setMessage("是否确定删除此条消息记录?")
+                        .setPositiveButton("确定",
+                                new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        //数据库中删除消息
+                                        MyDB.delete(mAdapter.getDatas().get(position));
+                                        //界面显示中删除消息
+                                        mAdapter.removeItem(position);
+                                        //删除最后一条，更新动态
+                                        if (position == mAdapter.getItemCount()) {
+                                            InstantMsgModel iMsg = MyDB.createDb(ChatActivity.this).queryById(other, InstantMsgModel.class);
+                                            if (iMsg != null) {//动态存在，即更新
+                                                ChatMsgModel lastItem = mAdapter.getDatas().get(mAdapter.getItemCount() - 1);
+                                                String msg;
+                                                switch (lastItem.getCt()) {
+                                                    case "1":
+                                                        msg = "[图片]";
+                                                        break;
+                                                    case "2":
+                                                        msg = "[语音]";
+                                                        break;
+                                                    case "100":
+                                                        String jsonString = lastItem.getTxt();
+                                                        Gson gson = new Gson();
+                                                        ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
+                                                        msg = "[分享]:\"" + shareMsg.getTitle() + "\"的帖子";
+                                                        break;
+                                                    default:
+                                                        msg = lastItem.getTxt();//类型：文字
+                                                        break;
+                                                }
+                                                iMsg.setContent(msg);
+                                                MyDB.update(iMsg);
+                                                EventBus.getDefault().post(new InstantMsgEvent());
+                                            }
+                                        }
+
+                                        dialog.dismiss();
+                                    }
+                                })
+                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                if (!isFinishing()) {
+                    builder.create().show();
+                }
+            }
+        });
     }
 
     /**

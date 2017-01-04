@@ -69,64 +69,69 @@ public class MessageFragment extends LazyLoadFragment implements MessageAdapter.
         page = 1;
         String auth = Hawk.get(APPS.USER_AUTH);
 
-        MyServiceClient.getService().getCall_FriendList(auth, page, PAGE_SIZE).enqueue(new Callback<FriendList>() {
-            @Override
-            public void onResponse(Call<FriendList> call, Response<FriendList> response) {
-                if (response.isSuccessful()) {
-                    FriendList friendList = response.body();
-                    if (friendList != null && friendList.getErr() == 0) {
-                        List<FriendList.DataBean.ListBean> mFList = friendList.getData().getList();
+        MyServiceClient.getService().get_FriendList(auth, page, PAGE_SIZE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<FriendList>() {
+                    @Override
+                    public void onCompleted() {
 
-                        //存储好友列表到本地数据库
-                        for (FriendList.DataBean.ListBean user : mFList) {
-                            String save_uid = user.getUid();
-                            String save_uicon = APPS.BASE_URL + user.getHead();
-                            String save_uname = user.getName();
-                            FriendsModel friendsModel = new FriendsModel(save_uid, save_uname, save_uicon, true);
-                            MyDB.insert(friendsModel);
-                        }
-
-                        //生成欢迎语动态
-                        FriendList.DataBean.ListBean user2 = mFList.get(1);//我们村客服
-                        InstantMsgModel user2_msg = MyDB.createDb(getContext()).queryById(user2.getUid(), InstantMsgModel.class);
-                        if (user2_msg == null) {//动态不存在才添加
-                            String user2_icon = APPS.BASE_URL + user2.getHead();
-                            String time = String.valueOf(System.currentTimeMillis()).substring(0, 10);//13位时间戳，截取前10位，主要统一
-                            String content = "你好！" + mFList.get(2).getName() + ",欢迎来到我们村！";
-                            InstantMsgModel msgModel = new InstantMsgModel(user2.getUid(), user2_icon, user2.getName(), time, content, 1);
-                            MyDB.insert(msgModel);
-                            EventBus.getDefault().post(new InstantMsgEvent());
-
-                            //欢迎语消息保存到数据库
-                            ChatMsgModel chatMsg = new ChatMsgModel();
-                            chatMsg.setType(ChatMsgModel.ITEM_TYPE_LEFT);//接收消息
-                            chatMsg.setFrom(user2.getUid());//消息来源用户id
-                            String me_uid = Hawk.get(APPS.ME_UID, "");
-                            chatMsg.setTo(me_uid);
-                            chatMsg.setSt(time);//消息时间
-                            chatMsg.setCt("0");//消息类型
-                            chatMsg.setTxt(content);//类型：文字
-                            MyDB.insert(chatMsg);//保存到数据库
-                        }
-
-                        //储存好友信息
-                        List<String> friendUids = new ArrayList<>();
-                        for (int i = 0; i < mList.size(); i++) {
-                            String uid = mList.get(i).getUid();
-                            if (uid != null) {
-                                friendUids.add(uid);
-                            }
-                        }
-                        Hawk.put(APPS.FRIEND_LIST_UID, friendUids);
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<FriendList> call, Throwable t) {
+                    @Override
+                    public void onError(Throwable e) {
 
-            }
-        });
+                    }
+
+                    @Override
+                    public void onNext(FriendList friendList) {
+                        if (friendList != null && friendList.getErr() == 0) {
+                            List<FriendList.DataBean.ListBean> mFList = friendList.getData().getList();
+
+                            //存储好友列表到本地数据库
+                            for (FriendList.DataBean.ListBean user : mFList) {
+                                String save_uid = user.getUid();
+                                String save_uicon = APPS.BASE_URL + user.getHead();
+                                String save_uname = user.getName();
+                                FriendsModel friendsModel = new FriendsModel(save_uid, save_uname, save_uicon, true);
+                                MyDB.insert(friendsModel);
+                            }
+
+                            //生成欢迎语动态
+                            FriendList.DataBean.ListBean user2 = mFList.get(1);//我们村客服
+                            InstantMsgModel user2_msg = MyDB.createDb(getContext()).queryById(user2.getUid(), InstantMsgModel.class);
+                            if (user2_msg == null) {//动态不存在才添加
+                                String user2_icon = APPS.BASE_URL + user2.getHead();
+                                String time = String.valueOf(System.currentTimeMillis()).substring(0, 10);//13位时间戳，截取前10位，主要统一
+                                String content = "你好！" + mFList.get(2).getName() + ",欢迎来到我们村！";
+                                InstantMsgModel msgModel = new InstantMsgModel(user2.getUid(), user2_icon, user2.getName(), time, content, 1);
+                                MyDB.insert(msgModel);
+                                EventBus.getDefault().post(new InstantMsgEvent());
+
+                                //欢迎语消息保存到数据库
+                                ChatMsgModel chatMsg = new ChatMsgModel();
+                                chatMsg.setType(ChatMsgModel.ITEM_TYPE_LEFT);//接收消息
+                                chatMsg.setFrom(user2.getUid());//消息来源用户id
+                                String me_uid = Hawk.get(APPS.ME_UID, "");
+                                chatMsg.setTo(me_uid);
+                                chatMsg.setSt(time);//消息时间
+                                chatMsg.setCt("0");//消息类型
+                                chatMsg.setTxt(content);//类型：文字
+                                MyDB.insert(chatMsg);//保存到数据库
+                            }
+
+                            //储存好友信息
+                            List<String> friendUids = new ArrayList<>();
+                            for (int i = 0; i < mList.size(); i++) {
+                                String uid = mList.get(i).getUid();
+                                if (uid != null) {
+                                    friendUids.add(uid);
+                                }
+                            }
+                            Hawk.put(APPS.FRIEND_LIST_UID, friendUids);
+                        }
+                    }
+                });
     }
 
 

@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.igexin.sdk.PushManager;
 import com.ming.slove.mvnew.R;
+import com.ming.slove.mvnew.api.MyService;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
@@ -207,58 +208,62 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
      * 获取用户信息
      */
     public void getUserInfoDetail() {
-        Call<UserInfo> call = MyServiceClient.getService().getCall_UserInfo(auth);
-        call.enqueue(new Callback<UserInfo>() {
-            @Override
-            public void onResponse(Call<UserInfo> call, Response<UserInfo> response) {
-                if (response.isSuccessful()) {
-                    UserInfo userInfo = response.body();
-                    if (userInfo != null && userInfo.getErr() == 0) {
-                        dataEntity = userInfo.getData();
-                        String headUrl = APPS.BASE_URL + dataEntity.getHead();
-                        Hawk.put(APPS.ME_HEAD, headUrl);
+        MyServiceClient.getService().get_UserInfo(auth)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<UserInfo>() {
+                    @Override
+                    public void onCompleted() {
 
-                        //如果是店长，更新首页，店长头像。解决无APP.ME_HEAD时，头像显示问题
-                        if (isShopOwner == 1) {
-                            EventBus.getDefault().post(new UpdataShopOwnerHeadEvent(headUrl));
-                        }
-
-                        String uName = dataEntity.getUname();
-                        String sexNumber = dataEntity.getSex();
-                        String accountNo = dataEntity.getLogname();
-                        //头像
-                        Glide.with(getContext())
-                                .load(headUrl)
-                                .bitmapTransform(new CropCircleTransformation(getContext()))
-                                .error(R.mipmap.defalt_user_circle)
-                                .into(iconHead);
-                        //昵称
-                        if (StringUtils.isEmpty(uName)) {
-                            String iphone = dataEntity.getPhone();
-                            String showName = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
-                            name.setText(showName);
-                        } else {
-                            name.setText(uName);
-                        }
-
-                        //性别
-                        if ("0".equals(sexNumber)) {
-                            sex.setImageDrawable(getResources().getDrawable(R.mipmap.ic_sex_boy));
-                        } else {
-                            sex.setImageDrawable(getResources().getDrawable(R.mipmap.ic_sex_girl));
-                        }
-                        accountNumber.setText("账号：" + accountNo);
-
-                        Hawk.put(APPS.IS_UPDATA_MY_INFO, true);
                     }
-                }
-            }
 
-            @Override
-            public void onFailure(Call<UserInfo> call, Throwable t) {
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
 
+                    }
+
+                    @Override
+                    public void onNext(UserInfo userInfo) {
+                        if (userInfo != null && userInfo.getErr() == 0) {
+                            dataEntity = userInfo.getData();
+                            String headUrl = APPS.BASE_URL + dataEntity.getHead();
+                            Hawk.put(APPS.ME_HEAD, headUrl);
+
+                            //如果是店长，更新首页，店长头像。解决无APP.ME_HEAD时，头像显示问题
+                            if (isShopOwner == 1) {
+                                EventBus.getDefault().post(new UpdataShopOwnerHeadEvent(headUrl));
+                            }
+
+                            String uName = dataEntity.getUname();
+                            String sexNumber = dataEntity.getSex();
+                            String accountNo = dataEntity.getLogname();
+                            //头像
+                            Glide.with(getContext())
+                                    .load(headUrl)
+                                    .bitmapTransform(new CropCircleTransformation(getContext()))
+                                    .error(R.mipmap.defalt_user_circle)
+                                    .into(iconHead);
+                            //昵称
+                            if (StringUtils.isEmpty(uName)) {
+                                String iphone = dataEntity.getPhone();
+                                String showName = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
+                                name.setText(showName);
+                            } else {
+                                name.setText(uName);
+                            }
+
+                            //性别
+                            if ("0".equals(sexNumber)) {
+                                sex.setImageDrawable(getResources().getDrawable(R.mipmap.ic_sex_boy));
+                            } else {
+                                sex.setImageDrawable(getResources().getDrawable(R.mipmap.ic_sex_girl));
+                            }
+                            accountNumber.setText("账号：" + accountNo);
+
+                            Hawk.put(APPS.IS_UPDATA_MY_INFO, true);
+                        }
+                    }
+                });
     }
 
     @OnClick({R.id.test, R.id.click_user, R.id.click_safe_center, R.id.click_my_setting, R.id.click_setting_common, R.id.click_store_manager, R.id.click_loyout})
@@ -274,6 +279,8 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
                     bundle.putParcelable(UserDetailActivity.USER_INFO, dataEntity);
                     intent1.putExtras(bundle);
                     startActivityForResult(intent1, REQUEST_USER_INFO);
+                }else{
+                    getUserInfoDetail();
                 }
                 break;
             case R.id.click_my_setting://我的

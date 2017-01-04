@@ -10,6 +10,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -34,6 +36,7 @@ import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.bigimageview.BigImageViewActivity;
+import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageView;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageViewAdapter;
@@ -46,6 +49,7 @@ import com.ming.slove.mvnew.model.database.MyDB;
 import com.ming.slove.mvnew.tab2.frienddetail.FriendDetailActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.VillageBbsActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.likeusers.LikeUsersArea;
+import com.ming.slove.mvnew.tab4.scommon.AdviceActivity;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -55,6 +59,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import me.shaohui.shareutil.ShareUtil;
+import me.shaohui.shareutil.share.SharePlatform;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -105,6 +111,8 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
 
     private String auth;
 
+    private String userName;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,7 +159,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
             }
         });
         //发帖人昵称
-        String userName = bbsDetail.getUname();
+        userName = bbsDetail.getUname();
         if (StringUtils.isEmpty(userName)) {
             //若用户名为空，显示手机号，中间四位为*
             String iphone = bbsDetail.getUserinfo().getPhone();
@@ -671,5 +679,33 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
                         Toast.makeText(BbsDetailActivity.this, result.getMsg(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_share, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_share) {
+
+            //显示第一张缩略图
+            BBSList.DataEntity.ListEntity.FilesEntity filesEntity=bbsDetail.getFiles().get(0);
+            String imageUrl = APPS.BASE_URL + filesEntity.getSurl_2();
+            if (StringUtils.isEmpty(filesEntity.getSurl_2())) {
+                imageUrl = APPS.BASE_URL + filesEntity.getSurl_1();
+            }
+            //分享链接的网址
+            String url=APPS.BASE_URL+"/bbs/bbsinfo?id="+bbsDetail.getId();
+
+            Dialog_ShareBottom dialog = new Dialog_ShareBottom();
+            dialog.setShareContent(userName, bbsDetail.getConts(), url,imageUrl);
+            dialog.show(getSupportFragmentManager());
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

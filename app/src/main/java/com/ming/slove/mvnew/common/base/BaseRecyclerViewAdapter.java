@@ -92,6 +92,7 @@ public abstract class BaseRecyclerViewAdapter<M, T extends RecyclerView.ViewHold
     public void removeItem(int position) {
         this.mList.remove(position);
         this.notifyItemRemoved(position);
+        this.notifyItemRangeChanged(position, getItemCount()-position);
     }
 
     public void removeItem(M model) {

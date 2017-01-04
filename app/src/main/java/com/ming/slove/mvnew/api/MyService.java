@@ -248,7 +248,7 @@ public interface MyService {
      * @return 用户信息
      */
     @GET("user/ginfo")
-    Call<UserInfo> getCall_UserInfo(
+    Observable<UserInfo> get_UserInfo(
             @Query("auth") String auth);
 
     /**
@@ -665,7 +665,7 @@ public interface MyService {
      * "head":"头像"
      */
     @GET("friend/list")
-    Call<FriendList> getCall_FriendList(
+    Observable<FriendList> get_FriendList(
             @Query("auth") String auth,
             @Query("page") int page,
             @Query("pagesize") int pagesize);
@@ -791,7 +791,7 @@ public interface MyService {
      *
      * @param from   发送人id
      * @param to     接收人id
-     * @param ct     消息类型，0文字，1图片，2声音，3html，4内部消息json格式，5交互消息 6应用透传消息json格式,7朋友系统消息json
+     * @param ct     消息类型，0文字，1图片，2声音，3html，4内部消息json格式，5交互消息 6应用透传消息json格式,7朋友系统消息json，100分享
      * @param app    发送消息的app
      * @param txt    消息内容
      * @param source 发送的资源，默认空数组，如果有资源则是数据流base64后的数据+’.’+资源的扩展名
