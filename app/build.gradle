@@ -8,7 +8,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0.8"
+        versionName "1.0.10"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 
@@ -24,6 +24,20 @@ android {
             abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {//签名配置
+        release {//发布版签名配置
+            try {
+                storeFile file("slovekeys.jks")//密钥文件路径
+                storePassword KEYSTORE_PASSWORD//密钥文件密码
+                keyAlias "mvnew"//key别名
+                keyPassword KEY_PASSWORD//key密码
+            }
+            catch (ex) {
+                throw new InvalidUserDataException("You should define KEYSTORE_PASSWORD and KEY_PASSWORD in gradle.properties.")
+            }
+        }
     }
     buildTypes {
 //        debug {
@@ -59,9 +73,13 @@ android {
 //            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
 //            testProguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguardTest-rules.pro'
 //        }
+        debug {
+            signingConfig signingConfigs.release
+        }
         release {
             minifyEnabled false
             shrinkResources true // 移除无用的resource文件
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }

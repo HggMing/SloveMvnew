@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/m_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_selector"
+    android:foreground="?attr/selectableItemBackground">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="6dp"
+            android:layout_marginLeft="-12dp"
+            android:layout_marginRight="-12dp"
+            android:background="@mipmap/divide_shade_down" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tv_buyer"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginLeft="15dp"
+                    android:textColor="#444444"
+                    android:textSize="@dimen/textsize_normal"
+                    tools:text="18410261029" />
+
+                <TextView
+                    android:id="@+id/tv_status"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:textColor="#ff6600"
+                    android:textSize="@dimen/textsize_normal"
+                    tools:text="已付款" />
+            </RelativeLayout>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/m_x_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:padding="8dp">
+
+                <TextView
+                    android:id="@+id/tv_total_num_cost"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="10dp"
+                    android:textColor="#555555"
+                    android:textSize="16sp"
+                    tools:text="共1件商品，合计:￥9" />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/layout_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/white">
+
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+
+                <com.bilibili.magicasakura.widgets.TintButton
+                    android:id="@+id/btn_04"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/button_white"
+                    android:text="取消订单"
+                    android:textColor="@color/theme_color_primary"
+                    android:textSize="@dimen/textsize_normal" />
+
+                <com.bilibili.magicasakura.widgets.TintButton
+                    android:id="@+id/btn_03"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/button_theme"
+                    android:text="查看物流"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textsize_normal"
+                    android:visibility="gone" />
+
+                <com.bilibili.magicasakura.widgets.TintButton
+                    android:id="@+id/btn_02"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="20dp"
+                    android:background="@drawable/button_theme"
+                    android:text="确认收货"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textsize_normal"
+                    android:visibility="gone" />
+
+                <com.bilibili.magicasakura.widgets.TintButton
+                    android:id="@+id/btn_01"
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="10dp"
+                    android:background="@drawable/button_theme"
+                    android:text="去支付"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/textsize_normal" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="-12dp"
+            android:layout_marginRight="-12dp"
+            android:layout_marginTop="4dp"
+            android:background="@mipmap/divide_shade_up" />
+    </LinearLayout>
+</RelativeLayout>

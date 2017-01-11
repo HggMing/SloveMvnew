@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,7 +14,6 @@ import android.widget.TextView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.base.AddListActivity;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -33,13 +30,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ChooseAddressActivity extends AddListActivity {
-
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-    @Bind(R.id.m_x_recyclerview)
-    RecyclerView mXRecyclerView;
-
+public class ChooseAddressActivity extends BackActivity {
     private ChooseAddressAdapter mAdapter;
     List<ShoppingAddress.DataBean> mList = new ArrayList<>();
     private String auth;
@@ -50,15 +41,19 @@ public class ChooseAddressActivity extends AddListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setToolbarTitle(R.string.title_activity_shopping_address);
-        config();
+
+        initView();
         initData();
     }
 
-    private void config() {
-         auth = Hawk.get(APPS.USER_AUTH);
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
+
         //设置adapter
         mAdapter = new ChooseAddressAdapter(this);
-        mXRecyclerView.setAdapter(mAdapter);
+        addRecycleView(mAdapter);
+
         mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position) {
@@ -98,13 +93,16 @@ public class ChooseAddressActivity extends AddListActivity {
 
             }
         });
-    }
-    @Override
-    public void onClick() {
-        super.onClick();
-//        Toast.makeText(ShoppingAddressActivity.this, "添加收货地址", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, EditShoppingAdressActivity.class);
-        startActivityForResult(intent, REFRESH);
+
+        //设置添加按钮
+        showFab(mRecyclerView, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //        Toast.makeText(ShoppingAddressActivity.this, "添加收货地址", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ChooseAddressActivity.this, EditShoppingAdressActivity.class);
+                startActivityForResult(intent, REFRESH);
+            }
+        });
     }
 
     @Override
@@ -117,7 +115,6 @@ public class ChooseAddressActivity extends AddListActivity {
         }
     }
 
-
     private void initData() {
         //设置数据
         MyServiceClient.getService()
@@ -127,7 +124,7 @@ public class ChooseAddressActivity extends AddListActivity {
                 .subscribe(new Subscriber<ShoppingAddress>() {
                     @Override
                     public void onCompleted() {
-
+                        showLoading(false);
                     }
 
                     @Override
@@ -140,10 +137,9 @@ public class ChooseAddressActivity extends AddListActivity {
                         mList.clear();
                         mList.addAll(shoppingAddress.getData());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_choose_address);
+                            showEmpty(R.string.empty_choose_address);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }

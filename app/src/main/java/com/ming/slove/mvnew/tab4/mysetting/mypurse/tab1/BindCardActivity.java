@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.base.AddListActivity;
+import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.CardList;
@@ -28,29 +28,41 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class BindCardActivity extends AddListActivity {
+public class BindCardActivity extends BackActivity {
     private BindCardAdapter mAdapter;
     private static final int REFRESH = 1100;
     private int type;
+
+    private String auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setToolbarTitle(R.string.title_activity_bind_card);
 
-        config();
+        initView();
         initData();
     }
 
-    private void config() {
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
         //设置adapter
         mAdapter = new BindCardAdapter(this);
-        mXRecyclerView.setAdapter(mAdapter);
+        addRecycleView(mAdapter);
+        //设置添加按钮
+        showFab(mRecyclerView, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BindCardActivity.this, AddCardsActivity.class);
+                intent.putExtra(AddCardsActivity.TYPE, type);
+                startActivityForResult(intent, REFRESH);
+            }
+        });
     }
 
     private void initData() {
         //设置数据
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_CardList(auth)
                 .subscribeOn(Schedulers.io())
@@ -58,7 +70,7 @@ public class BindCardActivity extends AddListActivity {
                 .subscribe(new Subscriber<CardList>() {
                     @Override
                     public void onCompleted() {
-
+                        showLoading(false);
                     }
 
                     @Override
@@ -70,23 +82,16 @@ public class BindCardActivity extends AddListActivity {
                     public void onNext(CardList cardList) {
                         if (cardList.getData().isEmpty() || cardList.getData() == null) {
                             type = -1;
-                            contentEmpty.setVisibility(View.VISIBLE);
+                            showEmpty(R.string.empty_bind_card);
                         } else {
                             type = 0;
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(cardList.getData());
                     }
                 });
     }
 
-    @Override
-    public void onClick() {
-        super.onClick();
-        Intent intent = new Intent(this, AddCardsActivity.class);
-        intent.putExtra(AddCardsActivity.TYPE, type);
-        startActivityForResult(intent, REFRESH);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

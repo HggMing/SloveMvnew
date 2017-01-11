@@ -23,6 +23,8 @@ import com.bilibili.magicasakura.widgets.TintEditText;
 import com.bilibili.magicasakura.widgets.TintRadioButton;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.model.event.RefreshMyOrderListEvent;
+import com.ming.slove.mvnew.tab4.mysetting.myorder.MyOrderListActivity;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.app.APP;
@@ -39,6 +41,7 @@ import com.ming.slove.mvnew.model.bean.ResultOther;
 import com.ming.slove.mvnew.model.bean.ShoppingAddress;
 import com.ming.slove.mvnew.model.event.ProductBuyEvent;
 import com.ming.slove.mvnew.tab4.mysetting.shoppingaddress.EditShoppingAdressActivity;
+import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -88,6 +91,8 @@ public class ProductPayActivity extends BackActivity {
     NestedScrollView mScroll;
     @Bind(R.id.et_beizhu)
     TintEditText etBeizhu;
+    @Bind(R.id.layout_beizhu)
+    LinearLayout lyBeizhu;
 
     private static final int REQUEST_ADD = 123;
 
@@ -100,6 +105,12 @@ public class ProductPayActivity extends BackActivity {
     private ProductPayAdapter mAdapter;
     private String product;
 
+    private int fromWhere;//1、来自订单
+    public static String KEY_FROM_WHERE = "key_from_where";
+
+    private String auth;
+    private ProductNewOrder.DataBean dataFromOrder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,11 +119,26 @@ public class ProductPayActivity extends BackActivity {
         setToolbarTitle(R.string.title_activity_product_pay);
         EventBus.getDefault().register(this);
 
-        initAddress();//收货人信息
+        initView();
+    }
+
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+
+        fromWhere = getIntent().getIntExtra(KEY_FROM_WHERE, 0);
+        if (fromWhere == 0) {
+            initAddress();//显示默认收货人信息
+        } else {
+            btnCommit.setText("付款");
+            lyBeizhu.setVisibility(View.GONE);//不显示用户备注
+            //直接显示订单收货地址
+            imgEditAdd.setVisibility(View.GONE);
+            userAddrInfo = getIntent().getParcelableExtra(KEY_USER_ADDR_INFO);
+            showAddress();
+        }
     }
 
     private void initPay() {
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_Money(auth)
                 .subscribeOn(Schedulers.io())
@@ -152,7 +178,10 @@ public class ProductPayActivity extends BackActivity {
     public void getProductBuyList(ProductBuyEvent event) {
         buyProductList = event.getBuyList();
         pricePay = event.getPriceAll();
+        dataFromOrder = event.getDataFromOrder();
+
         //初始化支付方式
+        auth = Hawk.get(APPS.USER_AUTH);
         initPay();
 
         tvOrderprice.setText("总价￥" + pricePay.toString());
@@ -187,9 +216,8 @@ public class ProductPayActivity extends BackActivity {
     private void initAddress() {
         //设置数据
         tvPhoneName.setText("用户默认收货信息为空！");
-        tvAdd.setText("请点击左边按钮选择已有地址，右边按钮添加新地址。");
+        tvAdd.setText("请点击选择收货地址信息。");
 
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_ShoppingAddress(auth)
                 .subscribeOn(Schedulers.io())
@@ -221,21 +249,28 @@ public class ProductPayActivity extends BackActivity {
                     public void onNext(ShoppingAddress.DataBean dataBean) {
                         if (dataBean != null) {
                             userAddrInfo = dataBean;
-                            String phoneName = dataBean.getTel() + "  " + dataBean.getUname();
-                            String address = dataBean.getAddr();
-                            tvPhoneName.setText(phoneName);
-                            tvAdd.setText(address);
+                            showAddress();
                         }
                     }
                 });
     }
 
+    private void showAddress() {
+        String phoneName = userAddrInfo.getTel() + "  " + userAddrInfo.getUname();
+        String address = userAddrInfo.getAddr();
+        tvPhoneName.setText(phoneName);
+        tvAdd.setText(address);
+    }
+
+
     @OnClick({R.id.layout_choose_addr, R.id.ly_pay_yu, R.id.ly_pay_online, R.id.btn_commit})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.layout_choose_addr://选择收货地址
-                Intent intent = new Intent(this, ChooseAddressActivity.class);
-                startActivityForResult(intent, REQUEST_ADD);
+                if (fromWhere == 0) {
+                    Intent intent = new Intent(this, ChooseAddressActivity.class);
+                    startActivityForResult(intent, REQUEST_ADD);
+                }
                 break;
             case R.id.ly_pay_yu://余额支付方式
                 rbPayYu.setChecked(true);
@@ -250,41 +285,56 @@ public class ProductPayActivity extends BackActivity {
                     Toast.makeText(this, "请选择或新增收货人信息！", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                final String auth = Hawk.get(APPS.USER_AUTH);
-                String uname = userAddrInfo.getUname();
-                String addr = userAddrInfo.getAddr();
-                String zCode = userAddrInfo.getZipcode();
-                String phone = userAddrInfo.getTel();
-                String postscript = etBeizhu.getEditableText().toString();
-                String vid = buyProductList.valueAt(0).getVid();
+                btnCommit.setEnabled(false);
 
-                MyServiceClient.getService()
-                        .post_NewOrder(auth, uname, product, addr, addr, addr, addr, zCode, phone, postscript, vid, vid, vid)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<ProductNewOrder>() {
-                            @Override
-                            public void onCompleted() {
+                if (fromWhere == 0) {
+                    createOrder();
+                } else {
 
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onNext(ProductNewOrder productNewOrder) {
-                                ProductNewOrder.DataBean data = productNewOrder.getData();
-                                if (rbPayOnline.isChecked()) {
-                                    payOnline(data);//在线支付
-                                } else {
-                                    payByYu(auth, data.getNo(), data.getTol() + "");//余额支付
-                                }
-                            }
-                        });
+                    if (rbPayOnline.isChecked()) {
+                        payOnline(dataFromOrder);//在线支付
+                    } else {
+                        payByYu(dataFromOrder);//余额支付
+                    }
+                }
                 break;
         }
+    }
+
+    //生成订单
+    private void createOrder() {
+        String uname = userAddrInfo.getUname();
+        String addr = userAddrInfo.getAddr();
+        String zCode = userAddrInfo.getZipcode();
+        String phone = userAddrInfo.getTel();
+        String postscript = etBeizhu.getEditableText().toString();
+        String vid = buyProductList.valueAt(0).getVid();
+
+        MyServiceClient.getService()
+                .post_NewOrder(auth, uname, product, addr, addr, addr, addr, zCode, phone, postscript, vid, vid, vid)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<ProductNewOrder>() {
+                    @Override
+                    public void onCompleted() {
+
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        btnCommit.setEnabled(true);
+                    }
+
+                    @Override
+                    public void onNext(ProductNewOrder productNewOrder) {
+                        ProductNewOrder.DataBean data = productNewOrder.getData();
+                        if (rbPayOnline.isChecked()) {
+                            payOnline(data);//在线支付
+                        } else {
+                            payByYu(data);//余额支付
+                        }
+                    }
+                });
     }
 
     private void payOnline(ProductNewOrder.DataBean data) {
@@ -292,7 +342,7 @@ public class ProductPayActivity extends BackActivity {
         payUtils.pay("村特产", "村特产订单", String.valueOf(data.getTol()), data.getNo(), data.getUrl());
     }
 
-    private void payByYu(final String auth, final String orderNo, final String money) {
+    private void payByYu(final ProductNewOrder.DataBean data) {
         final Dialog_InputPwd.Builder pwdDialog = new Dialog_InputPwd.Builder(this);
         pwdDialog.setTitle("交易密码")
                 .setNegativeButton("取消", new DialogInterface.OnClickListener() {
@@ -310,7 +360,7 @@ public class ProductPayActivity extends BackActivity {
                             return;
                         }
                         MyServiceClient.getService()
-                                .post_PayByYuer(auth, orderNo, pwd, money)
+                                .post_PayByYuer(auth, data.getNo(), pwd, data.getTol() + "")
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Subscriber<Result>() {
@@ -329,6 +379,13 @@ public class ProductPayActivity extends BackActivity {
                                         Toast.makeText(ProductPayActivity.this, result.getMsg(), Toast.LENGTH_SHORT).show();
                                         if (result.getErr() == 0) {
                                             //TODO 支付成功，进入我的订单页面
+                                            Intent intent = new Intent(ProductPayActivity.this, MyOrderListActivity.class);
+                                            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+                                            if(fromWhere==1){
+                                                EventBus.getDefault().post(new RefreshMyOrderListEvent());
+                                            }
+                                            startActivity(intent);
                                         }
                                         dialog.dismiss();
                                     }
@@ -345,10 +402,7 @@ public class ProductPayActivity extends BackActivity {
             switch (requestCode) {
                 case REQUEST_ADD://新增收货地址or选择收货地址后，界面显示
                     userAddrInfo = data.getParcelableExtra(KEY_USER_ADDR_INFO);
-                    String phoneName = userAddrInfo.getTel() + "  " + userAddrInfo.getUname();
-                    String address = userAddrInfo.getAddr();
-                    tvPhoneName.setText(phoneName);
-                    tvAdd.setText(address);
+                    showAddress();
                     break;
             }
         }
@@ -368,10 +422,10 @@ public class ProductPayActivity extends BackActivity {
             Context mContext = holder.itemView.getContext();
             ProductList.DataBean.ListBean data = mList.get(position);
             //商品图片显示
-            String imageUrl = APPS.BASE_URL+ data.getPicurl_1();
+            String imageUrl = APPS.BASE_URL + data.getPicurl_1();
             Glide.with(mContext).load(imageUrl)
                     .centerCrop()
-//                .placeholder(R.mipmap.default_nine_picture)
+                    .placeholder(R.drawable.default_nine_picture)
                     .into(holder.img);
             //商品名称
             holder.tvContent.setText(data.getTitle());

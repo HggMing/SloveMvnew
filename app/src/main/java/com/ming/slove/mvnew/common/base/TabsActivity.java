@@ -71,8 +71,6 @@ public class TabsActivity extends BaseActivity {
         // 初始化ViewPager的适配器，并设置给它
         mAdapter = new MyViewPagerAdapter(getSupportFragmentManager());
         mViewpager.setAdapter(mAdapter);
-        // 设置ViewPager最大缓存的页面个数
-        mViewpager.setOffscreenPageLimit(mFragments.size());
 
         mTabLayout.setTabMode(TabLayout.MODE_FIXED);
         // 将TabLayout和ViewPager进行关联，让两者联动起来
@@ -97,6 +95,8 @@ public class TabsActivity extends BaseActivity {
         public void setItem(String[] mTitles, List<Fragment> mFragments) {
             this.mTitles = mTitles;
             this.mFragments = mFragments;
+            // 设置ViewPager最大缓存的页面个数
+            mViewpager.setOffscreenPageLimit(mFragments.size());
             this.notifyDataSetChanged();
         }
 

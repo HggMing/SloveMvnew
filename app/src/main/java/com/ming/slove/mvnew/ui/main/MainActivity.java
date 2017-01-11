@@ -34,7 +34,6 @@ import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.IpPort;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.app.APP;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.model.bean.AddFriendRequest;
 import com.ming.slove.mvnew.model.bean.EbankWifiConnect;
@@ -49,7 +48,7 @@ import com.ming.slove.mvnew.model.database.NewFriendModel;
 import com.ming.slove.mvnew.model.event.ChangeThemeColorEvent;
 import com.ming.slove.mvnew.model.event.InstantMsgEvent;
 import com.ming.slove.mvnew.model.event.NewFriendEvent;
-import com.ming.slove.mvnew.model.event.RefreshTab1Event;
+import com.ming.slove.mvnew.model.event.RefreshTab2Event;
 import com.ming.slove.mvnew.model.event.ShopApplyPassEvent;
 import com.ming.slove.mvnew.shop.MyShopFragment;
 import com.ming.slove.mvnew.tab1.WebFragment;
@@ -245,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                                         Gson gson = new Gson();
                                         ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
 
-                                        chatMsg.setTxt("[分享]:\"" + shareMsg.getTitle() + "\"的帖子");
+                                        chatMsg.setTxt("[分享]:\"" + shareMsg.getTitle() + "\"");
 
                                         chatMsg.setShareMsg(shareMsg.getTitle(), shareMsg.getDetail(), shareMsg.getImage(), shareMsg.getLink());
                                         break;
@@ -400,7 +399,7 @@ public class MainActivity extends AppCompatActivity {
      * @param event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void showCount(RefreshTab1Event event) {
+    public void showCount(RefreshTab2Event event) {
         int count = event.getCount();
         if (count > 0) {
             badge.setVisibility(View.VISIBLE);

@@ -154,6 +154,7 @@ public class AddBookActivity extends BackActivity {
                 imgAdd.setVisibility(View.GONE);
                 Glide.with(AddBookActivity.this)
                         .load(imagPath)
+                        .placeholder(R.drawable.default_nine_picture)
                         .into(imgBook);
                 //对图片压缩处理
                 File file = null;

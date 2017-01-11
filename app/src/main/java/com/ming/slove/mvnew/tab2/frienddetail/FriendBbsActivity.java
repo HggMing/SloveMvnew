@@ -33,13 +33,9 @@ public class FriendBbsActivity extends BackActivity implements VillageBbsAdapter
 
     public static String UID = "查看用户帖子，提供用户id";
     public static String USER_NAME = "显示的用户名，用于标题";
-    @Bind(R.id.friend_bbs_list)
-    XRecyclerView mXRecyclerView;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
 
-    private VillageBbsAdapter mAdapter = new VillageBbsAdapter();
-    private XRecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+
+    private VillageBbsAdapter mAdapter;
     private List<BBSList.DataEntity.ListEntity> mList = new ArrayList<>();
     private BBSList.DataEntity.ListEntity bbsDetail;
 
@@ -48,32 +44,27 @@ public class FriendBbsActivity extends BackActivity implements VillageBbsAdapter
     private int ppid;//点击查看详情的帖子号
     private final int REQUEST_LIKE_COMMENT_NUMBER = 1000;
 
+    private String auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_friend_bbs);
-        ButterKnife.bind(this);
         setToolbarTitle(getIntent().getStringExtra(USER_NAME));
 
-        configXRecyclerView();//XRecyclerView配置
+        initView();
         getBBSList(page);//获取bbsList数据
     }
 
-    //配置RecyclerView
-    private void configXRecyclerView() {
-        //设置adapter
-        mAdapter.setOnItemClickListener(FriendBbsActivity.this);
-        mXRecyclerView.setAdapter(mAdapter);
-        //设置布局管理器
-        mXRecyclerView.setLayoutManager(mLayoutManager);
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-        //设置XRecyclerView相关
-        mXRecyclerView.setPullRefreshEnabled(false);//关闭刷新功能
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
+        //设置adapter
+        mAdapter = new VillageBbsAdapter();
+        addXRecycleView(mAdapter, new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
+
             }
 
             @Override
@@ -82,10 +73,10 @@ public class FriendBbsActivity extends BackActivity implements VillageBbsAdapter
                 mXRecyclerView.loadMoreComplete();
             }
         });
+        mAdapter.setOnItemClickListener(FriendBbsActivity.this);
     }
 
     private void getBBSList(int page) {
-        String auth = Hawk.get(APPS.USER_AUTH);
         String mUid = getIntent().getStringExtra(UID);
         MyServiceClient.getService()
                 .get_FriendBbsList(auth, mUid, page, PAGE_SIZE)
@@ -94,6 +85,7 @@ public class FriendBbsActivity extends BackActivity implements VillageBbsAdapter
                 .subscribe(new Subscriber<BBSList>() {
                     @Override
                     public void onCompleted() {
+                        showLoading(false);
                     }
 
                     @Override
@@ -105,9 +97,9 @@ public class FriendBbsActivity extends BackActivity implements VillageBbsAdapter
                     public void onNext(BBSList bbsList) {
                         if (bbsList != null && bbsList.getErr() == 0) {
                             if (mList.isEmpty() && bbsList.getData().getList().isEmpty()) {
-                                contentEmpty.setVisibility(View.VISIBLE);
+                               showEmpty(R.string.empty_friend_bbs);
                             } else {
-                                contentEmpty.setVisibility(View.GONE);
+                                hideEmpty();
                             }
                             mAdapter.setItem(mList, bbsList.getData().getList());
                         }

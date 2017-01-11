@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -25,5 +26,14 @@
         android:textSize="16sp"
         android:visibility="gone"
         tools:text="列表无内容时的提示信息" />
+
+    <com.bilibili.magicasakura.widgets.TintProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:max="1000"
+        android:visibility="gone"
+        app:progressIndeterminateTint="@color/theme_color_primary" />
 </FrameLayout>
 

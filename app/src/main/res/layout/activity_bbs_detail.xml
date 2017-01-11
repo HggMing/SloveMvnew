@@ -6,7 +6,7 @@
     tools:context=".tab3.villagebbs.bbsdetail.BbsDetailActivity">
 
     <com.jcodecraeer.xrecyclerview.XRecyclerView
-        android:id="@+id/tab3_bbs_detail"
+        android:id="@+id/m_x_recyclerview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/comment_input" />

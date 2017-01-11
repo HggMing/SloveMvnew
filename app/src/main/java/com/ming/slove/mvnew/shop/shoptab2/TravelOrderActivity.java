@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +12,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintButton;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
@@ -40,14 +36,6 @@ import rx.schedulers.Schedulers;
  * 旅游业务订单
  */
 public class TravelOrderActivity extends BackActivity {
-
-    @Bind(R.id.m_x_recyclerview)
-    XRecyclerView mXRecyclerView;
-    @Bind(R.id.m_refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-
     private List<TravelOrderList.ListBean> mList = new ArrayList<>();
     private TravelOrderAdapter mAdapter;
 
@@ -56,58 +44,26 @@ public class TravelOrderActivity extends BackActivity {
 
     private String notify_url;
 
+    private String auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orders);
-        ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_travel_order);
 
-        config();
-        initData(page);
-
-        // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAdapter.setItem(null);
-                mList.clear();
-                page = 1;
-                initData(page);
-            }
-        });
-    }
-
-    //支付宝调用后刷新订单界面
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        mAdapter.setItem(null);
-        mList.clear();
-        page = 1;
+        initView();
         initData(page);
     }
 
-    private void config() {
-        //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
-//        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
         //设置adapter
         mAdapter = new TravelOrderAdapter();
-        mXRecyclerView.setAdapter(mAdapter);
-
-        mXRecyclerView.setPullRefreshEnabled(false);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+        addXRecycleView(mAdapter, new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
+
             }
 
             @Override
@@ -116,6 +72,7 @@ public class TravelOrderActivity extends BackActivity {
                 mXRecyclerView.loadMoreComplete();
             }
         });
+        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
 
         //点击事件，支付
         mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
@@ -132,10 +89,31 @@ public class TravelOrderActivity extends BackActivity {
 
             }
         });
+
+        //下拉刷新
+        showRefresh(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mAdapter.setItem(null);
+                mList.clear();
+                page = 1;
+                initData(page);
+            }
+        });
+
+    }
+
+    //支付宝调用后刷新订单界面
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mAdapter.setItem(null);
+        mList.clear();
+        page = 1;
+        initData(page);
     }
 
     private void initData(final int page) {
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_TravelOrderList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
@@ -143,7 +121,7 @@ public class TravelOrderActivity extends BackActivity {
                 .subscribe(new Subscriber<TravelOrderList>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
+                        hideRefresh();
                     }
 
                     @Override
@@ -156,10 +134,9 @@ public class TravelOrderActivity extends BackActivity {
                         notify_url = travelOrderList.getUrl();
                         mList.addAll(travelOrderList.getList());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_orders);
+                            showEmpty(R.string.empty_orders);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }

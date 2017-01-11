@@ -40,6 +40,12 @@ public class ProductNewOrder {
         private double tol;
         private String url;
 
+        public DataBean(String no, double tol, String url) {
+            this.no = no;
+            this.tol = tol;
+            this.url = url;
+        }
+
         public String getNo() {
             return no;
         }

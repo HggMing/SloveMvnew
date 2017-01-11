@@ -16,7 +16,7 @@
             android:background="@color/white"
             android:orientation="vertical">
 
-            <include layout="@layout/divide_15_top_bottom" />
+            <!--<include layout="@layout/divide_15_top_bottom" />-->
 
             <RelativeLayout
                 android:id="@+id/click_user"

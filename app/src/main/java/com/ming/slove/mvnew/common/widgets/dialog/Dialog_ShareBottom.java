@@ -10,6 +10,7 @@ import com.ming.slove.mvnew.model.bean.IncomeBase;
 import com.ming.slove.mvnew.ui.share.ShareFriendListActivity;
 
 import me.shaohui.bottomdialog.BaseBottomDialog;
+import me.shaohui.shareutil.ShareLogger;
 import me.shaohui.shareutil.ShareUtil;
 import me.shaohui.shareutil.share.ShareListener;
 import me.shaohui.shareutil.share.SharePlatform;
@@ -56,7 +57,11 @@ public class Dialog_ShareBottom extends BaseBottomDialog implements View.OnClick
 
             @Override
             public void shareFailure(Exception e) {
-                Toast.makeText(v.getContext(), "分享失败", Toast.LENGTH_SHORT).show();
+                if (ShareLogger.INFO.NOT_INSTALL.equals(e.getMessage())) {
+                    Toast.makeText(v.getContext(), "没有安装相关应用，无法分享。", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(v.getContext(), "分享失败", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -69,6 +74,7 @@ public class Dialog_ShareBottom extends BaseBottomDialog implements View.OnClick
 
     @Override
     public void onClick(View view) {
+        Toast.makeText(getContext(), "正在打开分享界面，请稍等", Toast.LENGTH_SHORT).show();
         switch (view.getId()) {
             case R.id.share_qq:
                 ShareUtil.shareMedia(getContext(), SharePlatform.QQ, title, summary, targetUrl, thumb, mShareListener);
@@ -83,10 +89,10 @@ public class Dialog_ShareBottom extends BaseBottomDialog implements View.OnClick
             case R.id.share_wx:
                 ShareUtil.shareMedia(getContext(), SharePlatform.WX, title, summary, targetUrl, thumb, mShareListener);
                 break;
-            case R.id.share_weibo:
-                String msg="{\"title\":\""+title+"\",\"detail\":\""+summary+"\",\"image\":\""+thumb+"\",\"link\":\""+targetUrl+"\"}";
-                Intent intent=new Intent(getContext(), ShareFriendListActivity.class);
-                intent.putExtra(ShareFriendListActivity.SHARE_MSG,msg);
+            case R.id.share_weibo://分享到app内好友
+                String msg = "{\"title\":\"" + title + "\",\"detail\":\"" + summary + "\",\"image\":\"" + thumb + "\",\"link\":\"" + targetUrl + "\"}";
+                Intent intent = new Intent(getContext(), ShareFriendListActivity.class);
+                intent.putExtra(ShareFriendListActivity.SHARE_MSG, msg);
                 startActivity(intent);
                 break;
         }

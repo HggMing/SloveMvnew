@@ -165,31 +165,32 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                                         if (position == mAdapter.getItemCount()) {
                                             InstantMsgModel iMsg = MyDB.createDb(ChatActivity.this).queryById(other, InstantMsgModel.class);
                                             if (iMsg != null) {//动态存在，即更新
-                                                ChatMsgModel lastItem = mAdapter.getDatas().get(mAdapter.getItemCount() - 1);
-                                                String msg;
-                                                switch (lastItem.getCt()) {
-                                                    case "1":
-                                                        msg = "[图片]";
-                                                        break;
-                                                    case "2":
-                                                        msg = "[语音]";
-                                                        break;
-                                                    case "100":
-                                                        String jsonString = lastItem.getTxt();
-                                                        Gson gson = new Gson();
-                                                        ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
-                                                        msg = "[分享]:\"" + shareMsg.getTitle() + "\"的帖子";
-                                                        break;
-                                                    default:
-                                                        msg = lastItem.getTxt();//类型：文字
-                                                        break;
+                                                String msg = "";
+                                                if (mAdapter.getItemCount() != 0) {//删除后，列表不为空，取最后一条记录
+                                                    ChatMsgModel lastItem = mAdapter.getDatas().get(mAdapter.getItemCount() - 1);
+                                                    switch (lastItem.getCt()) {
+                                                        case "1":
+                                                            msg = "[图片]";
+                                                            break;
+                                                        case "2":
+                                                            msg = "[语音]";
+                                                            break;
+                                                        case "100":
+                                                            String jsonString = lastItem.getTxt();
+                                                            Gson gson = new Gson();
+                                                            ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
+                                                            msg = "[分享]:\"" + shareMsg.getTitle() + "\"";
+                                                            break;
+                                                        default:
+                                                            msg = lastItem.getTxt();//类型：文字
+                                                            break;
+                                                    }
                                                 }
                                                 iMsg.setContent(msg);
                                                 MyDB.update(iMsg);
                                                 EventBus.getDefault().post(new InstantMsgEvent());
                                             }
                                         }
-
                                         dialog.dismiss();
                                     }
                                 })

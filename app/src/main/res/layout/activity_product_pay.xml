@@ -187,24 +187,30 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-
-            <TextView
+            <LinearLayout
+                android:id="@+id/layout_beizhu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginTop="8dp"
-                android:text="订单备注"
-                android:textColor="@color/font_black_4"
-                android:textSize="@dimen/textsize_normal" />
+                android:orientation="vertical">
 
-            <com.bilibili.magicasakura.widgets.TintEditText
-                android:id="@+id/et_beizhu"
-                style="@style/EditTextStyle_common"
-                android:layout_marginBottom="12dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:hint="点击此处给卖家留言"
-                android:minLines="2" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:text="订单备注"
+                    android:textColor="@color/font_black_4"
+                    android:textSize="@dimen/textsize_normal" />
+
+                <com.bilibili.magicasakura.widgets.TintEditText
+                    android:id="@+id/et_beizhu"
+                    style="@style/EditTextStyle_common"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:hint="点击此处给卖家留言"
+                    android:minLines="2" />
+            </LinearLayout>
         </LinearLayout>
     </android.support.v4.widget.NestedScrollView>
 

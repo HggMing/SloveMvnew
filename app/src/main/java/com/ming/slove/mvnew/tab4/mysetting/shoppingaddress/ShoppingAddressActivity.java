@@ -15,7 +15,7 @@ import android.widget.TextView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.base.AddListActivity;
+import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -31,29 +31,43 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ShoppingAddressActivity extends AddListActivity implements ShoppingAddressAdapter.OnItemClickListener {
+public class ShoppingAddressActivity extends BackActivity implements ShoppingAddressAdapter.OnItemClickListener {
     private ShoppingAddressAdapter mAdapter;
     public static final int REFRESH = 1100;
     List<ShoppingAddress.DataBean> mList = new ArrayList<>();
+
+    private String auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setToolbarTitle(R.string.title_activity_shopping_address);
-        config();
+
+        initView();
         initData();
     }
 
-    private void config() {
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
         //设置adapter
         mAdapter = new ShoppingAddressAdapter(this);
-        mXRecyclerView.setAdapter(mAdapter);
+        addRecycleView(mAdapter);
         mAdapter.setOnItemClickListener(this);
+
+        //设置添加按钮
+        showFab(mRecyclerView, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//        Toast.makeText(ShoppingAddressActivity.this, "添加收货地址", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(ShoppingAddressActivity.this, EditShoppingAdressActivity.class);
+                startActivityForResult(intent, REFRESH);
+            }
+        });
     }
 
     private void initData() {
         //设置数据
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_ShoppingAddress(auth)
                 .subscribeOn(Schedulers.io())
@@ -61,7 +75,7 @@ public class ShoppingAddressActivity extends AddListActivity implements Shopping
                 .subscribe(new Subscriber<ShoppingAddress>() {
                     @Override
                     public void onCompleted() {
-
+                        showLoading(false);
                     }
 
                     @Override
@@ -74,22 +88,13 @@ public class ShoppingAddressActivity extends AddListActivity implements Shopping
                         mList.clear();
                         mList.addAll(shoppingAddress.getData());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_shopping_address);
+                            showEmpty(R.string.empty_shopping_address);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }
                 });
-    }
-
-    @Override
-    public void onClick() {
-        super.onClick();
-//        Toast.makeText(ShoppingAddressActivity.this, "添加收货地址", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, EditShoppingAdressActivity.class);
-        startActivityForResult(intent, REFRESH);
     }
 
     @Override

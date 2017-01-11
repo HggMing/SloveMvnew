@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,12 +12,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintButton;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -41,14 +37,6 @@ import rx.schedulers.Schedulers;
  * 汽车保险订单
  */
 public class InsuranceOrderActivity extends BackActivity {
-
-    @Bind(R.id.m_x_recyclerview)
-    XRecyclerView mXRecyclerView;
-    @Bind(R.id.m_refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-
     private List<InsuranceOrderList.ListBean> mList = new ArrayList<>();
     private InsuranceOrderAdapter mAdapter;
 
@@ -57,21 +45,54 @@ public class InsuranceOrderActivity extends BackActivity {
 
     private String notify_url;
 
+    private String auth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orders);
-        ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_insurance_order);
 
-        config();
+        initView();
         initData(page);
+    }
 
-        // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
+        //设置adapter
+        mAdapter = new InsuranceOrderAdapter();
+        addXRecycleView(mAdapter, new XRecyclerView.LoadingListener() {
+            @Override
+            public void onRefresh() {
+
+            }
+
+            @Override
+            public void onLoadMore() {
+                initData(++page);
+                mXRecyclerView.loadMoreComplete();
+            }
+        });
+        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
+
+        //点击事件，支付
+        mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                InsuranceOrderList.ListBean data = mList.get(position);
+                PayUtils payUtils = new PayUtils(InsuranceOrderActivity.this, 2);
+                payUtils.pay("汽车保险", "汽车保险",
+                        data.getPrice(), data.getOrder_sn(), notify_url);
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });
+
+        //下拉刷新
+        showRefresh(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 mAdapter.setItem(null);
@@ -92,50 +113,7 @@ public class InsuranceOrderActivity extends BackActivity {
         initData(page);
     }
 
-    private void config() {
-        //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
-//        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-
-        //设置adapter
-        mAdapter = new InsuranceOrderAdapter();
-        mXRecyclerView.setAdapter(mAdapter);
-
-        mXRecyclerView.setPullRefreshEnabled(false);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
-            @Override
-            public void onRefresh() {
-            }
-
-            @Override
-            public void onLoadMore() {
-                initData(++page);
-                mXRecyclerView.loadMoreComplete();
-            }
-        });
-
-        //点击事件，支付
-        mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position) {
-                InsuranceOrderList.ListBean data = mList.get(position);
-                PayUtils payUtils = new PayUtils(InsuranceOrderActivity.this, 2);
-                payUtils.pay("汽车保险", "汽车保险",
-                        data.getPrice(), data.getOrder_sn(), notify_url);
-            }
-
-            @Override
-            public void onItemLongClick(View view, int position) {
-
-            }
-        });
-    }
-
     private void initData(final int page) {
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_InsuranceOrderList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
@@ -143,7 +121,7 @@ public class InsuranceOrderActivity extends BackActivity {
                 .subscribe(new Subscriber<InsuranceOrderList>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
+                        hideRefresh();
                     }
 
                     @Override
@@ -156,10 +134,9 @@ public class InsuranceOrderActivity extends BackActivity {
                         notify_url = insuranceOrderList.getUrl();
                         mList.addAll(insuranceOrderList.getList());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_orders);
+                            showEmpty(R.string.empty_orders);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }

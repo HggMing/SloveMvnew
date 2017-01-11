@@ -15,7 +15,7 @@ import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.model.database.InstantMsgModel;
-import com.ming.slove.mvnew.model.event.RefreshTab1Event;
+import com.ming.slove.mvnew.model.event.RefreshTab2Event;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -70,10 +70,10 @@ public class MessageAdapter extends BaseRecyclerViewAdapter<InstantMsgModel, Mes
         if (count > 0) {
             holder.badge.setVisibility(View.VISIBLE);
             holder.badge.setText(String.valueOf(count));
-            EventBus.getDefault().post(new RefreshTab1Event(count));
+            EventBus.getDefault().post(new RefreshTab2Event(count));
         } else {
             holder.badge.setVisibility(View.GONE);
-            EventBus.getDefault().post(new RefreshTab1Event(0));
+            EventBus.getDefault().post(new RefreshTab2Event(0));
         }
 
         //点击事件

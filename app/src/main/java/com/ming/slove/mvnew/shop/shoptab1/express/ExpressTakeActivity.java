@@ -12,7 +12,7 @@ import android.widget.TextView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.base.AddListActivity;
+import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
@@ -28,7 +28,7 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-public class ExpressTakeActivity extends AddListActivity {
+public class ExpressTakeActivity extends BackActivity {
 
     private ExpressTakeAdapter mAdapter;
     private List<ExpressList.DataBean.ListBean> mList = new ArrayList<>();
@@ -39,15 +39,25 @@ public class ExpressTakeActivity extends AddListActivity {
         super.onCreate(savedInstanceState);
         setToolbarTitle(R.string.title_activity_express_take);
 
-        config();
+        initView();
         initData();
     }
 
-    private void config() {
+    private void initView() {
+        showLoading(true);
         //设置adapter
-        mXRecyclerView.addItemDecoration(new MyItemDecoration2(this));//添加分割线
         mAdapter = new ExpressTakeAdapter();
-        mXRecyclerView.setAdapter(mAdapter);
+        addRecycleView(mAdapter);
+        mRecyclerView.addItemDecoration(new MyItemDecoration2(this));//添加分割线
+
+        //设置添加按钮
+        showFab(mRecyclerView, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ExpressTakeActivity.this, EditExpressTakeActivity.class);
+                startActivityForResult(intent, REQUEST_CODE);
+            }
+        });
     }
 
     private void initData() {
@@ -59,7 +69,7 @@ public class ExpressTakeActivity extends AddListActivity {
                 .subscribe(new Subscriber<ExpressList>() {
                     @Override
                     public void onCompleted() {
-
+                        showLoading(false);
                     }
 
                     @Override
@@ -72,21 +82,13 @@ public class ExpressTakeActivity extends AddListActivity {
                         mList.clear();
                         mList.addAll(expressList.getData().getList());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_express_take);
+                            showEmpty(R.string.empty_express_take);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }
                 });
-    }
-
-    @Override
-    public void onClick() {
-        super.onClick();
-        Intent intent = new Intent(this, EditExpressTakeActivity.class);
-        startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override

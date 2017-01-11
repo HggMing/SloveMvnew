@@ -40,4 +40,5 @@
     <color name="golden">#bbaa15</color>
 
     <color name="itemback">#efefef</color>
+    <color name="alpha_background">#96e6e6e6</color>
 </resources>

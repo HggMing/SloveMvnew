@@ -36,11 +36,6 @@ import rx.schedulers.Schedulers;
 
 public class ShareFriendListActivity extends BackActivity {
 
-    @Bind(R.id.m_x_recyclerview)
-    RecyclerView mXRecyclerView;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-
     final private static int PAGE_SIZE = 50;//
     private int page = 1;
     private String auth;
@@ -58,16 +53,15 @@ public class ShareFriendListActivity extends BackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_income_history);
-        ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_share_friendlist);
 
-        auth = Hawk.get(APPS.USER_AUTH);
         initView();
         loadData();
     }
 
     private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
         characterParser = CharacterParser.getInstance();
         pinyinComparator = new PinyinComparator();
     }
@@ -80,7 +74,7 @@ public class ShareFriendListActivity extends BackActivity {
                 .subscribe(new Subscriber<FriendList>() {
                     @Override
                     public void onCompleted() {
-
+                        showLoading(false);
                     }
 
                     @Override
@@ -94,23 +88,25 @@ public class ShareFriendListActivity extends BackActivity {
 
                             combinationLists(friendList);
                             if (mList.isEmpty() || mList == null) {
-                                contentEmpty.setVisibility(View.VISIBLE);
+                                showEmpty(R.string.empty_share_friendlist);
                             } else {
-                                contentEmpty.setVisibility(View.GONE);
+                                hideEmpty();
 
                                 if (mAdapter == null) {
                                     mAdapter = new FriendListAdapter(ShareFriendListActivity.this, mList);
-                                    configXRecyclerView();//XRecyclerView配置
+                                    addRecycleView(mAdapter);
+
                                     final StickyRecyclerHeadersDecoration headersDecor = new StickyRecyclerHeadersDecoration(mAdapter);
-                                    mXRecyclerView.addItemDecoration(headersDecor);
-                                    mXRecyclerView.addItemDecoration(new MyItemDecoration2(ShareFriendListActivity.this));//添加分割线
+                                    mRecyclerView.addItemDecoration(headersDecor);
+                                    mRecyclerView.addItemDecoration(new MyItemDecoration2(ShareFriendListActivity.this));//添加分割线
+
                                     mAdapter.setOnItemClickListener(new FriendListAdapter.OnItemClickListener() {
                                         @Override
                                         public void onItemClick(View view, int position) {
                                             other = mList.get(position).getUid();
                                             //点击弹出是否分享
                                             MyDialog.Builder builder = new MyDialog.Builder(ShareFriendListActivity.this);
-                                            builder.setMessage("确定分享给+" + mList.get(position).getName() + "?")
+                                            builder.setMessage("确定分享给" + mList.get(position).getName() + "?")
                                                     .setPositiveButton("确定",
                                                             new DialogInterface.OnClickListener() {
                                                                 @Override
@@ -123,7 +119,7 @@ public class ShareFriendListActivity extends BackActivity {
                                                     .setNegativeButton("取消", new DialogInterface.OnClickListener() {
                                                         @Override
                                                         public void onClick(DialogInterface dialog, int which) {
-                                                            Toast.makeText(ShareFriendListActivity.this, "取消分享。", Toast.LENGTH_SHORT).show();
+                                                            Toast.makeText(ShareFriendListActivity.this, "取消分享", Toast.LENGTH_SHORT).show();
                                                             finish();
                                                             dialog.dismiss();
                                                         }
@@ -136,7 +132,6 @@ public class ShareFriendListActivity extends BackActivity {
 
                                         }
                                     });
-                                    mXRecyclerView.setAdapter(mAdapter);//设置adapter
                                     mAdapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                                         @Override
                                         public void onChanged() {
@@ -215,15 +210,5 @@ public class ShareFriendListActivity extends BackActivity {
         Collections.sort(tempList, pinyinComparator);
 
         mList.addAll(tempList);
-    }
-
-    //配置RecyclerView
-    private void configXRecyclerView() {
-        //设置布局和adapter
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-//        mXRecyclerView.addItemDecoration(new MyItemDecoration2(this));//添加分割线
-        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
     }
 }

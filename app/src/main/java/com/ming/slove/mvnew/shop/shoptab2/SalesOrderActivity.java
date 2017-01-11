@@ -16,15 +16,12 @@ import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintButton;
 import com.bumptech.glide.Glide;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
-import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
 import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
 import com.ming.slove.mvnew.model.bean.SalesOrderList;
@@ -44,14 +41,6 @@ import rx.schedulers.Schedulers;
  * 村实惠订单
  */
 public class SalesOrderActivity extends BackActivity {
-
-    @Bind(R.id.m_x_recyclerview)
-    XRecyclerView mXRecyclerView;
-    @Bind(R.id.m_refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-
     private List<SalesOrderList.ListBean> mList = new ArrayList<>();
     private SalesOrderAdapter mAdapter;
 
@@ -60,57 +49,26 @@ public class SalesOrderActivity extends BackActivity {
 
     private String notify_url;
 
+    private String auth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orders);
-        ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_sales_order);
-        config();
-        initData(page);
 
-        // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAdapter.setItem(null);
-                mList.clear();
-                page = 1;
-                initData(page);
-            }
-        });
-    }
-
-    //支付宝调用后刷新订单界面
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        mAdapter.setItem(null);
-        mList.clear();
-        page = 1;
+        initView();
         initData(page);
     }
 
-    private void config() {
-        //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
-//        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-
+    private void initView() {
+        auth = Hawk.get(APPS.USER_AUTH);
+        showLoading(true);
         //设置adapter
         mAdapter = new SalesOrderAdapter();
-        mXRecyclerView.setAdapter(mAdapter);
-
-        mXRecyclerView.setPullRefreshEnabled(false);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+        addXRecycleView(mAdapter, new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
+
             }
 
             @Override
@@ -119,6 +77,7 @@ public class SalesOrderActivity extends BackActivity {
                 mXRecyclerView.loadMoreComplete();
             }
         });
+        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
 
         //点击事件，支付
         mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
@@ -135,10 +94,32 @@ public class SalesOrderActivity extends BackActivity {
 
             }
         });
+
+        //下拉刷新
+        showRefresh(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mAdapter.setItem(null);
+                mList.clear();
+                page = 1;
+                initData(page);
+            }
+        });
+
     }
 
+    //支付宝调用后刷新订单界面
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mAdapter.setItem(null);
+        mList.clear();
+        page = 1;
+        initData(page);
+    }
+
+
     private void initData(final int page) {
-        String auth = Hawk.get(APPS.USER_AUTH);
         MyServiceClient.getService()
                 .get_SalesOrderList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
@@ -146,7 +127,7 @@ public class SalesOrderActivity extends BackActivity {
                 .subscribe(new Subscriber<SalesOrderList>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
+                        hideRefresh();
                     }
 
                     @Override
@@ -159,10 +140,9 @@ public class SalesOrderActivity extends BackActivity {
                         notify_url = salesOrderList.getUrl();
                         mList.addAll(salesOrderList.getList());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_orders);
+                            showEmpty(R.string.empty_orders);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }
@@ -282,6 +262,7 @@ public class SalesOrderActivity extends BackActivity {
             //商品图片
             String imageUrl = APPS.BASE_URL + data.getPicurl();
             Glide.with(mContext).load(imageUrl)
+                    .placeholder(R.drawable.default_nine_picture)
                     .centerCrop()
                     .into(holder.img);
             //购买商品简略信息

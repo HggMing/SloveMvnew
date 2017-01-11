@@ -27,6 +27,7 @@ public class AboutActivity extends BackActivity {
         setContentView(R.layout.activity_about);
         ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_about);
+
         initAboutActivity();
     }
     /**

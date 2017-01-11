@@ -13,6 +13,7 @@ import com.ming.slove.mvnew.shop.shoptab2.InsuranceOrderActivity;
 import com.ming.slove.mvnew.shop.shoptab2.PhoneRechargeOrderActivity;
 import com.ming.slove.mvnew.shop.shoptab2.SalesOrderActivity;
 import com.ming.slove.mvnew.shop.shoptab2.TravelOrderActivity;
+import com.ming.slove.mvnew.tab4.mysetting.myorder.MyOrderListActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -89,6 +90,7 @@ public class PayUtils {
                                 break;
                             case 5://特产
                                 //Todo  跳转到特产订单界面
+                                intent.setClass(mContext, MyOrderListActivity.class);
                                 break;
                         }
                         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);

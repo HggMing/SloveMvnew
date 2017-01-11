@@ -41,14 +41,6 @@ import rx.schedulers.Schedulers;
  * 话费充值订单
  */
 public class PhoneRechargeOrderActivity extends BackActivity {
-
-    @Bind(R.id.m_x_recyclerview)
-    XRecyclerView mXRecyclerView;
-    @Bind(R.id.m_refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-
     private PhoneRechargeOrderAdapter mAdapter;
     private List<RechargeOrderList.DataBean.ListBean> mList = new ArrayList<>();
 
@@ -59,53 +51,20 @@ public class PhoneRechargeOrderActivity extends BackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_orders);
-        ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_phone_recharge_order);
-        config();
-        initData(page);
 
-        // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAdapter.setItem(null);
-                mList.clear();
-                page = 1;
-                initData(page);
-            }
-        });
-    }
-
-    //支付宝调用后刷新订单界面
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        mAdapter.setItem(null);
-        mList.clear();
-        page = 1;
+        initView();
         initData(page);
     }
 
-    private void config() {
-        //设置recyclerview布局
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
-//        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-
+    private void initView() {
+        showLoading(true);
         //设置adapter
         mAdapter = new PhoneRechargeOrderAdapter();
-        mXRecyclerView.setAdapter(mAdapter);
-
-        mXRecyclerView.setPullRefreshEnabled(false);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+        addXRecycleView(mAdapter, new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
+
             }
 
             @Override
@@ -114,6 +73,7 @@ public class PhoneRechargeOrderActivity extends BackActivity {
                 mXRecyclerView.loadMoreComplete();
             }
         });
+        mXRecyclerView.addItemDecoration(new NoDecoration(this));//添加空白分割线
 
         //点击事件，支付
         mAdapter.setOnItemClickListener(new BaseRecyclerViewAdapter.OnItemClickListener() {
@@ -138,8 +98,28 @@ public class PhoneRechargeOrderActivity extends BackActivity {
 
             }
         });
+
+        //下拉刷新
+        showRefresh(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mAdapter.setItem(null);
+                mList.clear();
+                page = 1;
+                initData(page);
+            }
+        });
     }
 
+    //支付宝调用后刷新订单界面
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        mAdapter.setItem(null);
+        mList.clear();
+        page = 1;
+        initData(page);
+    }
     private void initData(final int page) {
         String vid = Hawk.get(APPS.MANAGER_VID);
         MyServiceClient.getService()
@@ -149,7 +129,7 @@ public class PhoneRechargeOrderActivity extends BackActivity {
                 .subscribe(new Subscriber<RechargeOrderList>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
+                        hideRefresh();
                     }
 
                     @Override
@@ -162,10 +142,9 @@ public class PhoneRechargeOrderActivity extends BackActivity {
                         notify_url = rechargeOrderList.getData().getUrl();
                         mList.addAll(rechargeOrderList.getData().getList());
                         if (mList.isEmpty()) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_orders);
+                            showEmpty(R.string.empty_orders);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                           hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }

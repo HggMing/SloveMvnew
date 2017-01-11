@@ -86,14 +86,14 @@ public class BbsDetailAdapter extends RecyclerView.Adapter<BbsDetailAdapter.View
         }
         //显示数据编辑
         //评论人头像
-        String headUrl =  mList.get(position).getUser_head();
+        String headUrl = mList.get(position).getUser_head();
 
         if (APPS.DEFAULT_HEAD.equals(headUrl)) {//未设置头像时，更换服务器提供的默认头像为本地
             Glide.with(mContext)
                     .load(R.mipmap.defalt_user_circle)
                     .into(holder.icon);
         } else {
-            Glide.with(mContext).load(APPS.BASE_URL +headUrl)
+            Glide.with(mContext).load(APPS.BASE_URL + headUrl)
                     .bitmapTransform(new CropCircleTransformation(mContext))
                     .error(R.mipmap.defalt_user_circle)
                     // .placeholder(R.mipmap.defalt_user_circle)
@@ -113,7 +113,11 @@ public class BbsDetailAdapter extends RecyclerView.Adapter<BbsDetailAdapter.View
         if (StringUtils.isEmpty(uname)) {
             //若用户名为空，显示手机号，中间四位为*
             String iphone = mList.get(position).getUser_tel();
-            uname = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
+            if (!StringUtils.isEmpty(iphone)) {
+                uname = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
+            } else {
+                uname = "匿名";
+            }
         }
         holder.name.setText(uname);
         //评论时间

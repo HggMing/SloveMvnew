@@ -31,10 +31,10 @@ public class APP extends Application {
         Hawk.init(this).build();
         //初始为测试服务器
         BASE_URL = Hawk.get(KEY_BASE_URL, "http://product1.yibanke.com/");
-        // 分享功能配置 //// TODO: 2017/1/4 填写微信开发id
+        // 分享功能配置
         ShareConfig config = ShareConfig.instance()
                 .qqId("1105819027")
-                //.wxId(WX_ID)
+                .wxId("wx187aeab1cec32357")
                 //.weiboId(WEIBO_ID)
                 // 下面两个，如果不需要登录功能，可不填写
                 //.weiboRedirectUrl(REDIRECT_URL)

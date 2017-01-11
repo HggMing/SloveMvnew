@@ -29,11 +29,6 @@ import rx.schedulers.Schedulers;
 
 public class IncomeBaseActivity extends BackActivity {
 
-    @Bind(R.id.m_x_recyclerview)
-    RecyclerView mXRecyclerView;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-
     private IncomeBaseAdapter mAdapter;
     List<IncomeBase.ListBean> mList = new ArrayList<>();
 
@@ -43,8 +38,6 @@ public class IncomeBaseActivity extends BackActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_income_base);
-        ButterKnife.bind(this);
 
         type = getIntent().getIntExtra(TYPE, 1);
         if (type == 1) {
@@ -53,14 +46,21 @@ public class IncomeBaseActivity extends BackActivity {
             setToolbarTitle(R.string.title_activity_income_business);
         }
 
-        configXRecyclerView();
+        initView();
         loadData();
+    }
+    private void initView() {
+        showLoading(true);
+        //设置布局和adapter
+        mAdapter = new IncomeBaseAdapter(type);
+        addRecycleView(mAdapter);
     }
 
     private void loadData() {
         Subscriber<IncomeBase> subscriber = new Subscriber<IncomeBase>() {
             @Override
             public void onCompleted() {
+                showLoading(false);
             }
 
             @Override
@@ -72,14 +72,13 @@ public class IncomeBaseActivity extends BackActivity {
             public void onNext(IncomeBase incomeBase) {
                 mList.addAll(incomeBase.getList());
                 if (mList.isEmpty() || mList == null) {
-                    contentEmpty.setVisibility(View.VISIBLE);
                     if(type==1){
-                        contentEmpty.setText("本月暂无基础收支明细！");
+                        showEmpty(R.string.empty_income_base);
                     }else{
-                        contentEmpty.setText("本月暂无业务提成记录！");
+                        showEmpty(R.string.empty_income_business);
                     }
                 } else {
-                    contentEmpty.setVisibility(View.GONE);
+                    hideEmpty();
                 }
                 mAdapter.setItem(mList);
             }
@@ -101,17 +100,7 @@ public class IncomeBaseActivity extends BackActivity {
         }
     }
 
-    //配置RecyclerView
-    private void configXRecyclerView() {
-        //设置布局和adapter
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter = new IncomeBaseAdapter(type);
-        mXRecyclerView.setAdapter(mAdapter);
 
-//        mXRecyclerView.addItemDecoration(new MyItemDecoration(this));//添加分割线
-        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-    }
 
     static class IncomeBaseAdapter extends BaseRecyclerViewAdapter<IncomeBase.ListBean, IncomeBaseAdapter.ViewHolder> {
         int type;

@@ -26,18 +26,19 @@
         android:layout_marginRight="25dp"
         android:layout_toEndOf="@id/user_head"
         android:layout_toRightOf="@id/user_head"
-        android:singleLine="true"
+        android:maxLines="1"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textSize="@dimen/textsize_normal"
         android:textColor="@color/font_black_4"
+        android:textSize="@dimen/textsize_normal"
         tools:text="昨日像那东流水" />
 
     <View
+        android:id="@+id/arrow"
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginRight="8dp"
         android:background="@mipmap/user_home_arrow"
-        android:visibility="visible" />
+        android:visibility="gone" />
 </RelativeLayout>

@@ -183,7 +183,7 @@ public class PushReceiver extends BroadcastReceiver {
                         Gson gson = new Gson();
                         ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
 
-                        chatMsg.setTxt("[分享]:\"" + shareMsg.getTitle() + "\"的帖子");
+                        chatMsg.setTxt("[分享]:\"" + shareMsg.getTitle() + "\"");
 
                         chatMsg.setShareMsg(shareMsg.getTitle(), shareMsg.getDetail(), shareMsg.getImage(), shareMsg.getLink());
                         break;

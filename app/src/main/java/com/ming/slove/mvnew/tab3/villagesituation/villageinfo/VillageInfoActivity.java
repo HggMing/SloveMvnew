@@ -4,19 +4,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
-import android.widget.TextView;
 
-import com.bilibili.magicasakura.utils.ThemeUtils;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
-import com.melnykov.fab.FloatingActionButton;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
@@ -29,24 +22,11 @@ import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 public class VillageInfoActivity extends BackActivity implements BaseRecyclerViewAdapter.OnItemClickListener {
-
-    @Bind(R.id.m_x_recyclerview)
-    XRecyclerView mXRecyclerView;
-    @Bind(R.id.content_empty)
-    TextView contentEmpty;
-    @Bind(R.id.m_refresh_layout)
-    SwipeRefreshLayout mRefreshLayout;
-    @Bind(R.id.fab)
-    FloatingActionButton fab;
-
     public static String VILLAGE_ID = "the_village_id";
     public static String TYPE = "the_title_name";
     public static String WHERE_CLICK = "where_click";
@@ -55,7 +35,7 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
     private int type;//1、荣誉室2、活动3、村委（Item不同，单独写）4、美食
     private int where_click = 0;//1、店长点击管理；其他：村圈内点击查看
 
-    private VillageInfoAdapter mAdapter = new VillageInfoAdapter();
+    private VillageInfoAdapter mAdapter;
     List<VillageInfo.DataBean> mList = new ArrayList<>();
 
     private int page = 1;
@@ -65,30 +45,13 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_village_info);
-        ButterKnife.bind(this);
+        setTitle();
 
-        initData();
-        config();//配置
-        getDataList(page);//获取List数据
-
-        // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
-        mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAdapter.setItem(null);
-                mList.clear();
-                page = 1;
-                getDataList(page);//获取List数据
-
-            }
-        });
+        initView();
+        initData(page);//获取List数据
     }
 
-    private void initData() {
+    private void setTitle() {
         where_click = getIntent().getIntExtra(WHERE_CLICK, 0);
         if (where_click == 1) {
             vid = Hawk.get(APPS.MANAGER_VID);
@@ -110,48 +73,52 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
     }
 
     //配置
-    private void config() {
-        //设置fab
-        if (where_click == 1) {
-            fab.setVisibility(View.VISIBLE);
-            fab.attachToRecyclerView(mXRecyclerView);//fab随recyclerView的滚动，隐藏和出现
-            int themeColor = ThemeUtils.getColorById(this, R.color.theme_color_primary);
-            int themeColor2 = ThemeUtils.getColorById(this, R.color.theme_color_primary_dark);
-            fab.setColorNormal(themeColor);//fab背景颜色
-            fab.setColorPressed(themeColor2);//fab点击后背景颜色
-            fab.setColorRipple(themeColor2);//fab点击后涟漪颜色
-        } else {
-            fab.setVisibility(View.GONE);
-        }
-
-        //配置RecyclerView
-        mXRecyclerView.setLayoutManager(new LinearLayoutManager(this));//设置布局管理器
-        mXRecyclerView.addItemDecoration(new MyItemDecoration(this));//添加分割线
-        mXRecyclerView.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
-        mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
-
-        mXRecyclerView.setAdapter(mAdapter);//设置adapter
-        mAdapter.setOnItemClickListener(this);
-
-        mXRecyclerView.setPullRefreshEnabled(false);
-        mXRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
-        mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
-
-        mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
+    private void initView() {
+        showLoading(true);
+        //设置adapter
+        mAdapter = new VillageInfoAdapter();
+        addXRecycleView(mAdapter, new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
-                mXRecyclerView.refreshComplete();
+
             }
 
             @Override
             public void onLoadMore() {
-                getDataList(++page);
+                initData(++page);
                 mXRecyclerView.loadMoreComplete();
             }
         });
+        mXRecyclerView.addItemDecoration(new MyItemDecoration(this));//添加分割线
+
+        mAdapter.setOnItemClickListener(this);
+
+        //下拉刷新
+        showRefresh(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mAdapter.setItem(null);
+                mList.clear();
+                page = 1;
+                initData(page);//获取List数据
+            }
+        });
+        //设置fab
+        if (where_click == 1) {
+            showFab(mXRecyclerView, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(VillageInfoActivity.this, AddVillageInfoActivity.class);
+                    intent.putExtra(AddVillageInfoActivity.TYPE, type);
+                    startActivityForResult(intent, REQUEST_CODE);
+                }
+            });
+        } else {
+            hideFab();
+        }
     }
 
-    private void getDataList(int page) {
+    private void initData(int page) {
         MyServiceClient.getService()
                 .get_VillageInfoList(vid, type, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
@@ -159,7 +126,7 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
                 .subscribe(new Subscriber<VillageInfo>() {
                     @Override
                     public void onCompleted() {
-                        mRefreshLayout.setRefreshing(false);
+                        hideRefresh();
                     }
 
                     @Override
@@ -171,10 +138,9 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
                     public void onNext(VillageInfo villageInfo) {
                         mList.addAll(villageInfo.getData());
                         if (mList.isEmpty() || mList == null) {
-                            contentEmpty.setVisibility(View.VISIBLE);
-                            contentEmpty.setText(R.string.empty_village_info);
+                            showEmpty(R.string.empty_village_info);
                         } else {
-                            contentEmpty.setVisibility(View.GONE);
+                            hideEmpty();
                         }
                         mAdapter.setItem(mList);
                     }
@@ -241,13 +207,6 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
                 });
     }
 
-    @OnClick(R.id.fab)
-    public void onClick() {
-        Intent intent = new Intent(this, AddVillageInfoActivity.class);
-        intent.putExtra(AddVillageInfoActivity.TYPE, type);
-        startActivityForResult(intent, REQUEST_CODE);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -256,7 +215,7 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
                 mAdapter.setItem(null);
                 mList.clear();
                 page = 1;
-                getDataList(page);
+                initData(page);
             }
         }
     }

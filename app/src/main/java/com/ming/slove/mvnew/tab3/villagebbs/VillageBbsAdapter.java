@@ -226,7 +226,7 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
                 }
                 Glide.with(context).load(imageUrl)
                         .asBitmap()
-                        .placeholder(R.mipmap.default_nine_picture)
+                        .placeholder(R.drawable.default_nine_picture)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
             }

@@ -40,7 +40,7 @@ public class WebFragment extends LazyLoadFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.activity_news_detail;
+        return R.layout.fragment_web;
     }
 
     @Override
@@ -207,6 +207,4 @@ public class WebFragment extends LazyLoadFragment {
             webView.setVisibility(View.GONE);
         }
     }
-
-
 }

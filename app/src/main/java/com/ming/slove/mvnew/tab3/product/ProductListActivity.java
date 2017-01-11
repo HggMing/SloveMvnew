@@ -304,7 +304,7 @@ public class ProductListActivity extends BackActivity {
             String imageUrl = APPS.BASE_URL + data.getPicurl_1();
             Glide.with(mContext).load(imageUrl)
                     .centerCrop()
-//                .placeholder(R.mipmap.default_nine_picture)
+                    .placeholder(R.drawable.default_nine_picture)
                     .into(holder.imgProduct);
             //点击item,，进入特产详情页面
             holder.item.setOnClickListener(new View.OnClickListener() {

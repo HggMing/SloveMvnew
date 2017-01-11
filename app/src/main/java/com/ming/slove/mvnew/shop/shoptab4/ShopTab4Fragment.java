@@ -149,10 +149,10 @@ public class ShopTab4Fragment extends Fragment {
             //点击事件
             holder.item.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mContext, VillagerInfoActivity.class);
-                    intent.putExtra(VillagerInfoActivity.VILLAGE_USER_INFO, data);
-                    mContext.startActivity(intent);
+                public void onClick(View v) {//// TODO: 2017/1/9 暂时禁用点击事件
+//                    Intent intent = new Intent(mContext, VillagerInfoActivity.class);
+//                    intent.putExtra(VillagerInfoActivity.VILLAGE_USER_INFO, data);
+//                    mContext.startActivity(intent);
                 }
             });
         }
@@ -164,6 +164,8 @@ public class ShopTab4Fragment extends Fragment {
             TextView userName;
             @Bind(R.id.item)
             RelativeLayout item;
+            @Bind(R.id.arrow)
+            View arrow;
 
             ViewHolder(View view) {
                 super(view);

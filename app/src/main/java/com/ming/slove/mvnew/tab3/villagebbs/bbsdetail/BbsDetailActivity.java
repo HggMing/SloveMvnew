@@ -73,7 +73,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
     public static final String BBS_DETAIL = "bbs detail from VillageBbsActivity";//bbs详细信息
     public static final String IS_CLICK_COMMENT = "is_click_comment";//是否点击评论
 
-    @Bind(R.id.tab3_bbs_detail)
+    @Bind(R.id.m_x_recyclerview)
     XRecyclerView mXRecyclerView;
     @Bind(R.id.comment_edit)
     EditText commentEdit;
@@ -255,7 +255,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
                 }
                 Glide.with(context).load(imageUrl)
                         .asBitmap()
-                        .placeholder(R.mipmap.default_nine_picture)
+                        .placeholder(R.drawable.default_nine_picture)
                         .into(imageView);
             }
 

@@ -28,6 +28,7 @@ import com.ming.slove.mvnew.model.bean.IpPort;
 import com.ming.slove.mvnew.model.bean.Login;
 import com.ming.slove.mvnew.model.bean.MessageList;
 import com.ming.slove.mvnew.model.bean.MoneyDetail;
+import com.ming.slove.mvnew.model.bean.MyOrderList;
 import com.ming.slove.mvnew.model.bean.MyVillUsers;
 import com.ming.slove.mvnew.model.bean.NewsList;
 import com.ming.slove.mvnew.model.bean.OrderInfo;
@@ -993,6 +994,7 @@ public interface MyService {
     @GET("account/get_currentmprofitlist")
     Observable<IncomeReward> get_Income_Reward(
             @Query("auth") String auth);
+
     //历史收入（简）
     @GET("account/get_lastsixmmony")
     Observable<IncomeHistory> get_Income_History(
@@ -1058,6 +1060,47 @@ public interface MyService {
             @Field("bank_name") String bank_name,
             @Field("bank_no") String bank_no,
             @Field("bank_true_name") String bank_true_name);
+
+
+    /**
+     * 获取我的订单列表（包含特产和村实惠）
+     *
+     * @param auth     认证信息
+     * @param page     页
+     * @param pagesize 每页数
+     * @return MyOrderList
+     */
+    @GET("orders/orderlist")
+    Observable<MyOrderList> get_OrderList(
+            @Query("auth") String auth,
+            @Query("page") int page,
+            @Query("pagesize") int pagesize);
+
+    /**
+     * 取消未支付订单
+     *
+     * @param auth     认证信息
+     * @param order_no 订单号
+     * @return Result
+     */
+    @FormUrlEncoded
+    @POST("orders/cancelorder")
+    Observable<Result> post_OrderCancel(
+            @Field("auth") String auth,
+            @Field("order_no") String order_no);
+
+    /**
+     * 订单确认收货
+     *
+     * @param auth     认证信息
+     * @param order_no 订单号
+     * @return Result
+     */
+    @FormUrlEncoded
+    @POST("orders/confirm")
+    Observable<Result> post_OrderConfirm(
+            @Field("auth") String auth,
+            @Field("order_no") String order_no);
 
     /**
      * 获取收货地址列表

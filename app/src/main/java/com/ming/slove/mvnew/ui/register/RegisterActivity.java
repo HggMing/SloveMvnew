@@ -128,7 +128,8 @@ public class RegisterActivity extends BackActivity {
     protected void onDestroy() {
         super.onDestroy();
         //在不需要再使用短信接收功能的时候,注销短信监听器
-        smsObserver.unregisterSMSObserver();
+        if (smsObserver != null)
+            smsObserver.unregisterSMSObserver();
     }
 
     private void getRCode() {

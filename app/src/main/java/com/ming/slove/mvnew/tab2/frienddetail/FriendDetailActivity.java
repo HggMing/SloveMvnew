@@ -185,6 +185,7 @@ public class FriendDetailActivity extends BackActivity {
                             Glide.with(FriendDetailActivity.this)
                                     .load(APPS.BASE_URL + bbsTopPic4List.get(i).getSurl_1())
                                     .centerCrop()
+                                    .placeholder(R.drawable.default_nine_picture)
                                     .into(imageViews.get(i));
                         }
                     }

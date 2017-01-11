@@ -61,57 +61,53 @@ import static com.ming.slove.mvnew.tab3.product.ProductPayActivity.KEY_USER_ADDR
 
 
 public class BrowserActivity extends BaseActivity {
-    public static String KEY_URL = "key_url";
-    TextView toolbarTitle;
-    Toolbar toolbar;
-//    @Bind(R.id.m_webview)
-//    X5WebView mWebView;
-
+    private TextView toolbarTitle;
+    private Toolbar toolbar;
     private X5WebView mWebView;
-    private ViewGroup mViewParent;
+    private FrameLayout mViewParent;
     private static final int MAX_LENGTH = 14;
-    private ProgressBar mPageLoadingProgressBar = null;
-    private URL mIntentUrl;
-    WebSettings webSetting;
 
-    private ShoppingAddress.DataBean userAddrInfo;//用户地址信息
+    private ProgressBar mPageLoadingProgressBar = null;
+    WebSettings webSetting;
     private static final int REQUEST_ADD = 123;
 
+
+    public static String KEY_URL = "key_url";
+    private String mIntentUrl;
+
+    public static String WEB_TITLE = "the_title";
+    private String mIntentTitle;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFormat(PixelFormat.TRANSLUCENT);
+        setContentView(R.layout.activity_browser);
 
-        Intent intent = getIntent();
-        if (intent != null) {
-            try {
-                mIntentUrl = new URL(intent.getStringExtra(KEY_URL));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (NullPointerException e) {
+        initView();
+        init();
+    }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    private void initView() {
+        mViewParent = (FrameLayout) findViewById(R.id.webView1);
+        toolbar = (Toolbar) findViewById(R.id.toolbar_activity_base);
+        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+
+        mIntentUrl = getIntent().getStringExtra(KEY_URL);
+        mIntentTitle = getIntent().getStringExtra(WEB_TITLE);
+        if (mIntentTitle != null)
+            toolbarTitle.setText(mIntentTitle);
 
         try {
             if (Build.VERSION.SDK_INT >= 11) {
-                getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
-                        WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
+                //对该window进行硬件加速.
+                getWindow().setFlags(WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED, WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        setContentView(R.layout.activity_browser);
-        ButterKnife.bind(this);
-        mViewParent = (ViewGroup) findViewById(R.id.webView1);
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar_activity_base);
-        toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
         assert toolbar != null;
         toolbar.setTitle("");
         setSupportActionBar(toolbar);
@@ -124,21 +120,10 @@ public class BrowserActivity extends BaseActivity {
         }
 
         this.webViewTransportTest();
-
-        init();
-
-//        Observable.timer(10, TimeUnit.MILLISECONDS)
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(new Action1<Long>() {
-//                    @Override
-//                    public void call(Long aLong) {
-//                        init();
-//                    }
-//                });
     }
 
     private void webViewTransportTest() {
-        X5WebView.setSmallWebViewEnabled(true);
+        X5WebView.setSmallWebViewEnabled(false);
     }
 
     private void initProgressBar() {
@@ -151,7 +136,7 @@ public class BrowserActivity extends BaseActivity {
     @SuppressLint("SetJavaScriptEnabled")
     private void init() {
         mWebView = new X5WebView(this);
-        mViewParent.addView(mWebView, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        mViewParent.addView(mWebView);
 
         initProgressBar();
         mWebView.setWebViewClient(new WebViewClient() {
@@ -170,16 +155,26 @@ public class BrowserActivity extends BaseActivity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
+                if (mIntentTitle == null) {
+                    String title=view.getTitle();
+                    if (title != null && title.length() > MAX_LENGTH) {
+                        title = title.subSequence(0, MAX_LENGTH) + "...";
+                    }
+                    toolbarTitle.setText(title);
+                }
             }
         });
 
         mWebView.setWebChromeClient(new WebChromeClient() {
             @Override
-            public void onReceivedTitle(WebView view, String title) {
-                if (title != null && title.length() > MAX_LENGTH) {
-                    title = title.subSequence(0, MAX_LENGTH) + "...";
-                }
-                toolbarTitle.setText(title);
+            public void onReceivedTitle(WebView webView, String title) {
+                super.onReceivedTitle(webView, title);
+//                if (mIntentTitle == null) {
+//                    if (title != null && title.length() > MAX_LENGTH) {
+//                        title = title.subSequence(0, MAX_LENGTH) + "...";
+//                    }
+//                    toolbarTitle.setText(title);
+//                }
             }
 
             @Override
@@ -303,7 +298,7 @@ public class BrowserActivity extends BaseActivity {
         // webSetting.setPreFectch(true);
         long time = System.currentTimeMillis();
         if (mIntentUrl != null) {
-            mWebView.loadUrl(mIntentUrl.toString());
+            mWebView.loadUrl(mIntentUrl);
         }
         CookieSyncManager.createInstance(this);
         CookieSyncManager.getInstance().sync();
@@ -391,10 +386,10 @@ public class BrowserActivity extends BaseActivity {
         }
 
         @JavascriptInterface
-        public String getShareParameter(String shareUrl,String title,String content,String pic_surl_1) {
+        public String getShareParameter(String shareUrl, String title, String content, String pic_surl_1) {
 //            Toast.makeText(mContext, "点击分享", Toast.LENGTH_SHORT).show();
-            Dialog_ShareBottom dialog=new Dialog_ShareBottom();
-            dialog.setShareContent(title,content,shareUrl,pic_surl_1);
+            Dialog_ShareBottom dialog = new Dialog_ShareBottom();
+            dialog.setShareContent(title, content, shareUrl, pic_surl_1);
             dialog.show(getSupportFragmentManager());
             return "{\"err\":\"0\"}";
         }
@@ -415,7 +410,7 @@ public class BrowserActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (mWebView != null && mWebView.canGoBack()) {
-            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+//            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
             mWebView.goBack();
         } else {
             super.onBackPressed();
@@ -442,13 +437,13 @@ public class BrowserActivity extends BaseActivity {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case REQUEST_ADD://选择收货地址后，返回数据
-                    userAddrInfo = data.getParcelableExtra(KEY_USER_ADDR_INFO);
-
-                    String addrJson="{\"err\":0,\n" +
+                    ShoppingAddress.DataBean userAddrInfo = data.getParcelableExtra(KEY_USER_ADDR_INFO);
+                    ;//用户地址信息
+                    String addrJson = "{\"err\":0,\n" +
                             "\"type\":1,\n" +
-                            "\"phone\":"+userAddrInfo.getTel()+",\n" +
-                            "\"name\":"+userAddrInfo.getUname()+",\n" +
-                            "\"addr\":"+userAddrInfo.getAddr()+"}";
+                            "\"phone\":" + userAddrInfo.getTel() + ",\n" +
+                            "\"name\":" + userAddrInfo.getUname() + ",\n" +
+                            "\"addr\":" + userAddrInfo.getAddr() + "}";
                     try {
                         JSONObject addJSONObject = new JSONObject(addrJson);
                         mWebView.loadUrl("javascript:RetChooseAddress(" + addJSONObject + ")");

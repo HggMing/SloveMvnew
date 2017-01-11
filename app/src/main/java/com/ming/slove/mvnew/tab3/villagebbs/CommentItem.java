@@ -34,7 +34,11 @@ class CommentItem {
         if (StringUtils.isEmpty(uname)) {
             //若用户名为空，显示手机号，中间四位为*
             String iphone = mList.getUser_tel();
-            uname = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
+            if (!StringUtils.isEmpty(iphone)) {
+                uname = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
+            } else {
+                uname = "匿名";
+            }
         }
         name.setText(uname);
         //评论时间
