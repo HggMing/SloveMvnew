@@ -20,22 +20,21 @@ import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
-import com.ming.slove.mvnew.common.utils.MyGallerFinal;
+import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.PhotoOperate;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.MySpinner;
 import com.ming.slove.mvnew.common.widgets.customcamera.TakePhotoActivity;
 import com.ming.slove.mvnew.common.widgets.dialog.Dialog_Select_Date;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.FunctionConfig;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.GalleryFinal;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.model.PhotoInfo;
 import com.ming.slove.mvnew.model.bean.ApplyInfo2;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.UploadFiles;
 import com.ming.slove.mvnew.model.bean.UserInfo;
 import com.ming.slove.mvnew.tab4.selfinfo.UpdateAdressActivity;
 import com.orhanobut.hawk.Hawk;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.yalantis.ucrop.util.PictureConfig;
 
 import java.io.File;
 import java.util.List;
@@ -199,105 +198,6 @@ public class ApplyShopOwnerActivity extends BackActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_VILLAGE_ID://所属村的选择
-                if (resultCode == RESULT_OK) {
-                    vid = data.getStringExtra(VILLAGE_ID);
-                    villageName = data.getStringExtra(VILLAGE_NAME);
-                    tvVillageName.setText(villageName);
-                    Hawk.put(APPS.APPLY_INFO_VID + Hawk.get(APPS.ME_UID), vid);
-                }
-                break;
-            case REQUEST_PHOTO_ID_CARD://返回身份证正面
-                if (resultCode == RESULT_OK) {
-                    String photoPath1 = APPS.FILE_PATH_CAMERACACHE + TakePhotoActivity.ID_CARD + ".jpg";
-                    Glide.with(this)
-                            .load(photoPath1)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .into(imgPhoto0);
-                    //对图片压缩处理
-                    file1 = null;
-                    try {
-                        file1 = new PhotoOperate().scal(photoPath1);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    RequestBody requestBody = null;
-                    if (file1 != null) {
-                        requestBody = RequestBody.create(MediaType.parse("image/*"), file1);
-                    }
-
-                    MyServiceClient.getService()
-                            .post_UploadImage(authBody, requestBody)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<UploadFiles>() {
-                                @Override
-                                public void onCompleted() {
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-
-                                }
-
-                                @Override
-                                public void onNext(UploadFiles uploadFiles) {
-                                    cid_img1 = Integer.parseInt(uploadFiles.getInsert_id());
-                                }
-                            });
-                }
-                break;
-            case REQUEST_PHOTO_ID_CARD2://返回身份证反面
-                if (resultCode == RESULT_OK) {
-                    String photoPath2 = APPS.FILE_PATH_CAMERACACHE + TakePhotoActivity.ID_CARD2 + ".jpg";
-                    Glide.with(this)
-                            .load(photoPath2)
-                            .diskCacheStrategy(DiskCacheStrategy.NONE)
-                            .skipMemoryCache(true)
-                            .into(imgPhoto1);
-                    //对图片压缩处理
-                    file2 = null;
-                    try {
-                        file2 = new PhotoOperate().scal(photoPath2);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    RequestBody requestBody = null;
-                    if (file2 != null) {
-                        requestBody = RequestBody.create(MediaType.parse("image/*"), file2);
-                    }
-                    MyServiceClient.getService()
-                            .post_UploadImage(authBody, requestBody)
-                            .subscribeOn(Schedulers.io())
-                            .observeOn(AndroidSchedulers.mainThread())
-                            .subscribe(new Subscriber<UploadFiles>() {
-                                @Override
-                                public void onCompleted() {
-
-                                }
-
-                                @Override
-                                public void onError(Throwable e) {
-
-                                }
-
-                                @Override
-                                public void onNext(UploadFiles uploadFiles) {
-                                    cid_img2 = Integer.parseInt(uploadFiles.getInsert_id());
-                                }
-                            });
-                }
-                break;
-        }
-    }
-
-
     private void initData() {
         auth = Hawk.get(APPS.USER_AUTH);
         authBody = RequestBody.create(MediaType.parse("text/plain"), auth);
@@ -457,60 +357,134 @@ public class ApplyShopOwnerActivity extends BackActivity {
 
     private void takeIdCardPhotoOther() {
         //使用图库方式
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(this));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableCamera(true)
-                .build();
-        GalleryFinal.openGallerySingle(1001, functionConfig, mOnHanlderResultCallback);
+        MyPictureSelector pictureSelector = new MyPictureSelector(this);
+        pictureSelector.selectorSinglePicture();
     }
 
-    private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            if (resultList != null) {
-                PhotoInfo photoInfo = resultList.get(0);
-                photoPath3 = "file://" + photoInfo.getPhotoPath();
-                Glide.with(ApplyShopOwnerActivity.this)
-                        .load(photoPath3)
-                        .into(imgPhoto3);
-                //对图片压缩处理
-                File file = null;
-                try {
-                    file = new PhotoOperate().scal(photoInfo.getPhotoPath());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                RequestBody requestBody = null;
-                if (file != null) {
-                    requestBody = RequestBody.create(MediaType.parse("image/*"), file);
-                }
-                MyServiceClient.getService()
-                        .post_UploadImage(authBody, requestBody)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<UploadFiles>() {
-                            @Override
-                            public void onCompleted() {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_VILLAGE_ID://所属村的选择
+                    vid = data.getStringExtra(VILLAGE_ID);
+                    villageName = data.getStringExtra(VILLAGE_NAME);
+                    tvVillageName.setText(villageName);
+                    Hawk.put(APPS.APPLY_INFO_VID + Hawk.get(APPS.ME_UID), vid);
+                    break;
+                case REQUEST_PHOTO_ID_CARD://返回身份证正面
+                    String photoPath1 = APPS.FILE_PATH_CAMERACACHE + TakePhotoActivity.ID_CARD + ".jpg";
+                    Glide.with(this)
+                            .load(photoPath1)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(imgPhoto0);
+                    //对图片压缩处理
+                    file1 = null;
+                    try {
+                        file1 = new PhotoOperate().scal(photoPath1);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    RequestBody requestBody = null;
+                    if (file1 != null) {
+                        requestBody = RequestBody.create(MediaType.parse("image/*"), file1);
+                    }
 
-                            }
+                    MyServiceClient.getService()
+                            .post_UploadImage(authBody, requestBody)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<UploadFiles>() {
+                                @Override
+                                public void onCompleted() {
 
-                            @Override
-                            public void onError(Throwable e) {
+                                }
 
-                            }
+                                @Override
+                                public void onError(Throwable e) {
 
-                            @Override
-                            public void onNext(UploadFiles uploadFiles) {
-                                q_img = Integer.parseInt(uploadFiles.getInsert_id());
-                            }
-                        });
+                                }
+
+                                @Override
+                                public void onNext(UploadFiles uploadFiles) {
+                                    cid_img1 = Integer.parseInt(uploadFiles.getInsert_id());
+                                }
+                            });
+                    break;
+                case REQUEST_PHOTO_ID_CARD2://返回身份证反面
+                    String photoPath2 = APPS.FILE_PATH_CAMERACACHE + TakePhotoActivity.ID_CARD2 + ".jpg";
+                    Glide.with(this)
+                            .load(photoPath2)
+                            .diskCacheStrategy(DiskCacheStrategy.NONE)
+                            .skipMemoryCache(true)
+                            .into(imgPhoto1);
+                    //对图片压缩处理
+                    file2 = null;
+                    try {
+                        file2 = new PhotoOperate().scal(photoPath2);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    RequestBody requestBody2 = null;
+                    if (file2 != null) {
+                        requestBody2 = RequestBody.create(MediaType.parse("image/*"), file2);
+                    }
+                    MyServiceClient.getService()
+                            .post_UploadImage(authBody, requestBody2)
+                            .subscribeOn(Schedulers.io())
+                            .observeOn(AndroidSchedulers.mainThread())
+                            .subscribe(new Subscriber<UploadFiles>() {
+                                @Override
+                                public void onCompleted() {
+
+                                }
+
+                                @Override
+                                public void onError(Throwable e) {
+
+                                }
+
+                                @Override
+                                public void onNext(UploadFiles uploadFiles) {
+                                    cid_img2 = Integer.parseInt(uploadFiles.getInsert_id());
+                                }
+                            });
+                    break;
+                case PictureConfig.REQUEST_IMAGE://返回其他图片
+                    List<LocalMedia> mediaList = (List<LocalMedia>) data.getSerializableExtra(PictureConfig.REQUEST_OUTPUT);
+                    if (mediaList != null) {
+                        photoPath3 = mediaList.get(0).getCompressPath();
+                        Glide.with(this)
+                                .load(photoPath3)
+                                .placeholder(R.drawable.default_nine_picture)
+                                .into(imgPhoto3);
+                        File file = new File(photoPath3);
+                        RequestBody requestBody3 = RequestBody.create(MediaType.parse("image/*"), file);
+
+                        MyServiceClient.getService()
+                                .post_UploadImage(authBody, requestBody3)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Subscriber<UploadFiles>() {
+                                    @Override
+                                    public void onCompleted() {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+
+                                    @Override
+                                    public void onNext(UploadFiles uploadFiles) {
+                                        q_img = Integer.parseInt(uploadFiles.getInsert_id());
+                                    }
+                                });
+                    }
+                    break;
             }
         }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-            Toast.makeText(ApplyShopOwnerActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-        }
-    };
+    }
 }

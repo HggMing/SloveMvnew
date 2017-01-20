@@ -51,7 +51,7 @@ public class PhotoOperate {
         }
 
         long fileSize = outputFile.length();
-        final long fileMaxSize = 200 * 1024;
+        final long fileMaxSize = 400 * 1024;
         if (fileSize >= fileMaxSize) {
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;

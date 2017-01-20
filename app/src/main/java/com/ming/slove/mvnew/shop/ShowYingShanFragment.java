@@ -1,21 +1,20 @@
-package com.ming.slove.mvnew.tab1;
+package com.ming.slove.mvnew.shop;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintProgressBar;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
-import com.orhanobut.hawk.Hawk;
+import com.ming.slove.mvnew.tab1.BrowserActivity;
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -29,9 +28,9 @@ import butterknife.Bind;
 import butterknife.OnClick;
 
 /**
- * 主页
+ * 营山县长显示统计页面
  */
-public class WebFragment extends LazyLoadFragment {
+public class ShowYingShanFragment extends LazyLoadFragment {
     @Bind(R.id.webView)
     WebView webView;
     @Bind(R.id.progressBar)
@@ -42,7 +41,6 @@ public class WebFragment extends LazyLoadFragment {
     private String url;
     private boolean isLoadError;
 
-
     @Override
     public int getLayout() {
         return R.layout.fragment_web;
@@ -50,8 +48,7 @@ public class WebFragment extends LazyLoadFragment {
 
     @Override
     public void initViews(View view) {
-        String auth = Hawk.get(APPS.USER_AUTH);
-        url = APPS.BASE_URL + "/mobile/index?auth=" + auth + "&device_type=1";//device_type 普通浏览器：0  app:1  微信：2
+        url = APPS.BASE_URL + "/yingshan";
         setHasOptionsMenu(true);
     }
 
@@ -87,80 +84,9 @@ public class WebFragment extends LazyLoadFragment {
         webSetting.setAppCachePath(cachePath.getPath());
         File databasesPath = new File(APPS.FILE_PATH_DBCACHE);
         webSetting.setDatabasePath(databasesPath.getPath());
-
-        webView.addJavascriptInterface(new Object() {
-            @JavascriptInterface
-            public void closetouch() {
-//                Toast.makeText(mActivity, "关闭滑动", Toast.LENGTH_SHORT).show();
-                webView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        v.getParent().requestDisallowInterceptTouchEvent(false);
-                        return false;
-                    }
-                });
-            }
-
-            @JavascriptInterface
-            public void opentouch() {
-//                Toast.makeText(mActivity, "打开滑动", Toast.LENGTH_SHORT).show();
-                webView.setOnTouchListener(new View.OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        v.getParent().requestDisallowInterceptTouchEvent(true);
-                        return false;
-                    }
-                });
-            }
-        }, "mingapk");
-
-//        webView.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_MOVE:
-//                            v.getParent().requestDisallowInterceptTouchEvent(true);
-//                            break;
-//                    case MotionEvent.ACTION_UP:
-//                    case MotionEvent.ACTION_CANCEL:
-//                        v.getParent().requestDisallowInterceptTouchEvent(false);
-//                        break;
-//                }
-//                return false;
-//            }
-//        });
         // 打开链接。
         webView.loadUrl(url);
     }
-
-    // 注入js函数监听
-    private void addImageClickListner() {
-        // 这段js函数的功能就是，遍历所有的img几点，并添加onclick函数，函数的功能是在图片点击的时候调用本地java接口并传递url过去
-        webView.loadUrl("javascript:(function(){"
-                + "var objs = $('.lunboBox'); " //轮播图片的div容器，
-                + "for(var i=0;i<objs.length;i++)  " + "{"
-                + "    objs[i].ontouchstart=function()  " + "    {  "
-                + "        window.mingapk.opentouch();  "
-                + "   return true; }  "
-                + "}"
-
-                + "var objs = $('.lunboBox'); " //轮播图片的div容器，
-                + "for(var i=0;i<objs.length;i++)  " + "{"
-                + "    objs[i].ontouchend=function()  " + "    {  "
-                + "        window.mingapk.closetouch();  "
-                + "   return true; }  "
-                + "}"
-
-//                + "var objs = $('body'); "  //点击任何地方 ， 系统开始可以接受滚动
-//                + "for(var i=0;i<objs.length;i++)  " + "{"
-//                + "    objs[i].ontouchstart=function()  " + "    {  "
-//                + "        window.mingapk.opentouch();  "
-//                + "   return false; }  "
-//                + "}"
-
-                + "})()");
-    }
-
 
     @OnClick(R.id.content_empty)
     public void onClick() {
@@ -222,8 +148,7 @@ public class WebFragment extends LazyLoadFragment {
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
-            // html加载完成之后，添加监听图片的点击js函数
-            addImageClickListner();
+            // html加载完成之后
             webView.setVisibility(View.VISIBLE);
         }
 

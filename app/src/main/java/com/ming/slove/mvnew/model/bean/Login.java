@@ -17,47 +17,11 @@ public class Login {
 
     private int err;
     private String msg;
-    /**
-     * uid : 12018
-     * phone : 18140006179
-     * logname : 18140006179
-     * sex : 0
-     * uname : 一拳
-     * birth : 0
-     * ctime : 1456132445
-     * cid :
-     * loc :
-     * lastlog : 1457651689
-     * lastip : 171.213.53.193
-     * lastdev : 0
-     */
-
     private InfoEntity info;
-    private String auth;
-
-    /**
-     * 510922103201 : {"id":"549340","province_id":"510","province_name":"四川省","city_id":"510900000000","city_name":"遂宁市","county_id":"510922000000","county_name":"射洪县","town_id":"510922103000","town_name":"金华镇","village_id":"510922103201","village_name":"上方村","bid":"0"}
-     */
-
-
-    public ShopownerBean getShopowner() {
-        return shopowner;
-    }
-
-    public void setShopowner(ShopownerBean shopowner) {
-        this.shopowner = shopowner;
-    }
-
-    /**
-     * is_shopowner : 1
-     * manager_vid : 510922103201
-     */
-
     private ShopownerBean shopowner;
-
-    /**
-     * 510922103201 : {"id":"549340","province_id":"510","province_name":"四川省","city_id":"510900000000","city_name":"遂宁市","county_id":"510922000000","county_name":"射洪县","town_id":"510922103000","town_name":"金华镇","village_id":"510922103201","village_name":"上方村","bid":"0"}
-     */
+    private Map<String,VidInfoBean> vid_info;
+    private String auth;
+    private int is_show_yingshan;
 
 
     public void setErr(int err) {
@@ -72,8 +36,24 @@ public class Login {
         this.info = info;
     }
 
+    public void setShopowner(ShopownerBean shopowner) {
+        this.shopowner = shopowner;
+    }
+
+    public void setVid_info(Map<String, VidInfoBean> vid_info) {
+        this.vid_info = vid_info;
+    }
+
+    public Map<String, VidInfoBean> getVid_info() {
+        return vid_info;
+    }
+
     public void setAuth(String auth) {
         this.auth = auth;
+    }
+
+    public void setIs_show_yingshan(int is_show_yingshan) {
+        this.is_show_yingshan = is_show_yingshan;
     }
 
     public int getErr() {
@@ -88,11 +68,33 @@ public class Login {
         return info;
     }
 
+    public ShopownerBean getShopowner() {
+        return shopowner;
+    }
+
     public String getAuth() {
         return auth;
     }
 
+    public int getIs_show_yingshan() {
+        return is_show_yingshan;
+    }
+
     public static class InfoEntity {
+        /**
+         * uid : 12018
+         * phone : 18140006179
+         * logname : 18140006179
+         * sex : 0
+         * uname : 一拳
+         * birth : 0
+         * ctime : 1456132445
+         * cid :
+         * loc :
+         * lastlog : 1457651689
+         * lastip : 171.213.53.193
+         * lastdev : 0
+         */
         private String uid;
         private String phone;
         private String logname;
@@ -105,6 +107,9 @@ public class Login {
         private String lastlog;
         private String lastip;
         private String lastdev;
+        private String head;
+        private String rank;
+        private String user_star;
 
         public void setUid(String uid) {
             this.uid = uid;
@@ -154,6 +159,18 @@ public class Login {
             this.lastdev = lastdev;
         }
 
+        public void setHead(String head) {
+            this.head = head;
+        }
+
+        public void setRank(String rank) {
+            this.rank = rank;
+        }
+
+        public void setUser_star(String user_star) {
+            this.user_star = user_star;
+        }
+
         public String getUid() {
             return uid;
         }
@@ -201,9 +218,25 @@ public class Login {
         public String getLastdev() {
             return lastdev;
         }
+
+        public String getHead() {
+            return head;
+        }
+
+        public String getUser_star() {
+            return user_star;
+        }
+
+        public String getRank() {
+            return rank;
+        }
     }
 
     public static class ShopownerBean {
+        /**
+         * is_shopowner : 1
+         * manager_vid : 510922103201
+         */
         private int is_shopowner;
         private String manager_vid;
 
@@ -224,17 +257,6 @@ public class Login {
         }
     }
 
-
-    public Map<String, VidInfoBean> getVid_info() {
-        return vid_info;
-    }
-
-    public void setVid_info(Map<String, VidInfoBean> vid_info) {
-        this.vid_info = vid_info;
-    }
-
-    private Map<String,VidInfoBean> vid_info;
-
     public static class VidInfoBean {
         /**
          * id : 244602
@@ -249,7 +271,9 @@ public class Login {
          * village_id : 350881100203
          * village_name : 西埔村
          * bid : 0
-         * pwd : null
+         * pwd :
+         *office_id :  6
+         *groupid :  0
          */
 
         private String id;
@@ -264,7 +288,9 @@ public class Login {
         private String village_id;
         private String village_name;
         private String bid;
-        private Object pwd;
+        private String pwd;
+        private String office_id;
+        private String groupid;
 
         public String getId() {
             return id;
@@ -362,12 +388,28 @@ public class Login {
             this.bid = bid;
         }
 
-        public Object getPwd() {
+        public String getPwd() {
             return pwd;
         }
 
-        public void setPwd(Object pwd) {
+        public void setPwd(String pwd) {
             this.pwd = pwd;
+        }
+
+        public String getOffice_id() {
+            return office_id;
+        }
+
+        public void setOffice_id(String office_id) {
+            this.office_id = office_id;
+        }
+
+        public String getGroupid() {
+            return groupid;
+        }
+
+        public void setGroupid(String groupid) {
+            this.groupid = groupid;
         }
     }
 

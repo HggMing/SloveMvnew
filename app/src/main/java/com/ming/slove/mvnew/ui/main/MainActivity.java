@@ -32,6 +32,7 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.IpPort;
+import com.ming.slove.mvnew.shop.ShowYingShanFragment;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -128,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isFirstRun;//是否初次运行
 
     private int isShopOwner;//是否是店长,1是0不是
+    private int isShowYingshan;//是否是县长,1是0不是
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -354,13 +356,17 @@ public class MainActivity extends AppCompatActivity {
         //个推,初始化SDK
         PushManager.getInstance().initialize(this.getApplicationContext());
 
+        isShowYingshan = Hawk.get(APPS.IS_SHOW_YINGSHAN, 0);
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
-
 
         fragments.add(new WebFragment());
         fragments.add(new MessageFragment());
         fragments.add(new VillageListFragment());
-        if (isShopOwner == 1) {
+        if (isShowYingshan == 1) {//若为营山县长
+            fragments.add(new ShowYingShanFragment());
+            tab5Layout.setVisibility(View.VISIBLE);
+            tTab5.setText("我的县");
+        } else if (isShopOwner == 1) {//若为店长
             fragments.add(new MyShopFragment());
             tab5Layout.setVisibility(View.VISIBLE);
         } else {
@@ -444,13 +450,13 @@ public class MainActivity extends AppCompatActivity {
                 viewPager.setCurrentItem(2);
                 break;
             case R.id.tab4Layout:
-                if (isShopOwner == 0) {
+                if (isShopOwner == 0 && isShowYingshan == 0) {
                     viewPager.setCurrentItem(3);
                 } else {
                     viewPager.setCurrentItem(4);
                 }
                 break;
-            case R.id.tab5Layout://我的店
+            case R.id.tab5Layout://我的店or我的县
                 viewPager.setCurrentItem(3);
                 break;
         }
@@ -502,19 +508,19 @@ public class MainActivity extends AppCompatActivity {
                     setTab4ToB();
                     setTab5ToB();
                     break;
-                case 3://店长：我的店；普通：设置
-                    if (isShopOwner == 0) {//普通：设置
-                        toolbarTitle.setText(R.string.tab4_main);
-                        idToolbar = 4;
+                case 3://县长：我的县；店长：我的店；普通：设置
+                    if (isShowYingshan == 1) {//县长：我的县
+                        toolbarTitle.setText(R.string.tab5_main_1);
+                        idToolbar = 5;
 
-                        tTab4.setTextColor(themeColor);
-                        mTab41.setVisibility(View.VISIBLE);
-                        mTab40.setVisibility(View.GONE);
+                        tTab5.setTextColor(themeColor);
+                        mTab51.setVisibility(View.VISIBLE);
+                        mTab50.setVisibility(View.GONE);
                         setTab1ToB();
                         setTab2ToB();
                         setTab3ToB();
-                        setTab5ToB();
-                    } else {//店长：我的店
+                        setTab4ToB();
+                    } else if (isShopOwner == 1) {//店长：我的店
                         toolbarTitle.setText(R.string.tab5_main);
                         idToolbar = 5;
 
@@ -525,9 +531,20 @@ public class MainActivity extends AppCompatActivity {
                         setTab2ToB();
                         setTab3ToB();
                         setTab4ToB();
+                    } else {//普通：设置
+                        toolbarTitle.setText(R.string.tab4_main);
+                        idToolbar = 4;
+
+                        tTab4.setTextColor(themeColor);
+                        mTab41.setVisibility(View.VISIBLE);
+                        mTab40.setVisibility(View.GONE);
+                        setTab1ToB();
+                        setTab2ToB();
+                        setTab3ToB();
+                        setTab5ToB();
                     }
                     break;
-                case 4://仅店长：设置
+                case 4://店长or县长：设置
                     toolbarTitle.setText(R.string.tab4_main);
                     idToolbar = 4;
 
@@ -683,22 +700,40 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         switch (idToolbar) {
+            case 1://首页，刷新页面
+                menu.findItem(R.id.action_refresh).setVisible(true);
+                menu.findItem(R.id.action_friendlist).setVisible(false);
+                menu.findItem(R.id.action_follow).setVisible(false);
+                menu.findItem(R.id.action_theme).setVisible(false);
+                break;
             case 2://消息页面，进入好友列表
+                menu.findItem(R.id.action_refresh).setVisible(false);
                 menu.findItem(R.id.action_friendlist).setVisible(true);
                 menu.findItem(R.id.action_follow).setVisible(false);
                 menu.findItem(R.id.action_theme).setVisible(false);
                 break;
             case 3://村圈页面，进入关注村圈
+                menu.findItem(R.id.action_refresh).setVisible(false);
                 menu.findItem(R.id.action_friendlist).setVisible(false);
                 menu.findItem(R.id.action_follow).setVisible(true);
                 menu.findItem(R.id.action_theme).setVisible(false);
                 break;
             case 4://设置页面，进入主题切换
+                menu.findItem(R.id.action_refresh).setVisible(false);
                 menu.findItem(R.id.action_friendlist).setVisible(false);
                 menu.findItem(R.id.action_follow).setVisible(false);
                 menu.findItem(R.id.action_theme).setVisible(true);
                 break;
+            case 5://我的县，刷新页面
+                if (isShowYingshan == 1) {
+                    menu.findItem(R.id.action_refresh).setVisible(true);
+                    menu.findItem(R.id.action_friendlist).setVisible(false);
+                    menu.findItem(R.id.action_follow).setVisible(false);
+                    menu.findItem(R.id.action_theme).setVisible(false);
+                }
+                break;
             default://其他页面，无快捷按钮
+                menu.findItem(R.id.action_refresh).setVisible(false);
                 menu.findItem(R.id.action_friendlist).setVisible(false);
                 menu.findItem(R.id.action_follow).setVisible(false);
                 menu.findItem(R.id.action_theme).setVisible(false);

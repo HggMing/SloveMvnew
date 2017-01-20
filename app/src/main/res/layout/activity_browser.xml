@@ -46,6 +46,26 @@
                 android:layout_height="match_parent"
                 android:background="@color/white" />
 
+            <FrameLayout
+                android:id="@+id/content_empty"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="gone">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="无法加载页面，点击刷新"
+                    android:textColor="@color/font_black_8"
+                    android:textSize="@dimen/textsize_normal" />
+            </FrameLayout>
+
             <ProgressBar
                 android:id="@+id/progressBar1"
                 style="?android:attr/progressBarStyleHorizontal"

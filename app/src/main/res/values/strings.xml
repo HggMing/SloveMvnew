@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">爱简单base</string>
-    <string name="action_settings">设置</string>
     <string name="tab1_main">主页</string>
     <string name="tab1_main_1">我们村</string>
     <string name="tab2_main">消息</string>
     <string name="tab3_main">我的村</string>
     <string name="tab4_main">设置</string>
     <string name="tab5_main">我的店</string>
+    <string name="tab5_main_1">营山县</string>
 
     <!--Back2Activity-->
     <string name="btn_text_speak">按住 说话</string>

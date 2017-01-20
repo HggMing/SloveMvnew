@@ -7,13 +7,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.litesuits.orm.db.assit.QueryBuilder;
@@ -23,6 +27,7 @@ import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
+import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.NotifyUtil;
 import com.ming.slove.mvnew.common.utils.PhotoOperate;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -43,13 +48,15 @@ import com.ming.slove.mvnew.tab2.chat.keyboard.ChatAppsGridView;
 import com.ming.slove.mvnew.tab2.chat.keyboard.ChatKeyBoard;
 import com.orhanobut.hawk.Hawk;
 import com.sj.emoji.EmojiBean;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.yalantis.ucrop.util.FileUtils;
+import com.yalantis.ucrop.util.PictureConfig;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -61,6 +68,7 @@ import sj.keyboard.data.EmoticonEntity;
 import sj.keyboard.interfaces.EmoticonClickListener;
 import sj.keyboard.widget.EmoticonsEditText;
 import sj.keyboard.widget.FuncLayout;
+
 
 public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBoardListener {
 
@@ -75,6 +83,8 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
     private ChatMsgModel chatMsg;
     private String me;//接收者uid
     private String other;//发送者uid
+
+    private Uri cameraUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -469,29 +479,81 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
     }
 
     /**
-     * 发送图片消息
+     * 发送图片，点击事件
      *
      * @param event
      */
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void sendImage(SendImageEvent event) {
+    public void selectorPicture(SendImageEvent event) {
+        String type = event.getType();
+        if ("1".equals(type)) {//图片选择
+            MyPictureSelector pictureSelector = new MyPictureSelector(this);
+            pictureSelector.selectorSinglePicture();
+        } else {//type=2，为拍照
+            takePhoto();
+
+        }
+    }
+
+    private void takePhoto() {
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, "没有SD卡", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        File cameraFile = FileUtils.createCameraFile(this, 1);
+        if (cameraFile != null) {
+            cameraUri = Uri.fromFile(cameraFile);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
+            startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA);
+        } else {
+            Toast.makeText(this, "拍照失败：创建文件失败", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.REQUEST_IMAGE:
+                    List<LocalMedia> mediaList = (List<LocalMedia>) data.getSerializableExtra(PictureConfig.REQUEST_OUTPUT);
+                    if (mediaList != null) {
+                        String imagPath = mediaList.get(0).getCompressPath();
+                        sendImage(imagPath);
+                    }
+                    break;
+                case PictureConfig.REQUEST_CAMERA:
+                    // 拍照返回
+                    if (cameraUri != null) {
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, cameraUri));//更新图库
+
+                        File file = null;
+                        try {
+                            String cameraPath = cameraUri.getPath();
+                            file = new PhotoOperate().scal(cameraPath);//对图片压缩处理
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (file != null) {
+                            sendImage(file.getAbsolutePath());//发送图片
+                        }
+                    } else {
+                        Toast.makeText(this, "拍照失败，请重新拍摄。", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
+            }
+        }
+    }
+
+    /**
+     * 发送图片消息
+     */
+    public void sendImage(String imagePath) {
         ekBar.reset();//关闭功能键盘
-        //本地图片路径
-        String imagePath = event.getImagePath();
         //处理图片，保存到指定路径
-        File file = null;
-        try {
-            file = new PhotoOperate().scal(imagePath);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String imagePath2 = null;
-        String source = null;
-        if (file != null) {
-            imagePath2 = file.getAbsolutePath();
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath2);//图片文件转为Bitmap对象
-            source = BaseTools.toBase64(bitmap) + ".jpg";
-        }
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);//图片文件转为Bitmap对象
+        String source = BaseTools.toBase64(bitmap) + ".jpg";
 
         chatMsg = new ChatMsgModel();
         chatMsg.setType(ChatMsgModel.ITEM_TYPE_RIGHT);//发送消息
@@ -500,7 +562,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
         chatMsg.setSt(String.valueOf(System.currentTimeMillis()));//发送消息时间：当前时间
         chatMsg.setCt("1");//消息类型：图片
         chatMsg.setTxt("[图片]");//消息内容
-        chatMsg.setLink(imagePath2);
+        chatMsg.setLink(imagePath);
 
         //发送消息后，更新动态
         InstantMsgModel iMsg = MyDB.createDb(this).queryById(other, InstantMsgModel.class);

@@ -89,7 +89,21 @@
             app:showStyle="fill"
             app:singleImgSize="500dp"
             app:width_Y="11" />
-
+        <FrameLayout
+            android:id="@+id/m_player"
+            android:layout_width="210dp"
+            android:layout_height="120dp">
+            <ImageView
+                android:id="@+id/thumb_image_view"
+                android:layout_width="match_parent"
+                android:src="@color/alpha_background"
+                android:layout_height="match_parent" />
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:src="@drawable/jc_click_play_selector" />
+        </FrameLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"

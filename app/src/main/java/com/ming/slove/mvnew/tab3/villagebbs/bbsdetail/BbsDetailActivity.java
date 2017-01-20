@@ -33,6 +33,7 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
+import com.ming.slove.mvnew.common.utils.MediaUtils;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.bigimageview.BigImageViewActivity;
@@ -40,6 +41,7 @@ import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageView;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageViewAdapter;
+import com.ming.slove.mvnew.common.widgets.video.MyVideoPlayer;
 import com.ming.slove.mvnew.model.bean.BBSList;
 import com.ming.slove.mvnew.model.bean.BbsCommentList;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -49,7 +51,6 @@ import com.ming.slove.mvnew.model.database.MyDB;
 import com.ming.slove.mvnew.tab2.frienddetail.FriendDetailActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.VillageBbsActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.likeusers.LikeUsersArea;
-import com.ming.slove.mvnew.tab4.scommon.AdviceActivity;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -58,9 +59,9 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayer;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
-import me.shaohui.shareutil.ShareUtil;
-import me.shaohui.shareutil.share.SharePlatform;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -96,6 +97,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
     private LinearLayout bbsDetailHead;
     private LinearLayout bbsLikeLayout;
     private LikeUsersArea likeUsersArea;
+    private MyVideoPlayer mPlayer;
 
     private BbsDetailAdapter mAdapter = new BbsDetailAdapter();
     private XRecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
@@ -137,6 +139,20 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
             InputMethodManager inputManager = (InputMethodManager) commentEdit.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.showSoftInput(commentEdit, 0);
         }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        JCVideoPlayer.releaseAllVideos();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (JCVideoPlayer.backPress()) {
+            return;
+        }
+        super.onBackPressed();
     }
 
     private void setBbsDetailHead() {
@@ -279,8 +295,23 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
         };
         nineGridImage.setAdapter(nineGridViewAdapter);
         List<BBSList.DataEntity.ListEntity.FilesEntity> photoList = bbsDetail.getFiles();
-        nineGridImage.setImagesData(photoList);
-
+        //***新增视频显示
+        if (photoList!=null&&photoList.size() > 0) {
+            String url = APPS.BASE_URL + photoList.get(0).getUrl();
+            if (MediaUtils.isVideoFileType(url)) {//若为视频文件
+                mPlayer.setVisibility(View.VISIBLE);
+                nineGridImage.setVisibility(View.GONE);
+                //封面图片
+                Glide.with(this).load(url).thumbnail(0.5f).into(mPlayer.thumbImageView);
+                mPlayer.setUp(url, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "");
+            } else {
+                mPlayer.setVisibility(View.GONE);
+                nineGridImage.setImagesData(photoList);//加载九宫格图片
+            }
+        }else{
+            mPlayer.setVisibility(View.GONE);
+            nineGridImage.setVisibility(View.GONE);
+        }
         //点赞人员显示区
         View.OnClickListener mOnClickUser = new View.OnClickListener() {
             @Override
@@ -496,6 +527,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
         bbsReport = (TextView) header.findViewById(R.id.bbs_report);
         bbsDetailHead = (LinearLayout) header.findViewById(R.id.bbs_detail_head);
         bbsLikeLayout = (LinearLayout) header.findViewById(R.id.bbs_like_layout);
+        mPlayer = (MyVideoPlayer) header.findViewById(R.id.m_player);
         mXRecyclerView.addHeaderView(header);
 
         mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
@@ -693,16 +725,16 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
         if (id == R.id.action_share) {
 
             //显示第一张缩略图
-            BBSList.DataEntity.ListEntity.FilesEntity filesEntity=bbsDetail.getFiles().get(0);
+            BBSList.DataEntity.ListEntity.FilesEntity filesEntity = bbsDetail.getFiles().get(0);
             String imageUrl = APPS.BASE_URL + filesEntity.getSurl_2();
             if (StringUtils.isEmpty(filesEntity.getSurl_2())) {
                 imageUrl = APPS.BASE_URL + filesEntity.getSurl_1();
             }
             //分享链接的网址
-            String url=APPS.BASE_URL+"/bbs/bbsinfo?id="+bbsDetail.getId();
+            String url = APPS.BASE_URL + "/bbs/bbsinfo?id=" + bbsDetail.getId();
 
             Dialog_ShareBottom dialog = new Dialog_ShareBottom();
-            dialog.setShareContent(userName, bbsDetail.getConts(), url,imageUrl);
+            dialog.setShareContent(userName, bbsDetail.getConts(), url, imageUrl);
             dialog.show(getSupportFragmentManager());
             return true;
         }

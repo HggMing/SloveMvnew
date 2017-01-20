@@ -38,7 +38,7 @@ public class BackActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initContentView(R.layout.activity_base2);
+        initContentView(R.layout.activity_base);
 
         initViews();
     }

@@ -15,6 +15,7 @@ import com.tencent.smtt.export.external.extension.interfaces.IX5WebViewExtension
 import com.tencent.smtt.export.external.extension.proxy.ProxyWebViewClientExtension;
 import com.tencent.smtt.export.external.interfaces.IX5WebViewBase.HitTestResult;
 import com.tencent.smtt.export.external.interfaces.JsResult;
+import com.tencent.smtt.export.external.interfaces.MediaAccessPermissionsCallback;
 import com.tencent.smtt.sdk.WebViewCallbackClient;
 
 import java.util.HashMap;
@@ -273,6 +274,11 @@ public class X5WebViewEventHandler extends ProxyWebViewClientExtension implement
 	@Override
 	public void onColorModeChanged(long arg0) {
 
+	}
+
+	@Override
+	public boolean onPermissionRequest(String s, long l, MediaAccessPermissionsCallback mediaAccessPermissionsCallback) {
+		return false;
 	}
 
 	@Override

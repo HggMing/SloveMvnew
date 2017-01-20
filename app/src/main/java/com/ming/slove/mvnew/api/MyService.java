@@ -275,10 +275,9 @@ public interface MyService {
      */
     @FormUrlEncoded
     @POST("user/uhead")
-    Call<Result> postCall_UpdateHead(
+    Observable<Result> post_UpdateHead(
             @Field("auth") String auth,
             @Field("head") String head);
-
 
     /**
      * 修改用户信息接口
@@ -506,6 +505,20 @@ public interface MyService {
             @Part("files\"; filename=\"jpg") RequestBody file
             // @PartMap Map<String, RequestBody> params,
     );
+
+    /**
+     * 该接口用户帖子的附件上传，上传视频
+     * @param auth 验证参数
+     * @param type 0图片2视频（图片可以不传，默认0）
+     * @param file 附件上传
+     * @return
+     */
+    @Multipart
+    @POST("bbs/ufiles")
+    Observable<UploadFiles> post_UploadVideo(
+            @Part("auth") RequestBody auth,
+            @Part("type") RequestBody type,
+            @Part("files\"; filename=\"mp4") RequestBody file);
 
     /**
      * 发布新帖子

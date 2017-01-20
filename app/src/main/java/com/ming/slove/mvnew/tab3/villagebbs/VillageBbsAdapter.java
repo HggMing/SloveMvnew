@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -23,10 +24,12 @@ import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.BaseTools;
+import com.ming.slove.mvnew.common.utils.MediaUtils;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.bigimageview.BigImageViewActivity;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageView;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageViewAdapter;
+import com.ming.slove.mvnew.common.widgets.video.MyVideoPlayer;
 import com.ming.slove.mvnew.model.bean.BBSList;
 import com.ming.slove.mvnew.model.bean.BbsCommentList;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -40,6 +43,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -251,7 +255,27 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
         };
         holder.nineGridImageView.setAdapter(nineGridViewAdapter);
         List<BBSList.DataEntity.ListEntity.FilesEntity> photoList = mList.get(position).getFiles();
-        holder.nineGridImageView.setImagesData(photoList);
+        //***新增视频显示
+        if (photoList != null && photoList.size() > 0) {
+            final String url = APPS.BASE_URL + photoList.get(0).getUrl();
+            if (MediaUtils.isVideoFileType(url)) {//若为视频文件
+                holder.mPlayer.setVisibility(View.VISIBLE);
+                holder.nineGridImageView.setVisibility(View.GONE);
+
+                holder.mPlayer.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        JCVideoPlayerStandard.startFullscreen(mContext, MyVideoPlayer.class, url, "");
+                    }
+                });
+            } else {
+                holder.mPlayer.setVisibility(View.GONE);
+                holder.nineGridImageView.setImagesData(photoList);//加载九宫格图片
+            }
+        } else {
+            holder.mPlayer.setVisibility(View.GONE);
+            holder.nineGridImageView.setVisibility(View.GONE);
+        }
         //评论、点赞区域***************************************************************************************************************************
 
         if ((likeNumber.equals("0")) && (msgNumber).equals("0")) {//点赞数和评论均为0
@@ -377,6 +401,11 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
         ImageView triangle;
         @Bind(R.id.bbs_item)
         LinearLayout bbsItem;
+        @Bind(R.id.m_player)
+        FrameLayout mPlayer;
+        @Bind(R.id.thumb_image_view)
+        ImageView thumbImageView;
+
 
         LikeUsersArea likeUsersArea;
         CommentArea commentArea;

@@ -108,11 +108,16 @@ public class X5WebView extends WebView {
 
         @Override
         public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String captureType) {
-            Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-            i.addCategory(Intent.CATEGORY_OPENABLE);
-            i.setType("*/*");
-            ((Activity) (X5WebView.this.getContext())).startActivityForResult(Intent.createChooser(i, "choose files"),
-                    X5WebView.FILE_CHOOSER);
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            try {
+                ((Activity) (X5WebView.this.getContext())).startActivityForResult(Intent.createChooser(intent, "choose files"),
+                        1);
+            } catch (android.content.ActivityNotFoundException ex) {
+
+            }
+
             super.openFileChooser(uploadFile, acceptType, captureType);
         }
 
@@ -330,7 +335,12 @@ public class X5WebView extends WebView {
             if (isClampedY && !clampedY) {
                 this.reload();
             }
-            this.isClampedY = clampedY;
+            if (clampedY) {
+                this.isClampedY = true;
+
+            } else {
+                this.isClampedY = false;
+            }
         }
         super_onOverScrolled(scrollX, scrollY, clampedX, clampedY);
     }

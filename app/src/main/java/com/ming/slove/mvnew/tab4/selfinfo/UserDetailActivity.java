@@ -1,7 +1,6 @@
 package com.ming.slove.mvnew.tab4.selfinfo;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,14 +16,13 @@ import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
-import com.ming.slove.mvnew.common.utils.MyGallerFinal;
+import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.widgets.dialog.Dialog_UpdateSex;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.FunctionConfig;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.GalleryFinal;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.model.PhotoInfo;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.UserInfo;
 import com.orhanobut.hawk.Hawk;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.yalantis.ucrop.util.PictureConfig;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -37,6 +35,9 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 public class UserDetailActivity extends BackActivity {
 
@@ -139,57 +140,73 @@ public class UserDetailActivity extends BackActivity {
      * 修改头像
      */
     private void updateHead() {
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(this));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableEdit(true)//开启编辑功能
-                .setEnableCrop(true)//开启裁剪功能
-                .setEnableCamera(true)
-                .setCropSquare(true)//裁剪正方形
-                .setForceCrop(true)//启动强制裁剪功能,一进入编辑页面就开启图片裁剪，不需要用户手动点击裁剪，此功能只针对单选操作
-                .build();
-        GalleryFinal.openGallerySingle(1001, functionConfig, mOnHanlderResultCallback);
+        MyPictureSelector pictureSelector = new MyPictureSelector(this);
+        pictureSelector.selectorSquarePicture();
     }
 
-    private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            if (resultList != null) {
-                PhotoInfo photoInfo = resultList.get(0);
-                Glide.with(UserDetailActivity.this)
-                        .load("file://" + photoInfo.getPhotoPath())
-                        .bitmapTransform(new CropCircleTransformation(UserDetailActivity.this))
-                        .into(iconHead2);
-                Bitmap bitmap = BitmapFactory.decodeFile(photoInfo.getPhotoPath());//图片文件转为Bitmap对象
-                final String newHead = BaseTools.bitmapToBase64(bitmap) + ".jpg";
-                MyServiceClient.getService().postCall_UpdateHead(auth, newHead).enqueue(new Callback<Result>() {
-                    @Override
-                    public void onResponse(Call<Result> call, Response<Result> response) {
-                        if (response.isSuccessful()) {
-                            Result result = response.body();
-                            if (result != null) {
-                                Toast.makeText(UserDetailActivity.this, result.getMsg(), Toast.LENGTH_SHORT).show();
-                                if (result.getErr() == 0) {
-                                    //上传头像成功
-                                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
-                                    GalleryFinal.cleanCacheFile();//清除裁剪冗余图片
-                                }
-                            }
-                        }
-                    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.REQUEST_IMAGE://拍照或选择图片后，更新头像
+                    List<LocalMedia> mediaList = (List<LocalMedia>) data.getSerializableExtra(PictureConfig.REQUEST_OUTPUT);
+                    if (mediaList != null) {
+                        String imagPath = mediaList.get(0).getCompressPath();
+                        //刷新头像显示
+                        Glide.with(this)
+                                .load(imagPath)
+                                .bitmapTransform(new CropCircleTransformation(this))
+                                .into(iconHead2);
 
-                    @Override
-                    public void onFailure(Call<Result> call, Throwable t) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(imagPath);//图片文件转为Bitmap对象
+                        final String newHead = BaseTools.bitmapToBase64(bitmap) + ".jpg";
+                        MyServiceClient.getService()
+                                .post_UpdateHead(auth, newHead)
+                                .subscribeOn(Schedulers.io())
+                                .observeOn(AndroidSchedulers.mainThread())
+                                .subscribe(new Subscriber<Result>() {
+                                    @Override
+                                    public void onCompleted() {
+
+                                    }
+
+                                    @Override
+                                    public void onError(Throwable e) {
+
+                                    }
+
+                                    @Override
+                                    public void onNext(Result result) {
+                                        if (result != null) {
+                                            Toast.makeText(UserDetailActivity.this, result.getMsg(), Toast.LENGTH_SHORT).show();
+                                            if (result.getErr() == 0) {
+                                                //上传头像成功
+                                                Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
+                                            }
+                                        }
+                                    }
+                                });
                     }
-                });
+                    break;
+                case 11:
+                    String result = data.getStringExtra(NEW_NAME);
+                    getName.setText(result);
+                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
+                    break;
+                case 22:
+                    String result2 = data.getStringExtra(NEW_IDCARD);
+                    getIdCard.setText(result2);
+                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
+                    break;
+                case 33:
+                    String result3 = data.getStringExtra(NEW_ADDRESS);
+                    getAddress.setText(result3);
+                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
+                    break;
             }
         }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-            Toast.makeText(UserDetailActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-        }
-    };
+    }
 
     /**
      * 修改性别
@@ -259,42 +276,9 @@ public class UserDetailActivity extends BackActivity {
                 });
     }
 
-
     @Override
     public void onBackPressed() {
         setResult(RESULT_OK);
         super.onBackPressed();
     }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case 11:
-                if (resultCode == Activity.RESULT_OK) {//resultCode为回传的标记，我在B中回传的是RESULT_OK
-                    String result = data.getStringExtra(NEW_NAME);
-                    getName.setText(result);
-                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
-                }
-                break;
-            case 22:
-                if (resultCode == Activity.RESULT_OK) {
-                    String result2 = data.getStringExtra(NEW_IDCARD);
-                    getIdCard.setText(result2);
-                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
-                }
-                break;
-            case 33:
-                if (resultCode == Activity.RESULT_OK) {
-                    String result3 = data.getStringExtra(NEW_ADDRESS);
-                    getAddress.setText(result3);
-                    Hawk.put(APPS.IS_UPDATA_MY_INFO, false);
-                }
-                break;
-            default:
-                break;
-        }
-    }
-
-
 }

@@ -38,12 +38,12 @@ public class Back2Activity extends BaseActivity {
             //设置toolbar后,开启返回图标
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             //设备返回图标样式
-            getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_back);
+            getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_toolbar_back);
         }
     }
 
     protected void setActivityContent() {
-        setContentView(R.layout.activity_base2);
+        setContentView(R.layout.activity_base);
     }
 
     @Override

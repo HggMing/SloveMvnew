@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.utils.FileUtils;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 
 import java.io.BufferedOutputStream;
@@ -21,15 +22,7 @@ public class FileUtil {
     private static String initPath() {
         if (StringUtils.isEmpty(storagePath)) {
             storagePath = APPS.FILE_PATH_CAMERACACHE;
-            File f = new File(storagePath);
-            if (!f.exists()) {
-                f.mkdirs();
-                try {
-                    new File(storagePath, ".nomedia").createNewFile();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+            FileUtils.makeDirNoMedia(storagePath);
         }
         return storagePath;
     }

@@ -49,7 +49,6 @@ public class VillageBbsActivity extends BaseActivity implements VillageBbsAdapte
     public static final String LIKEED_TAG = "liked_tag";//标志已经点赞
     public static final String LIKE_NO_NEW = "like_no+1";//点赞数据+1
 
-
     @Bind(R.id.toolbar_bbs)
     Toolbar toolbar;
     @Bind(R.id.tab3_bbs_list)

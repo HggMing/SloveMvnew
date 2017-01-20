@@ -140,7 +140,10 @@ public class LoginPresenter implements LoginContract.Presenter {
                                 mModel.saveShopAddress(login);
                             }
                             //储存登录用户信息
-                            mModel.saveUserInfo(login.getAuth(), login.getInfo().getUid(), login.getShopowner().getIs_shopowner());
+                            mModel.saveUserInfo(login.getAuth(),
+                                    login.getInfo().getUid(),
+                                    login.getShopowner().getIs_shopowner(),
+                                    login.getIs_show_yingshan());
 
                             if (isRememberPwd) {
                                 mModel.saveLoginInfo(loginName, loginPwd);

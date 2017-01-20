@@ -9,17 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.common.utils.MyGallerFinal;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.FunctionConfig;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.GalleryFinal;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.model.PhotoInfo;
 import com.ming.slove.mvnew.model.bean.ChatAppBean;
 import com.ming.slove.mvnew.model.event.SendImageEvent;
 
 import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ChatAppsAdapter extends BaseAdapter {
 
@@ -73,10 +68,10 @@ public class ChatAppsAdapter extends BaseAdapter {
 //                    Toast.makeText(mContext,appBean.getFuncName(), Toast.LENGTH_SHORT).show();
                     switch (position) {
                         case 0://图片
-                            loadPicture();
+                            EventBus.getDefault().post(new SendImageEvent("1"));//将点击事件传到Activity'
                             break;
                         case 1://拍照
-                            loadPhoto();
+                            EventBus.getDefault().post(new SendImageEvent("2"));//将点击事件传到Activity'
                             break;
                     }
                 }
@@ -84,62 +79,6 @@ public class ChatAppsAdapter extends BaseAdapter {
         }
         return convertView;
     }
-
-    private void loadPicture() {
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(mContext));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableEdit(false)//开启编辑功能
-                .setEnableCrop(false)//开启裁剪功能
-                .setEnableCamera(false)
-                .build();
-        GalleryFinal.openGallerySingle(1001, functionConfig, mOnHanlderResultCallback);
-    }
-
-    private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            if (resultList != null) {
-                PhotoInfo photoInfo = resultList.get(0);
-//                Bitmap bitmap = BitmapFactory.decodeFile(photoInfo.getPhotoPath());//图片文件转为Bitmap对象
-                EventBus.getDefault().post(new SendImageEvent(photoInfo.getPhotoPath()));
-            }
-        }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-        }
-    };
-
-    private void loadPhoto() {
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(mContext));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableEdit(false)//开启编辑功能
-                .setEnableCrop(false)//开启裁剪功能
-                .setEnableRotate(false)//开启旋转功能
-                .setEnableCamera(false)//开启相机功能
-                .setEnablePreview(true)//开启预览功能
-//                .setSelected(imageList)//添加已选列表,只是在列表中默认呗选中不会过滤图片
-                .build();
-        GalleryFinal.openCamera(1003, functionConfig, mOnHanlderResultCallback2);
-    }
-
-    GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback2 = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            if (resultList != null) {
-                PhotoInfo photoInfo = resultList.get(0);
-//                Bitmap bitmap = BitmapFactory.decodeFile(photoInfo.getPhotoPath());//图片文件转为Bitmap对象
-                EventBus.getDefault().post(new SendImageEvent(photoInfo.getPhotoPath()));
-            }
-        }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-
-        }
-    };
 
     class ViewHolder {
         public ImageView iv_icon;

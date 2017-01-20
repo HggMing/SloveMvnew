@@ -41,7 +41,14 @@
 
 #自己app的bean
 
+-keep class com.ming.slove.mvnew.model.**{ *; }
+#bilibili主题
+-dontwarn com.bilibili.magicasakura.**
 
+#lite-orm
+#-keep  class com.litesuits.orm.**  { *; }
+
+-keep class com.sj.emoji.** {*;}
 
 
 ####################################################################################################################
@@ -79,11 +86,6 @@
 -keepclassmembers class * extends android.webkit.webViewClient {
     public void *(android.webkit.webView, jav.lang.String);
 }
-
-#GalleryFinal
--keep class com.ming.slove.mvnew.common.widgets.gallerfinal.widget.*{*;}
--keep class com.ming.slove.mvnew.common.widgets.gallerfinal.widget.crop.*{*;}
--keep class com.ming.slove.mvnew.common.widgets.gallerfinal.widget.zoonview.*{*;}
 
 #glide
 -keep public class * implements com.bumptech.glide.module.GlideModule

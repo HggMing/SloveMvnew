@@ -106,6 +106,13 @@
             app:singleImgSize="500dp"
             app:width_Y="11" />
 
+        <com.ming.slove.mvnew.common.widgets.video.MyVideoPlayer
+            android:id="@+id/m_player"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/list_item_selector"
+            android:foreground="?attr/selectableItemBackground"
+            android:visibility="gone" />
 
         <RelativeLayout
             android:layout_width="match_parent"

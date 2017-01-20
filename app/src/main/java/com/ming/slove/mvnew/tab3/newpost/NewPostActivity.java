@@ -3,7 +3,10 @@ package com.ming.slove.mvnew.tab3.newpost;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,22 +16,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.widgets.TintRadioButton;
+import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
-import com.ming.slove.mvnew.common.utils.MyGallerFinal;
+import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.PhotoOperate;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.FunctionConfig;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.GalleryFinal;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.model.PhotoInfo;
+import com.ming.slove.mvnew.common.widgets.video.MyVideoPlayer;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.UploadFiles;
 import com.orhanobut.hawk.Hawk;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.yalantis.ucrop.util.FileUtils;
+import com.yalantis.ucrop.util.PictureConfig;
 
 import java.io.File;
 import java.io.Serializable;
@@ -38,6 +45,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import rx.Observable;
@@ -51,20 +59,30 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
     public static String VILLAGE_ID = "village_id_post";
     @Bind(R.id.edit)
     EditText edit;
-    @Bind(R.id.popPicture)
-    ImageView popPicture;
-    @Bind(R.id.popPhoto)
-    ImageView popPhoto;
     @Bind(R.id.gridRecyclerView)
     RecyclerView mXRecyclerView;
+    @Bind(R.id.m_player)
+    MyVideoPlayer mPlayer;
+    @Bind(R.id.img_add_video)
+    ImageView addVideo;
+    @Bind(R.id.radio_all)
+    RadioGroup radioAll;
+    @Bind(R.id.rb_picture)
+    TintRadioButton rbPicture;
+    @Bind(R.id.rb_video)
+    TintRadioButton rbVideo;
 
     private NewPostAdapter mAdapter = new NewPostAdapter();
     private RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(this, 3, GridLayoutManager.VERTICAL, false);
-    List<PhotoInfo> imageList = new ArrayList<>();
+    private List<LocalMedia> imageList = new ArrayList<>();
 
     private String vid;//村id
     private String auth;
     private ProgressDialog dialog;
+
+    private Uri cameraUri;
+
+    private int choseType = 1;//1、选择图片2、选择视频
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,8 +90,41 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
         setContentView(R.layout.activity_new_post);
         ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_new_post);
+
+        initView();
+    }
+
+    private void initView() {
         auth = Hawk.get(APPS.USER_AUTH);
         configXRecyclerView();
+        //切换发送图片和发送视频
+        radioAll.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == rbPicture.getId()) {
+                    choseType = 1;
+                    imageList.clear();
+
+                    mXRecyclerView.setVisibility(View.VISIBLE);
+                    addVideo.setVisibility(View.GONE);
+                    mPlayer.setVisibility(View.GONE);
+                } else {
+                    choseType = 2;
+                    imageList.clear();
+
+                    mXRecyclerView.setVisibility(View.GONE);
+                    addVideo.setVisibility(View.VISIBLE);
+                    mPlayer.setVisibility(View.GONE);
+                }
+            }
+        });
+        //点击发送视频
+        addVideo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadVideo();
+            }
+        });
     }
 
     //配置RecyclerView
@@ -86,64 +137,87 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
         mXRecyclerView.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
     }
 
-    private void loadPicture() {
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(this));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setMutiSelectMaxSize(9)//配置多选数量
-                .setEnableEdit(false)//开启编辑功能
-                .setEnableCrop(false)//开启裁剪功能
-                .setEnableRotate(false)//开启旋转功能
-                .setEnableCamera(false)//开启相机功能
-                .setSelected(imageList)//添加已选列表,只是在列表中默认呗选中不会过滤图片
-                .build();
-        GalleryFinal.openGalleryMuti(1002, functionConfig, mOnHanlderResultCallback);
-    }
-
-    GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            imageList.clear();
-            imageList.addAll(resultList);
-            mAdapter.setItem(imageList);
-        }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-
-        }
-    };
-
+    /**
+     * 直接调用系统相机拍照
+     */
     private void loadPhoto() {
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(this));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableEdit(false)//开启编辑功能
-                .setEnableCrop(false)//开启裁剪功能
-                .setEnableRotate(false)//开启旋转功能
-                .setEnableCamera(false)//开启相机功能
-                .setEnablePreview(true)//开启预览功能
-                .setSelected(imageList)//添加已选列表,只是在列表中默认呗选中不会过滤图片
-                .build();
-        GalleryFinal.openCamera(1003, functionConfig, mOnHanlderResultCallback2);
+        if (!Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+            Toast.makeText(this, "没有SD卡", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        File cameraFile = FileUtils.createCameraFile(this, 1);
+        if (cameraFile != null) {
+            cameraUri = Uri.fromFile(cameraFile);
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, cameraUri);
+            startActivityForResult(cameraIntent, PictureConfig.REQUEST_CAMERA);
+        } else {
+            Toast.makeText(this, "拍照失败：创建文件失败", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback2 = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            if (imageList.size() < 9) {
-                imageList.add(resultList.get(0));
-            } else {
-                Toast.makeText(NewPostActivity.this, "图片已达到最大选择数量", Toast.LENGTH_SHORT).show();
+    /**
+     * 调用图库选择或拍摄图片
+     */
+    private void loadPicture() {
+        MyPictureSelector pictureSelector = new MyPictureSelector(this);
+        pictureSelector.selectorMultiplePicture(imageList);
+    }
+
+    /**
+     * 调用图库选择或拍摄视频
+     */
+    private void loadVideo() {
+        MyPictureSelector pictureSelector = new MyPictureSelector(this);
+        pictureSelector.selectorVideo();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.REQUEST_IMAGE:
+                    List<LocalMedia> mediaList = (List<LocalMedia>) data.getSerializableExtra(PictureConfig.REQUEST_OUTPUT);
+                    if (mediaList != null) {
+                        imageList.clear();
+                        imageList.addAll(mediaList);
+                        if (choseType == 1) {//返回图片显示
+                            mAdapter.setItem(imageList);
+                        } else {//返回视频显示
+                            addVideo.setVisibility(View.GONE);
+                            mPlayer.setVisibility(View.VISIBLE);
+
+                            String url = mediaList.get(0).getPath();
+                            if (!StringUtils.isEmpty(url)) {
+                                Glide.with(this).load(url).thumbnail(0.5f).into(mPlayer.thumbImageView); //封面图片
+                                mPlayer.setUp(url, JCVideoPlayerStandard.SCREEN_LAYOUT_NORMAL, "");
+                            }
+                        }
+                    }
+                    break;
+                case PictureConfig.REQUEST_CAMERA:
+                    // 拍照返回
+                    if (cameraUri != null) {
+                        sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, cameraUri));//更新图库
+
+                        if (imageList.size() < 9) {
+                            LocalMedia a = new LocalMedia();
+                            a.setPath(cameraUri.getPath());
+                            a.setType(1);
+                            imageList.add(a);
+                        } else {
+                            Toast.makeText(NewPostActivity.this, "图片已达到最大选择数量", Toast.LENGTH_SHORT).show();
+                        }
+                        mAdapter.setItem(imageList);
+
+                    } else {
+                        Toast.makeText(this, "拍照失败，请重新拍摄。", Toast.LENGTH_SHORT).show();
+                    }
+                    break;
             }
-            mAdapter.setItem(imageList);
         }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-
-        }
-    };
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -201,24 +275,31 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
                 return true;
             } else {
                 Observable.from(imageList)
-                        .flatMap(new Func1<PhotoInfo, Observable<UploadFiles>>() {
+                        .flatMap(new Func1<LocalMedia, Observable<UploadFiles>>() {
                             @Override
-                            public Observable<UploadFiles> call(PhotoInfo photoInfo) {
-//                                File file = new File(photoInfo.getPhotoPath());
-                                //对图片压缩处理
-                                File file = null;
-                                try {
-                                    file = new PhotoOperate().scal(photoInfo.getPhotoPath());
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                                RequestBody requestBody = null;
-                                if (file != null) {
-                                    requestBody = RequestBody.create(MediaType.parse("image/*"), file);
-                                }
+                            public Observable<UploadFiles> call(LocalMedia localMedia) {
+//                                File file = new File(localMedia.getPath());
                                 RequestBody authBody = RequestBody.create(MediaType.parse("text/plain"), auth);
+                                RequestBody requestBody = null;
 
-                                return MyServiceClient.getService().post_UploadImage(authBody, requestBody);
+                                if (choseType == 1) {//图片
+                                    //对图片压缩处理
+                                    File file = null;
+                                    try {
+                                        file = new PhotoOperate().scal(localMedia.getPath());
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                    if (file != null) {
+                                        requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+                                    }
+                                    return MyServiceClient.getService().post_UploadImage(authBody, requestBody);
+                                } else {//视频
+                                    File file = new File(localMedia.getPath());
+                                    requestBody = RequestBody.create(MediaType.parse("image/*"), file);
+                                    RequestBody typeBody = RequestBody.create(MediaType.parse("text/plain"), "2");
+                                    return MyServiceClient.getService().post_UploadVideo(authBody, typeBody, requestBody);
+                                }
                             }
                         })
                         .map(new Func1<UploadFiles, String>() {
@@ -255,22 +336,14 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick({R.id.popPicture, R.id.popPhoto})
-    public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.popPicture://点击选择图片
-                loadPicture();
-                break;
-            case R.id.popPhoto://点击拍照
-                loadPhoto();
-                break;
-        }
-    }
-
     @Override
     public void onItemClick(View view, final int position) {
         switch (view.getId()) {
-            case R.id.post_picture://点击图片查看大图
+            case R.id.img_add://打开图库，添加图片
+                loadPicture();
+                break;
+            case R.id.post_picture:
+                //点击图片查看大图
                 Intent intent = new Intent(this, BigImageViewActivity.class);
                 intent.putExtra(BigImageViewActivity.IMAGE_LIST, (Serializable) imageList);
                 intent.putExtra(BigImageViewActivity.IMAGE_INDEX, position);

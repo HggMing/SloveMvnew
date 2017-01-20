@@ -14,15 +14,14 @@ import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
-import com.ming.slove.mvnew.common.utils.MyGallerFinal;
-import com.ming.slove.mvnew.common.utils.PhotoOperate;
+import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.StringUtils;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.FunctionConfig;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.GalleryFinal;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.model.PhotoInfo;
 import com.ming.slove.mvnew.common.widgets.scanner.MyScannerActivity;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.orhanobut.hawk.Hawk;
+import com.orhanobut.logger.Logger;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.yalantis.ucrop.util.PictureConfig;
 
 import java.io.File;
 import java.util.List;
@@ -104,7 +103,7 @@ public class AddBookActivity extends BackActivity {
 
                         @Override
                         public void onError(Throwable e) {
-
+                            Logger.d(e.getMessage());
                         }
 
                         @Override
@@ -130,58 +129,45 @@ public class AddBookActivity extends BackActivity {
                 startActivityForResult(intent, REQUEST_CODE);
                 break;
             case R.id.add_book://图书封面图片
-                addBookPicture();
+                MyPictureSelector pictureSelector = new MyPictureSelector(this);
+                pictureSelector.selectorSinglePicture();
                 break;
         }
     }
 
-    private void addBookPicture() {
-        //使用图库方式
-        MyGallerFinal aFinal = new MyGallerFinal();
-        GalleryFinal.init(aFinal.getCoreConfig(this));
-        FunctionConfig functionConfig = new FunctionConfig.Builder()
-                .setEnableCamera(true)
-                .build();
-        GalleryFinal.openGallerySingle(1001, functionConfig, mOnHanlderResultCallback);
-    }
-
-    private GalleryFinal.OnHanlderResultCallback mOnHanlderResultCallback = new GalleryFinal.OnHanlderResultCallback() {
-        @Override
-        public void onHanlderSuccess(int reqeustCode, List<PhotoInfo> resultList) {
-            if (resultList != null) {
-                PhotoInfo photoInfo = resultList.get(0);
-                String imagPath = "file://" + photoInfo.getPhotoPath();
-                imgAdd.setVisibility(View.GONE);
-                Glide.with(AddBookActivity.this)
-                        .load(imagPath)
-                        .placeholder(R.drawable.default_nine_picture)
-                        .into(imgBook);
-                //对图片压缩处理
-                File file = null;
-                try {
-                    file = new PhotoOperate().scal(photoInfo.getPhotoPath());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (file != null) {
-                    imgBookBody = RequestBody.create(MediaType.parse("image/*"), file);
-                }
-            }
-        }
-
-        @Override
-        public void onHanlderFailure(int requestCode, String errorMsg) {
-            Toast.makeText(AddBookActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
-        }
-    };
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                String numberScan = data.getStringExtra(MyScannerActivity.SCAN_RESULT);
-                etNum.setText(numberScan);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_CODE:
+                    String numberScan = data.getStringExtra(MyScannerActivity.SCAN_RESULT);
+                    etNum.setText(numberScan);
+                    break;
+                case PictureConfig.REQUEST_IMAGE:
+                    List<LocalMedia> mediaList = (List<LocalMedia>) data.getSerializableExtra(PictureConfig.REQUEST_OUTPUT);
+                    if (mediaList != null) {
+                        String imagPath = mediaList.get(0).getCompressPath();
+                        imgAdd.setVisibility(View.GONE);
+                        Glide.with(this)
+                                .load(imagPath)
+                                .placeholder(R.drawable.default_nine_picture)
+                                .into(imgBook);
+                        File file = new File(imagPath);
+                        imgBookBody = RequestBody.create(MediaType.parse("image/*"), file);
+
+                        //对图片压缩处理
+                       /* File file = null;
+                        try {
+                            file = new PhotoOperate().scal(photoInfo.getPath());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        if (file != null) {
+                            imgBookBody = RequestBody.create(MediaType.parse("image*//*"), file);
+                        }*/
+                    }
+                    break;
             }
         }
     }

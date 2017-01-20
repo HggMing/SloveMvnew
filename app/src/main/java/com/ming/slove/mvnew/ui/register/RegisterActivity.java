@@ -266,6 +266,7 @@ public class RegisterActivity extends BackActivity {
                             Hawk.put(APPS.USER_AUTH, login.getAuth());//保存认证信息
                             Hawk.put(APPS.ME_UID, login.getInfo().getUid());
                             Hawk.put(APPS.IS_SHOP_OWNER, login.getShopowner().getIs_shopowner());
+                            Hawk.put(APPS.IS_SHOW_YINGSHAN, login.getIs_show_yingshan());
                             // .put(APP.LOGIN_NAME, regPhone)
                             // .put(APP.LOGIN_PASSWORD, pwd)
                             Hawk.delete(APPS.IS_FIRST_RUN);//用于显示添加村圈的引导

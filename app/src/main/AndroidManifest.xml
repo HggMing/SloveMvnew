@@ -5,10 +5,6 @@
     <!-- 网络需要权限 -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- GalleryFinal自定义相册 -->
-    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <!-- 拦截android实时短信,自动填写短信验证码 -->
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
@@ -73,19 +69,6 @@
         <meta-data
             android:name="com.ming.slove.mvnew.common.utils.MyGlideModule"
             android:value="GlideModule" />
-        <!-- gallerfinal相关页面 -->
-        <activity
-            android:name=".common.widgets.gallerfinal.PhotoSelectActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".common.widgets.gallerfinal.PhotoEditActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".common.widgets.gallerfinal.PhotoPreviewActivity"
-            android:configChanges="orientation|keyboard|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" />
         <!-- 支付宝相关网页 -->
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
@@ -173,6 +156,7 @@
         <activity
             android:name=".tab3.villagebbs.VillageBbsActivity"
             android:label="@string/title_activity_village_bbs"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".common.widgets.bigimageview.BigImageViewActivity"
@@ -196,6 +180,7 @@
         <activity
             android:name=".tab3.villagebbs.bbsdetail.BbsDetailActivity"
             android:label="@string/title_activity_bbs_detail"
+            android:configChanges="orientation|screenSize|keyboardHidden"
             android:screenOrientation="portrait" />
         <activity
             android:name=".tab4.scommon.SettingCommonActivity"

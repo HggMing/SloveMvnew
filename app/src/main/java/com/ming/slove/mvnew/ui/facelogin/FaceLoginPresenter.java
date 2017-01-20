@@ -141,7 +141,8 @@ public class FaceLoginPresenter implements FaceLoginContract.Presenter {
                         mModel.saveUserInfo(login.getAuth(),
                                 login.getInfo().getUid(),
                                 login.getShopowner().getIs_shopowner(),
-                                tPhone);
+                                tPhone,
+                                login.getIs_show_yingshan());
 
                         mView.loginSuccess();
                     }

@@ -5,13 +5,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.PixelFormat;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
@@ -19,23 +20,23 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.MyServiceClient;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.utils.StringUtils;
-import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
-import com.ming.slove.mvnew.model.bean.ShoppingAddress;
-import com.ming.slove.mvnew.tab3.product.ChooseAddressActivity;
-import com.orhanobut.hawk.Hawk;
-import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.app.APP;
 import com.ming.slove.mvnew.common.base.BaseActivity;
+import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
+import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.OrderInfo;
+import com.ming.slove.mvnew.model.bean.ShoppingAddress;
 import com.ming.slove.mvnew.tab1.webutils.X5WebView;
 import com.ming.slove.mvnew.tab2.chat.ChatActivity;
+import com.ming.slove.mvnew.tab3.product.ChooseAddressActivity;
 import com.ming.slove.mvnew.tab3.product.ProductListActivity;
+import com.orhanobut.hawk.Hawk;
 import com.tencent.smtt.export.external.interfaces.JsResult;
+import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.CookieSyncManager;
@@ -49,10 +50,6 @@ import com.tencent.smtt.sdk.WebViewClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import butterknife.ButterKnife;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -64,20 +61,20 @@ public class BrowserActivity extends BaseActivity {
     private TextView toolbarTitle;
     private Toolbar toolbar;
     private X5WebView mWebView;
-    private FrameLayout mViewParent;
-    private static final int MAX_LENGTH = 14;
-
+    private FrameLayout contentEmpty;
     private ProgressBar mPageLoadingProgressBar = null;
-    WebSettings webSetting;
-    private static final int REQUEST_ADD = 123;
+    private FrameLayout mViewParent;
 
+    private static final int MAX_LENGTH = 14;
+    private static final int REQUEST_ADD = 123;
+    WebSettings webSetting;
 
     public static String KEY_URL = "key_url";
     private String mIntentUrl;
 
     public static String WEB_TITLE = "the_title";
     private String mIntentTitle;
-
+    private boolean isLoadError;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +90,7 @@ public class BrowserActivity extends BaseActivity {
         mViewParent = (FrameLayout) findViewById(R.id.webView1);
         toolbar = (Toolbar) findViewById(R.id.toolbar_activity_base);
         toolbarTitle = (TextView) findViewById(R.id.toolbar_title);
+        contentEmpty = (FrameLayout) findViewById(R.id.content_empty);
 
         mIntentUrl = getIntent().getStringExtra(KEY_URL);
         mIntentTitle = getIntent().getStringExtra(WEB_TITLE);
@@ -118,6 +116,15 @@ public class BrowserActivity extends BaseActivity {
             //设备返回图标样式
             getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_toolbar_back);
         }
+
+        contentEmpty.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mWebView.reload();//刷新网页
+                mWebView.setVisibility(View.GONE);
+                contentEmpty.setVisibility(View.GONE);
+            }
+        });
 
         this.webViewTransportTest();
     }
@@ -153,15 +160,29 @@ public class BrowserActivity extends BaseActivity {
             }
 
             @Override
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
+            public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
+                super.onPageStarted(webView, s, bitmap);
+                isLoadError=false;
+            }
+
+            @Override
+            public void onPageFinished(WebView webView, String url) {
+                super.onPageFinished(webView, url);
                 if (mIntentTitle == null) {
-                    String title=view.getTitle();
+                    String title = webView.getTitle();
                     if (title != null && title.length() > MAX_LENGTH) {
                         title = title.subSequence(0, MAX_LENGTH) + "...";
                     }
                     toolbarTitle.setText(title);
                 }
+                webView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
+                super.onReceivedError(webView, webResourceRequest, webResourceError);
+                contentEmpty.setVisibility(View.VISIBLE);
+                isLoadError = true;
             }
         });
 
@@ -169,12 +190,12 @@ public class BrowserActivity extends BaseActivity {
             @Override
             public void onReceivedTitle(WebView webView, String title) {
                 super.onReceivedTitle(webView, title);
-//                if (mIntentTitle == null) {
-//                    if (title != null && title.length() > MAX_LENGTH) {
-//                        title = title.subSequence(0, MAX_LENGTH) + "...";
-//                    }
-//                    toolbarTitle.setText(title);
-//                }
+                if (mIntentTitle == null) {
+                    if (title != null && title.length() > MAX_LENGTH) {
+                        title = title.subSequence(0, MAX_LENGTH) + "...";
+                    }
+                    toolbarTitle.setText(title);
+                }
             }
 
             @Override
@@ -396,12 +417,25 @@ public class BrowserActivity extends BaseActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_refresh, menu);
+        return true;
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                return true;
+            case R.id.action_refresh:
+                if (isLoadError) {
+                    mWebView.setVisibility(View.GONE);
+                }
+                mWebView.reload();
+                contentEmpty.setVisibility(View.GONE);
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -411,7 +445,11 @@ public class BrowserActivity extends BaseActivity {
     public void onBackPressed() {
         if (mWebView != null && mWebView.canGoBack()) {
 //            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            if (isLoadError) {
+                mWebView.setVisibility(View.GONE);
+            }
             mWebView.goBack();
+            contentEmpty.setVisibility(View.GONE);
         } else {
             super.onBackPressed();
         }

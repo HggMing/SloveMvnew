@@ -14,7 +14,7 @@ import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.GlideDrawableImageViewTarget;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.common.utils.BaseTools;
-import com.ming.slove.mvnew.common.widgets.gallerfinal.model.PhotoInfo;
+import com.yalantis.ucrop.entity.LocalMedia;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ public class BigImageViewActivity extends AppCompatActivity {
     @Bind(R.id.progressBar)
     ProgressBar progressBar;
 
-    private List<PhotoInfo> mList;
+    private List<LocalMedia> mList;
 
 
     @Override
@@ -45,7 +45,7 @@ public class BigImageViewActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         BaseTools.transparentStatusBar(this);//透明状态栏
 
-        mList = (List<PhotoInfo>) getIntent().getSerializableExtra(IMAGE_LIST);
+        mList = (List<LocalMedia>) getIntent().getSerializableExtra(IMAGE_LIST);
         int index = getIntent().getIntExtra(IMAGE_INDEX, 0);
         mViewPager.setAdapter(new SamplePagerAdapter());
         mIndicator.setViewPager(mViewPager);//设置指示器
@@ -71,12 +71,12 @@ public class BigImageViewActivity extends AppCompatActivity {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             PhotoView photoView = new PhotoView(container.getContext());
-            String imageUrl ="file://"+mList.get(position).getPhotoPath();
+            String imageUrl = mList.get(position).getPath();
             progressBar.setVisibility(View.VISIBLE);
             //加载目标大图
             Glide.with(container.getContext())
                     .load(imageUrl)
-                    .into(new GlideDrawableImageViewTarget(photoView){
+                    .into(new GlideDrawableImageViewTarget(photoView) {
                         @Override
                         public void onResourceReady(GlideDrawable resource, GlideAnimation<? super GlideDrawable> animation) {
                             super.onResourceReady(resource, animation);

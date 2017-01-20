@@ -27,7 +27,7 @@
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
                 android:layout_weight="1"
-                android:background="@drawable/theme_adrbar_btn_refresh_normal0" />
+                android:background="@mipmap/btn_refresh_normal0" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -41,7 +41,7 @@
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
                 android:layout_weight="1"
-                android:background="@drawable/theme_toolbar_btn_back_fg_normal0" />
+                android:background="@mipmap/btn_back_fg_normal0" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -55,7 +55,7 @@
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
                 android:layout_weight="1"
-                android:background="@drawable/theme_toolbar_btn_home_fg_normal2" />
+                android:background="@mipmap/btn_home_fg_normal2" />
         </RelativeLayout>
     </LinearLayout>
 
@@ -72,11 +72,11 @@
             android:textColor="#4195f4"
             android:textSize="18sp" />
 
-        <com.example.test_webview_demo.utils.X5WebView
+        <com.ming.slove.mvnew.tab1.webutils.X5WebView
             android:id="@+id/web_filechooser"
             android:layout_width="fill_parent"
             android:layout_height="match_parent" >
-        </com.example.test_webview_demo.utils.X5WebView>
+        </com.ming.slove.mvnew.tab1.webutils.X5WebView>
 
         <RelativeLayout
             android:id="@+id/refreshPool"

@@ -41,7 +41,7 @@ public interface LoginContract {
 
         void saveShopAddress(Login login);//存储店长所在村id及地址
 
-        void saveUserInfo(String auth, String uid, int is_shopowner);//储存登录用户信息
+        void saveUserInfo(String auth, String uid, int is_shopowner,int is_show_yingshan);//储存登录用户信息
 
         void saveLoginInfo(String loginName, String loginPwd);//存储登录账号信息
 
