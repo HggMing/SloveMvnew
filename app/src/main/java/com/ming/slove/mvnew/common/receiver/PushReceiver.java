@@ -10,7 +10,7 @@ import android.os.Bundle;
 import com.google.gson.Gson;
 import com.igexin.sdk.PushConsts;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.NotifyUtil;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -70,7 +70,7 @@ public class PushReceiver extends BroadcastReceiver {
                 // 第三方应用需要将CID上传到第三方服务器，并且将当前用户帐号和CID进行关联，以便日后通过用户帐号查找CID进行消息推送
                 String cid = bundle.getString("clientid");
                 String me = Hawk.get(APPS.ME_UID);
-                MyServiceClient.getService().
+                OtherApi.getService().
                         getObservable_RegisterChat(me, 1, "yxj", cid)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -102,7 +102,7 @@ public class PushReceiver extends BroadcastReceiver {
         //请求消息
         MyDB.createDb(context);
         me_uid = Hawk.get(APPS.ME_UID, "");
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_MessageList(me_uid, "yxj", 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -211,7 +211,7 @@ public class PushReceiver extends BroadcastReceiver {
                     final FriendsModel friend = MyDB.createDb(context).queryById(uid, FriendsModel.class);
                     if (friend == null) {//如果消息来自非好友（新增：客户联系店长）
                         String auth = Hawk.get(APPS.USER_AUTH);
-                        MyServiceClient.getService().get_FriendDetail(auth, uid)
+                        OtherApi.getService().get_FriendDetail(auth, uid)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Subscriber<FriendDetail>() {

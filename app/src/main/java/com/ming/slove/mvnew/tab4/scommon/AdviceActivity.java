@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -64,7 +64,7 @@ public class AdviceActivity extends BackActivity {
 
     private void mSubmit() {
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Advice(auth, content, contact)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

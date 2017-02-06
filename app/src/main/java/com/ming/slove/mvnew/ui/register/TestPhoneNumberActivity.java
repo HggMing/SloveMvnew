@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -80,7 +80,7 @@ public class TestPhoneNumberActivity extends BackActivity {
      * 忘记密码，检查手机号是否存在
      */
     private void checkPhonePSW(final String phone) {
-        MyServiceClient.getService().get_CheckPhonePSW(phone)
+        OtherApi.getService().get_CheckPhonePSW(phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CheckPhone>() {
@@ -116,7 +116,7 @@ public class TestPhoneNumberActivity extends BackActivity {
      * 注册时，检查手机号是否已注册
      */
     private void checkPhone(final String phone) {
-        MyServiceClient.getService().get_CheckPhone(phone)
+        OtherApi.getService().get_CheckPhone(phone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<CheckPhone>() {

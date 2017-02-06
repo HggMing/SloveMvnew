@@ -1,7 +1,6 @@
 package com.ming.slove.mvnew.shop.shoptab4;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -18,7 +17,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
@@ -81,7 +80,7 @@ public class ShopTab4Fragment extends Fragment {
 
     private void initData() {
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_MyVillUsers(auth, 1, 20)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -149,7 +148,7 @@ public class ShopTab4Fragment extends Fragment {
             //点击事件
             holder.item.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {//// TODO: 2017/1/9 暂时禁用点击事件
+                public void onClick(View v) {// TODO: 2017/1/9 暂时禁用点击事件
 //                    Intent intent = new Intent(mContext, VillagerInfoActivity.class);
 //                    intent.putExtra(VillagerInfoActivity.VILLAGE_USER_INFO, data);
 //                    mContext.startActivity(intent);

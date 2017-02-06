@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -161,7 +161,7 @@ public class UserDetailActivity extends BackActivity {
 
                         Bitmap bitmap = BitmapFactory.decodeFile(imagPath);//图片文件转为Bitmap对象
                         final String newHead = BaseTools.bitmapToBase64(bitmap) + ".jpg";
-                        MyServiceClient.getService()
+                        OtherApi.getService()
                                 .post_UpdateHead(auth, newHead)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())
@@ -256,7 +256,7 @@ public class UserDetailActivity extends BackActivity {
      * @param sexNo 男：“0”，女：“1”
      */
     private void updateSexToServer(String sexNo, final Dialog_UpdateSex dialog) {
-        MyServiceClient.getService().postCall_UpdateInfo(auth, null, sexNo, null, null)
+        OtherApi.getService().postCall_UpdateInfo(auth, null, sexNo, null, null)
                 .enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {

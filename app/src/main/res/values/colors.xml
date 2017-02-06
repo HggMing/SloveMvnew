@@ -41,4 +41,8 @@
 
     <color name="itemback">#efefef</color>
     <color name="alpha_background">#c8999999</color>
+    <color name="alpha">#00ffffff</color>
+
+    <color name="red">#ffff0000</color>
+    <color name="yellow">#ffffff00</color>
 </resources>

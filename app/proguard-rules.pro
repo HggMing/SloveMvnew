@@ -50,6 +50,12 @@
 
 -keep class com.sj.emoji.** {*;}
 
+#PLDroidPlayer(直播播放器）
+-keep class com.pili.pldroid.player.** { *; }
+-keep class tv.danmaku.ijk.media.player.** {*;}
+#直播推流
+-keep class com.qiniu.pili.droid.streaming.** { *; }
+
 
 ####################################################################################################################
 ##############################################         第三方模块的混淆           ##################################

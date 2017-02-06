@@ -15,11 +15,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.api.login.LoginApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
-import com.ming.slove.mvnew.common.base.ClickDialog;
 import com.ming.slove.mvnew.common.base.WebViewActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.sms_autofill.SmsObserver;
@@ -28,7 +27,6 @@ import com.ming.slove.mvnew.common.widgets.sms_autofill.VerificationCodeSmsFilte
 import com.ming.slove.mvnew.model.bean.Login;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.ui.main.MainActivity;
-import com.ming.slove.mvnew.ui.update.UpdateApp;
 import com.orhanobut.hawk.Hawk;
 import com.tbruyelle.rxpermissions.RxPermissions;
 
@@ -133,7 +131,7 @@ public class RegisterActivity extends BackActivity {
     }
 
     private void getRCode() {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_RCode(sign, 1, regPhone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -206,7 +204,7 @@ public class RegisterActivity extends BackActivity {
      */
     private void register(String code, final String pwd, String rphone) {
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_Register(regPhone, code, pwd, sign, rphone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

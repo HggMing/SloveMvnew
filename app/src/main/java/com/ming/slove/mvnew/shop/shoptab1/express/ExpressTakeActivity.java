@@ -10,7 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -62,7 +62,7 @@ public class ExpressTakeActivity extends BackActivity {
 
     private void initData() {
         String vid = Hawk.get(APPS.MANAGER_VID);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_ExpressList(vid, "2")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

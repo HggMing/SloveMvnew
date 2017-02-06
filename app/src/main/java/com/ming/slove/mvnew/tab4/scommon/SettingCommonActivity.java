@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
@@ -94,11 +94,11 @@ public class SettingCommonActivity extends BackActivity {
      */
     private void connectWifi() {
         final String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService().get_IpPort()
+        OtherApi.getService().get_IpPort()
                 .flatMap(new Func1<IpPort, Observable<EbankWifiConnect>>() {
                     @Override
                     public Observable<EbankWifiConnect> call(IpPort ipPort) {
-                        return MyServiceClient.getService().get_EbankWifiConnect(ipPort.getIp(), ipPort.getPort(), ipPort.getMac(), auth);
+                        return OtherApi.getService().get_EbankWifiConnect(ipPort.getIp(), ipPort.getPort(), ipPort.getMac(), auth);
                     }
                 })
                 .subscribeOn(Schedulers.io())

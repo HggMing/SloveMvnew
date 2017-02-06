@@ -17,7 +17,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
@@ -310,7 +310,7 @@ public class ApplyShopOwnerActivity extends BackActivity {
                 Hawk.put(APPS.APPLY_INFO + Hawk.get(APPS.ME_UID), applyInfo2);
 
                 //提交申请
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_ApplyMaster(auth, vid, uname, contact, conts, sex, edu, cid_img1, cid_img2, q_img, brithday)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -391,7 +391,7 @@ public class ApplyShopOwnerActivity extends BackActivity {
                         requestBody = RequestBody.create(MediaType.parse("image/*"), file1);
                     }
 
-                    MyServiceClient.getService()
+                    OtherApi.getService()
                             .post_UploadImage(authBody, requestBody)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -430,7 +430,7 @@ public class ApplyShopOwnerActivity extends BackActivity {
                     if (file2 != null) {
                         requestBody2 = RequestBody.create(MediaType.parse("image/*"), file2);
                     }
-                    MyServiceClient.getService()
+                    OtherApi.getService()
                             .post_UploadImage(authBody, requestBody2)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
@@ -462,7 +462,7 @@ public class ApplyShopOwnerActivity extends BackActivity {
                         File file = new File(photoPath3);
                         RequestBody requestBody3 = RequestBody.create(MediaType.parse("image/*"), file);
 
-                        MyServiceClient.getService()
+                        OtherApi.getService()
                                 .post_UploadImage(authBody, requestBody3)
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())

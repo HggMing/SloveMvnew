@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -105,7 +105,7 @@ public class VillageMasterActivity extends BackActivity implements BaseRecyclerV
     }
 
     private void initData() {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_VillageMasterList(auth, vid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -180,7 +180,7 @@ public class VillageMasterActivity extends BackActivity implements BaseRecyclerV
     private void deleteDate(final int position) {
         String id = mList.get(position).getId();
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_DelVillageMaster(auth, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

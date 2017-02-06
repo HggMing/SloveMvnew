@@ -11,7 +11,7 @@ import android.widget.Toast;
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
@@ -91,7 +91,7 @@ public class AddBookActivity extends BackActivity {
             RequestBody nameBody = RequestBody.create(MediaType.parse("text/plain"), name);
             RequestBody numberBody = RequestBody.create(MediaType.parse("text/plain"), number);
 
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_AddBook(authBody, vidBody, nameBody, numberBody, imgBookBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

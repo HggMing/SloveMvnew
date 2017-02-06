@@ -9,7 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -60,7 +60,7 @@ public class RemarkNameActivity extends BackActivity {
             String uid = getIntent().getStringExtra(UID);
             final String newName = etAname.getText().toString();
 
-            MyServiceClient.getService().post_RemarkName(auth, uid, newName)
+            OtherApi.getService().post_RemarkName(auth, uid, newName)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<Result>() {

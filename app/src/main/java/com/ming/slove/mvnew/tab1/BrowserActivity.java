@@ -21,7 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -65,7 +65,6 @@ public class BrowserActivity extends BaseActivity {
     private ProgressBar mPageLoadingProgressBar = null;
     private FrameLayout mViewParent;
 
-    private static final int MAX_LENGTH = 14;
     private static final int REQUEST_ADD = 123;
     WebSettings webSetting;
 
@@ -162,7 +161,7 @@ public class BrowserActivity extends BaseActivity {
             @Override
             public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
                 super.onPageStarted(webView, s, bitmap);
-                isLoadError=false;
+                isLoadError = false;
             }
 
             @Override
@@ -170,9 +169,6 @@ public class BrowserActivity extends BaseActivity {
                 super.onPageFinished(webView, url);
                 if (mIntentTitle == null) {
                     String title = webView.getTitle();
-                    if (title != null && title.length() > MAX_LENGTH) {
-                        title = title.subSequence(0, MAX_LENGTH) + "...";
-                    }
                     toolbarTitle.setText(title);
                 }
                 webView.setVisibility(View.VISIBLE);
@@ -181,8 +177,10 @@ public class BrowserActivity extends BaseActivity {
             @Override
             public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
                 super.onReceivedError(webView, webResourceRequest, webResourceError);
-                contentEmpty.setVisibility(View.VISIBLE);
-                isLoadError = true;
+                if (webResourceError.getErrorCode() != -6) {
+                    contentEmpty.setVisibility(View.VISIBLE);
+                    isLoadError = true;
+                }
             }
         });
 
@@ -191,9 +189,6 @@ public class BrowserActivity extends BaseActivity {
             public void onReceivedTitle(WebView webView, String title) {
                 super.onReceivedTitle(webView, title);
                 if (mIntentTitle == null) {
-                    if (title != null && title.length() > MAX_LENGTH) {
-                        title = title.subSequence(0, MAX_LENGTH) + "...";
-                    }
                     toolbarTitle.setText(title);
                 }
             }
@@ -348,7 +343,7 @@ public class BrowserActivity extends BaseActivity {
         @JavascriptInterface
         public String Alipay(final String order_sn) {
 //            Toast.makeText(BrowserActivity.this, "order_sn:" + order_sn, Toast.LENGTH_SHORT).show();
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_OrderInfo(order_sn, auth)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

@@ -2,16 +2,12 @@ package com.ming.slove.mvnew.tab2.frienddetail;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.model.bean.BBSList;
@@ -23,8 +19,6 @@ import com.orhanobut.hawk.Hawk;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -78,7 +72,7 @@ public class FriendBbsActivity extends BackActivity implements VillageBbsAdapter
 
     private void getBBSList(int page) {
         String mUid = getIntent().getStringExtra(UID);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_FriendBbsList(auth, mUid, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

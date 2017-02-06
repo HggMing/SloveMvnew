@@ -2,8 +2,6 @@ package com.ming.slove.mvnew.tab4.mysetting.mypurse.tab2;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -86,13 +84,13 @@ public class IncomeBaseActivity extends BackActivity {
 
         String auth = Hawk.get(APPS.USER_AUTH);
         if (type == 1) {
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_Income_Base(auth)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(subscriber);
         } else {
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_Income_Business(auth)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

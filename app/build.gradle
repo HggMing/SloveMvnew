@@ -5,9 +5,9 @@ android {
     defaultConfig {
         applicationId "com.ming.slove.mvnew"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 22
         versionCode 1
-        versionName "1.0.12"
+        versionName "1.0.20"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 
@@ -20,11 +20,11 @@ android {
                 qq_id           : "1105819027"
         ]
         ndk {
-            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
+//            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
-
     signingConfigs {//签名配置
         release {//发布版签名配置
             try {
@@ -85,7 +85,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
     dependencies {
         compile fileTree(include: ['*.jar'], dir: 'libs')
         androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -145,11 +144,15 @@ android {
         //视频
 //        compile 'fm.jiecao:jiecaovideoplayer:4.8.3'
         compile 'fm.jiecao:jiecaovideoplayer:5.3'
+        compile 'com.qiniu.pili:pili-android-qos:0.8.18'
+        compile 'com.qiniu:happy-dns:0.2.11'
         //图库
         compile 'com.github.LuckSiege:PictureSelector:v1.1.0'
         //jar包
         compile files('lib/lite-orm-1.9.2.jar')
         compile files('lib/alipaySdk-20160825.jar')
         compile files('lib/tbs_sdk_thirdapp_v3.0.0.1038_43000_sharewithdownload_obfs_20170110_144724.jar')
+        compile files('lib/pldroid-player-1.4.1.jar')
+        compile files('lib/pldroid-media-streaming-2.1.2.jar')
     }
 }

@@ -8,7 +8,7 @@ import android.view.View;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -119,7 +119,7 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
     }
 
     private void initData(int page) {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_VillageInfoList(vid, type, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -183,7 +183,7 @@ public class VillageInfoActivity extends BackActivity implements BaseRecyclerVie
     private void deleteDate(final int position) {
         String id = mList.get(position).getId();
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_DelVillageInfo(auth, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

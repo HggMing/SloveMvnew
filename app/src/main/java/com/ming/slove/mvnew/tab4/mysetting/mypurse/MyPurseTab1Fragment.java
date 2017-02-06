@@ -11,12 +11,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.BaseTools;
-import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.common.widgets.CustomItem;
 import com.ming.slove.mvnew.model.bean.MoneyDetail;
 import com.ming.slove.mvnew.model.bean.ResultOther;
@@ -64,7 +63,7 @@ public class MyPurseTab1Fragment extends LazyLoadFragment {
     public void loadData() {
         //显示账号余额
         auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Money(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -85,7 +84,7 @@ public class MyPurseTab1Fragment extends LazyLoadFragment {
                     }
                 });
         //显示收支明细
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_MoneyDetail(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -129,7 +128,7 @@ public class MyPurseTab1Fragment extends LazyLoadFragment {
     @OnClick(R.id.take_money)
     public void onClick() {
         //检测是否设置钱包密码
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_IsSetPWD(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

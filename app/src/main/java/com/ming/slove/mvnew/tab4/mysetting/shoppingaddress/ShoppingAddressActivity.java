@@ -13,7 +13,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -68,7 +68,7 @@ public class ShoppingAddressActivity extends BackActivity implements ShoppingAdd
 
     private void initData() {
         //设置数据
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_ShoppingAddress(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -119,7 +119,7 @@ public class ShoppingAddressActivity extends BackActivity implements ShoppingAdd
             sd_is_def = "1";
         }
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_EditShoppingAddress(auth, data.getId(), data.getUname(), data.getAddr(), data.getTel(), sd_is_def, data.getZipcode())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -219,7 +219,7 @@ class ShoppingAddressAdapter extends BaseRecyclerViewAdapter<ShoppingAddress.Dat
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 String auth = Hawk.get(APPS.USER_AUTH);
-                                MyServiceClient.getService()
+                                OtherApi.getService()
                                         .post_DelShoppingAddress(auth, data.getId())
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())

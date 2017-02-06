@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -115,7 +115,7 @@ public class EditShoppingAdressActivity extends BackActivity {
             String auth = Hawk.get(APPS.USER_AUTH);
             if (data != null) {
                 String sd_id = data.getId();
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_EditShoppingAddress(auth, sd_id, sd_name, sd_addr, sd_phone, sd_is_def, sd_code)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -137,7 +137,7 @@ public class EditShoppingAdressActivity extends BackActivity {
                             }
                         });
             } else {
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_AddShoppingAddress(auth, sd_name, sd_addr, sd_phone, sd_is_def, sd_code)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

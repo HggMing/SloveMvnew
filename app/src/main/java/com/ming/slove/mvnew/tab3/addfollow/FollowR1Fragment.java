@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.RecommendVillage;
@@ -70,7 +70,7 @@ public class FollowR1Fragment extends Fragment implements FollowR1Adapter.OnItem
 
     private void getDataList() {
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_RecommendVillage(auth)
                 .flatMap(new Func1<RecommendVillage, Observable<RecommendVillage.DataBean>>() {
                     @Override
@@ -166,7 +166,7 @@ public class FollowR1Fragment extends Fragment implements FollowR1Adapter.OnItem
 
     private void followVillage(int position) {
         String vid = mList.get(position).getVillage_id();
-        MyServiceClient.getService().postCall_FollowVillage(auth, vid)
+        OtherApi.getService().postCall_FollowVillage(auth, vid)
                 .enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {

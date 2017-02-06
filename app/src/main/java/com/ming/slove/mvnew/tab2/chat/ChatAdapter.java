@@ -17,7 +17,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -32,7 +32,6 @@ import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -282,7 +281,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                                         share_id = s.substring(begin + 3, end);
                                     }
 
-                                    MyServiceClient.getService()
+                                    OtherApi.getService()
                                             .get_BBSDetail(auth, share_id)
                                             .map(new Func1<BBSDetail, BBSList.DataEntity.ListEntity>() {
                                                 @Override

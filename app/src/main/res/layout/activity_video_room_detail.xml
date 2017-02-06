@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/stand_bg"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="205dp"
+        android:background="@color/black"
+        android:orientation="vertical">
+
+        <com.pili.pldroid.player.widget.PLVideoTextureView
+            android:id="@+id/VideoView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/CoverView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center" />
+
+        <LinearLayout
+            android:id="@+id/LoadingView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <ProgressBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="加载中，请稍等..."
+                android:textColor="@android:color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="10dp"
+            android:onClick="onClickFullScreen"
+            android:src="@drawable/btn_fullscreen_selector" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:layout_margin="6dp"
+            android:src="@mipmap/defalt_user_circle"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/icon"
+            android:layout_marginRight="12dp"
+            android:layout_toRightOf="@+id/icon"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/font_black_4"
+            android:textSize="14sp"
+            tools:text="内容很多内容容很多内容很多内容容很多内容很多内容容很多内容很多内容容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多" />
+
+
+        <com.bilibili.magicasakura.widgets.TintTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/content"
+            android:layout_below="@id/content"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/theme_color_primary"
+            android:textSize="12sp"
+            tools:text="超级小胖纸" />
+
+        <TextView
+            android:id="@+id/number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/name"
+            android:layout_marginBottom="12dp"
+            android:layout_toRightOf="@id/name"
+            android:drawableLeft="@mipmap/icon_emotion"
+            android:drawablePadding="5dp"
+            android:textColor="@color/font_black_8"
+            android:textSize="12sp"
+            tools:text="3人正在看" />
+    </RelativeLayout>
+
+    <include layout="@layout/divide_15_top_bottom" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.bilibili.magicasakura.widgets.TintImageView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="@dimen/padding_12"
+            android:background="@color/theme_color_primary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="@dimen/padding_12"
+            android:text="正在观看" />
+    </LinearLayout>
+
+    <com.jcodecraeer.xrecyclerview.XRecyclerView
+        android:id="@+id/m_x_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="16dp" />
+</LinearLayout>

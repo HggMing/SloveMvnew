@@ -13,7 +13,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -63,7 +63,7 @@ public class BindCardActivity extends BackActivity {
 
     private void initData() {
         //设置数据
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_CardList(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -156,7 +156,7 @@ public class BindCardActivity extends BackActivity {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
                                     String auth = Hawk.get(APPS.USER_AUTH);
-                                    MyServiceClient.getService()
+                                    OtherApi.getService()
                                             .post_DelCard(auth, data.getId())
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())

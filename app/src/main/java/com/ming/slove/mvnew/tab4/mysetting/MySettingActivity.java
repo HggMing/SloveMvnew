@@ -3,10 +3,9 @@ package com.ming.slove.mvnew.tab4.mysetting;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.widgets.CustomItem;
@@ -47,7 +46,7 @@ public class MySettingActivity extends BackActivity {
         auth = Hawk.get(APPS.USER_AUTH);
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Money(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

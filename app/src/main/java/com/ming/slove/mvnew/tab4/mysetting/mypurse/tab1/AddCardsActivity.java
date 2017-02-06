@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -69,7 +69,7 @@ public class AddCardsActivity extends BackActivity {
             }
 
             String auth = Hawk.get(APPS.USER_AUTH);
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_AddCard(auth, bank_name, bank_no, bank_true_name)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

@@ -73,6 +73,7 @@
     <string name="title_activity_new_post">发布帖子</string>
     <string name="title_activity_government_affairs">政务</string>
     <string name="title_activity_village_situation">村况</string>
+    <string name="title_activity_add_new_live_room">添加直播房间</string>
 
     <string name="title_activity_user_detail">个人信息</string>
     <string name="title_activity_update_uname">设置用户名</string>
@@ -140,4 +141,14 @@
     <string name="empty_income_business">本月暂无业务提成记录！</string>
     <string name="empty_income_history">暂无历史月份收入！</string>
     <string name="empty_share_friendlist">你还没有添加好友，请添加后再分享。</string>
+    <string name="empty_video_room_list">暂无人直播，可点击右下角按钮发起直播。</string>
+
+    <!--直播相关-->
+    <string name="flash_light_on">打开</string>
+    <string name="flash_light_off">关闭</string>
+
+    <string name="string_state_ready">直播已暂停</string>
+    <string name="string_state_preparing">准备</string>
+    <string name="string_state_connecting">正在连接</string>
+    <string name="string_state_streaming">直播中</string>
 </resources>

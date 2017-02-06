@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/live_video_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/stand_bg"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="6dp"
+        android:layout_marginLeft="-12dp"
+        android:layout_marginRight="-12dp"
+        android:background="@mipmap/divide_shade_down" />
+
+    <FrameLayout
+        android:id="@+id/m_player"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_marginTop="6dp">
+
+        <ImageView
+            android:id="@+id/thumb_image_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:background="@color/alpha_background" />
+
+        <com.bilibili.magicasakura.widgets.TintButton
+            android:layout_width="wrap_content"
+            android:layout_height="26dp"
+            android:layout_gravity="end"
+            android:clickable="false"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/button_alpha"
+            android:text="*直播中"
+            android:textColor="@color/theme_color_primary"
+            android:textSize="@dimen/textsize_normal" />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/jc_click_play_selector"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="37dp"
+            android:layout_height="37dp"
+            android:layout_margin="6dp"
+            android:visibility="visible"
+            android:src="@mipmap/defalt_user_circle" />
+
+        <TextView
+            android:id="@+id/content"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/icon"
+            android:layout_marginRight="12dp"
+            android:layout_toRightOf="@+id/icon"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:textColor="@color/font_black_4"
+            android:textSize="14sp"
+            tools:text="内容很多内容容很多内容很多内容容很多内容很多内容容很多内容很多内容容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多内容很多" />
+
+
+        <com.bilibili.magicasakura.widgets.TintTextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/content"
+            android:layout_below="@id/content"
+            android:layout_marginTop="6dp"
+            android:textColor="@color/theme_color_primary"
+            android:textSize="12sp"
+            tools:text="超级小胖纸" />
+
+        <TextView
+            android:id="@+id/number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@id/name"
+            android:layout_marginLeft="10dp"
+            android:layout_toRightOf="@id/name"
+            android:drawableLeft="@mipmap/icon_emotion"
+            android:drawablePadding="5dp"
+            android:textColor="@color/font_black_8"
+            android:textSize="12sp"
+            tools:text="3人正在看" />
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="-12dp"
+        android:layout_marginRight="-12dp"
+        android:layout_marginTop="6dp"
+        android:background="@mipmap/divide_shade_up" />
+
+</LinearLayout>

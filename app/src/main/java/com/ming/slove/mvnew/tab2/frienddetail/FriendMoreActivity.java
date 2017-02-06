@@ -14,7 +14,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -90,7 +90,7 @@ public class FriendMoreActivity extends BackActivity {
         String auth = Hawk.get(APPS.USER_AUTH);
         String uid = getIntent().getStringExtra(FRIEND_UID);
 
-        MyServiceClient.getService().get_FriendDetail(auth, uid)
+        OtherApi.getService().get_FriendDetail(auth, uid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<FriendDetail>() {

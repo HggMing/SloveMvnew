@@ -13,7 +13,7 @@ import com.bilibili.magicasakura.widgets.TintProgressBar;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -191,7 +191,7 @@ public class MyOrderListFragment extends LazyLoadFragment {
                                                 new DialogInterface.OnClickListener() {
                                                     @Override
                                                     public void onClick(DialogInterface dialog, int which) {
-                                                        MyServiceClient.getService().post_OrderConfirm(auth, mList.get(position).getOrder_sn())
+                                                        OtherApi.getService().post_OrderConfirm(auth, mList.get(position).getOrder_sn())
                                                                 .subscribeOn(Schedulers.io())
                                                                 .observeOn(AndroidSchedulers.mainThread())
                                                                 .subscribe(mResultSubscriber);
@@ -208,7 +208,7 @@ public class MyOrderListFragment extends LazyLoadFragment {
                                     builder.create().show();
                                 }
                                 break;
-                            case "5"://去评价//// TODO: 2017/1/6  
+                            case "5"://去评价//TODO: 2017/1/6
                                 Toast.makeText(getContext(), "去评价", Toast.LENGTH_SHORT).show();
                                 break;
                         }
@@ -228,7 +228,7 @@ public class MyOrderListFragment extends LazyLoadFragment {
                                         new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                MyServiceClient.getService().post_OrderCancel(auth, mList.get(position).getOrder_sn())
+                                                OtherApi.getService().post_OrderCancel(auth, mList.get(position).getOrder_sn())
                                                         .subscribeOn(Schedulers.io())
                                                         .observeOn(AndroidSchedulers.mainThread())
                                                         .subscribe(mResultSubscriber);
@@ -290,7 +290,7 @@ public class MyOrderListFragment extends LazyLoadFragment {
         };
 
         if (fromWhere == 0) {//全部
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_OrderList(auth, page, PAGE_SIZE)
                     .subscribeOn(Schedulers.io())
                     .flatMap(new Func1<MyOrderList, Observable<MyOrderList.DataBean.ListBean>>() {
@@ -303,7 +303,7 @@ public class MyOrderListFragment extends LazyLoadFragment {
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(myOrderListSubscriber);
         } else {
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_OrderList(auth, page, PAGE_SIZE)
                     .subscribeOn(Schedulers.io())
                     .flatMap(new Func1<MyOrderList, Observable<MyOrderList.DataBean.ListBean>>() {

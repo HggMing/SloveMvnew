@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -69,7 +69,7 @@ public class EditExpressTakeActivity extends BackActivity {
     private void settingExpressFrim() {
         mAdapter = mySp.getAdapter(this);
         //可选数据列表
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_ExpressFirm(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -141,7 +141,7 @@ public class EditExpressTakeActivity extends BackActivity {
                 return true;
             }
             String vid = Hawk.get(APPS.MANAGER_VID);
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_EditExpressTake(auth, vid, number, "2", expressFirm, name, phone)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

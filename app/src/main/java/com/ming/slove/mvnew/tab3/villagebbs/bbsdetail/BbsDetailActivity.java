@@ -29,7 +29,7 @@ import com.bumptech.glide.Priority;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -211,7 +211,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
 
             private void deleteBbs() {
                 String id = bbsDetail.getId();
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_DeleteBbs(auth, id)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -361,7 +361,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
         bbsLikeLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyServiceClient.getService().getCall_ClickLike(auth, pid).enqueue(new Callback<Result>() {
+                OtherApi.getService().getCall_ClickLike(auth, pid).enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {
                         if (response.isSuccessful()) {
@@ -442,7 +442,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
             }
 
             private void reportBbs(String conts) {
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_Report(auth, bid, conts)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -472,7 +472,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
     }
 
     private void getLikeList(String pid) {
-        MyServiceClient.getService().get_ZanList(auth, pid, 1, 99)
+        OtherApi.getService().get_ZanList(auth, pid, 1, 99)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ZanList>() {
@@ -549,7 +549,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
     }
 
     private void getDataList(int page) {
-        MyServiceClient.getService().get_BbsCommentList(auth, pid, page, PAGE_SIZE)
+        OtherApi.getService().get_BbsCommentList(auth, pid, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<BbsCommentList>() {
@@ -597,7 +597,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
     private void deleteCommentBbs(final int position) {
         String id = mList.get(position).getId();
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_DeleteComment(auth, id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -643,7 +643,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
         commentPost.setEnabled(false);
         //发送评论
         final String conts = commentEdit.getText().toString();
-        MyServiceClient.getService().post_AddComment(auth, pid, conts)
+        OtherApi.getService().post_AddComment(auth, pid, conts)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<Result>() {
@@ -652,7 +652,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
                         //关闭输入法
                         BaseTools.closeInputMethod(BbsDetailActivity.this);
                         //添加评论并刷新
-                        MyServiceClient.getService().get_BbsCommentList(auth, pid, 1, 3)
+                        OtherApi.getService().get_BbsCommentList(auth, pid, 1, 3)
                                 .subscribeOn(Schedulers.newThread())
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .subscribe(new Subscriber<BbsCommentList>() {

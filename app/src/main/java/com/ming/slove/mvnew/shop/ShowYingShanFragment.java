@@ -155,8 +155,10 @@ public class ShowYingShanFragment extends LazyLoadFragment {
         @Override
         public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
             super.onReceivedError(webView, webResourceRequest, webResourceError);
-            contentEmpty.setVisibility(View.VISIBLE);
-            isLoadError = true;
+            if (webResourceError.getErrorCode() != -6) {
+                contentEmpty.setVisibility(View.VISIBLE);
+                isLoadError = true;
+            }
         }
     }
 }

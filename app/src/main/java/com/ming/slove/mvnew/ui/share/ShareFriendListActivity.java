@@ -2,15 +2,12 @@ package com.ming.slove.mvnew.ui.share;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
@@ -28,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import butterknife.Bind;
-import butterknife.ButterKnife;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -68,7 +63,7 @@ public class ShareFriendListActivity extends BackActivity {
 
     private void loadData() {
         page = 1;
-        MyServiceClient.getService().get_FriendList(auth, page, PAGE_SIZE)
+        OtherApi.getService().get_FriendList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<FriendList>() {
@@ -152,7 +147,7 @@ public class ShareFriendListActivity extends BackActivity {
         String msg = getIntent().getStringExtra(SHARE_MSG);
         me = Hawk.get(APPS.ME_UID);
         //开始发送
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_sendMessage(me, other, "100", "yxj", msg, null, "2", 1, "2")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.common.widgets.dialog.Dialog_UpdateApp;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.UpdateAppBack;
@@ -41,7 +41,7 @@ public class UpdateApp {
     public static void updateAuto(final Context context, final DoOnActivity mDoOnActivity) {
 
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_UpdateApp(id, id2)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -89,7 +89,7 @@ public class UpdateApp {
      * @param context A
      */
     public static void updateCheck(final Context context) {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_UpdateApp(id, id2)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -171,7 +171,7 @@ public class UpdateApp {
                             @Override
                             public void onClick(final DialogInterface dialog, int which) {
                                 //由于fir.im下载重定向，先要获取真正的url
-                                MyServiceClient.getService()
+                                OtherApi.getService()
                                         .get_UpdateAppUrl(updataUrl)
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())

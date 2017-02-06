@@ -3,7 +3,7 @@ package com.ming.slove.mvnew.tab4.mysetting.mypurse.tab2;
 import android.os.Bundle;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.widgets.CustomItem;
@@ -36,7 +36,7 @@ public class IncomeRewardActivity extends BackActivity {
     private void loadData() {
         //显示账号本月返点奖励
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Income_Reward(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

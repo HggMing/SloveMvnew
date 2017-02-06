@@ -15,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -49,9 +49,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -166,7 +163,7 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
 
     private void getDataList() {
         page = 1;
-        MyServiceClient.getService().get_FriendList(auth, page, PAGE_SIZE)
+        OtherApi.getService().get_FriendList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<FriendList>() {
@@ -360,7 +357,7 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
                             friend.setUid(mList.get(position).getUid());
                             MyDB.delete(friend);
                             //删除好友
-                            MyServiceClient.getService()
+                            OtherApi.getService()
                                     .post_DelFriend(auth, mList.get(position).getUid())
                                     .subscribeOn(Schedulers.io())
                                     .observeOn(AndroidSchedulers.mainThread())

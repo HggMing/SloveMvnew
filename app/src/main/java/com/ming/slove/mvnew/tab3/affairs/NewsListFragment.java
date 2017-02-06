@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
@@ -75,7 +75,7 @@ public class NewsListFragment extends LazyLoadFragment implements NewsListAdapte
     private void getDataList(int page) {
         String vid = this.getArguments().getString(GovernmentAffairsActivity.VILLAGE_ID);
         type = this.getArguments().getInt(GovernmentAffairsActivity.FRAGMENT_TYPE);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_NewsList(vid, type, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

@@ -2,7 +2,8 @@ package com.ming.slove.mvnew.api.login;
 
 import android.util.Base64;
 
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.ApiUtils;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.PhotoOperate;
 import com.ming.slove.mvnew.model.bean.Login;
@@ -19,6 +20,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
 /**
+ * 登录相关api
  * Created by Ming on 2016/12/9.
  */
 
@@ -28,7 +30,7 @@ public class LoginApi {
 
     private static LoginService getService() {
         if (mService == null||isApiChanged) {
-            mService = MyServiceClient.createService(LoginService.class);
+            mService = ApiUtils.createService(LoginService.class);
             isApiChanged=false;
         }
         return mService;

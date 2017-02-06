@@ -15,7 +15,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.gson.Gson;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -172,7 +172,7 @@ public class RealNameBindingActivity extends BackActivity {
             RequestBody rb_data = RequestBody.create(MediaType.parse("text/plain"), paraString);
             RequestBody rb_faceImage = RequestBody.create(MediaType.parse("image/*"), file_facepic);
             RequestBody rb_idImage = RequestBody.create(MediaType.parse("image/*"), file_pic1);
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_FaceRealBinding(rb_data, rb_faceImage, rb_idImage)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

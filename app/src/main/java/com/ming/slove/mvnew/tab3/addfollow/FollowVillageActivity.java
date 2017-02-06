@@ -21,7 +21,7 @@ import android.widget.Toast;
 import com.bilibili.magicasakura.widgets.TintTextView;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -156,7 +156,7 @@ public class FollowVillageActivity extends BaseActivity implements FollowVillage
 
     private void searchVillage(String village) {
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_QueryVillage(village)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -256,7 +256,7 @@ public class FollowVillageActivity extends BaseActivity implements FollowVillage
     private void followVillage(int position) {
         String auth = Hawk.get(APPS.USER_AUTH);
         String vid = mList.get(position).getVillage_id();
-        MyServiceClient.getService().postCall_FollowVillage(auth, vid)
+        OtherApi.getService().postCall_FollowVillage(auth, vid)
                 .enqueue(new Callback<Result>() {
                     @Override
                     public void onResponse(Call<Result> call, Response<Result> response) {

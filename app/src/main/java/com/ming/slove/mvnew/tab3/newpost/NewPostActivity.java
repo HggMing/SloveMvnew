@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.bilibili.magicasakura.widgets.TintRadioButton;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
@@ -44,7 +44,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -268,7 +267,7 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
             };
 
             if (imageList.isEmpty() || imageList == null) {
-                MyServiceClient.getService().post_BBSPost(auth, vid, null, conts, null, null)
+                OtherApi.getService().post_BBSPost(auth, vid, null, conts, null, null)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(subscriber);
@@ -293,12 +292,12 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
                                     if (file != null) {
                                         requestBody = RequestBody.create(MediaType.parse("image/*"), file);
                                     }
-                                    return MyServiceClient.getService().post_UploadImage(authBody, requestBody);
+                                    return OtherApi.getService().post_UploadImage(authBody, requestBody);
                                 } else {//视频
                                     File file = new File(localMedia.getPath());
                                     requestBody = RequestBody.create(MediaType.parse("image/*"), file);
                                     RequestBody typeBody = RequestBody.create(MediaType.parse("text/plain"), "2");
-                                    return MyServiceClient.getService().post_UploadVideo(authBody, typeBody, requestBody);
+                                    return OtherApi.getService().post_UploadVideo(authBody, typeBody, requestBody);
                                 }
                             }
                         })
@@ -324,7 +323,7 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
                         .flatMap(new Func1<String, Observable<Result>>() {
                             @Override
                             public Observable<Result> call(String s) {
-                                return MyServiceClient.getService().post_BBSPost(auth, vid, null, conts, null, s);
+                                return OtherApi.getService().post_BBSPost(auth, vid, null, conts, null, s);
                             }
                         })
                         .subscribeOn(Schedulers.io())

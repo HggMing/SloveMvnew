@@ -15,8 +15,7 @@ import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.ui.login.LoginActivity;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.app.APP;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.sms_autofill.SmsObserver;
@@ -121,7 +120,7 @@ public class ResetPasswordActivity extends BackActivity {
 
 
     private void getRCode() {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_RCode(sign, 2, resetPhone)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -185,7 +184,7 @@ public class ResetPasswordActivity extends BackActivity {
      * @param pwd  密码
      */
     private void resetPassword(String code, String pwd) {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_ResetPassword(resetPhone, pwd, code, sign)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

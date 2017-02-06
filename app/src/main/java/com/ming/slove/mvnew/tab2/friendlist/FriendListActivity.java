@@ -13,7 +13,7 @@ import com.bilibili.magicasakura.widgets.TintTextView;
 import com.bilibili.magicasakura.widgets.TintToolbar;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -123,7 +123,7 @@ public class FriendListActivity extends BaseActivity {
      */
     private void searchFriend(String searchText) {
 //        Toast.makeText(FriendListActivity.this, "搜索："+searchText, Toast.LENGTH_SHORT).show();
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_UserInfoByPhone(auth, searchText)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

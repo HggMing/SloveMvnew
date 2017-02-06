@@ -17,8 +17,7 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.igexin.sdk.PushManager;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyService;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
@@ -55,9 +54,6 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -208,7 +204,7 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
      * 获取用户信息
      */
     public void getUserInfoDetail() {
-        MyServiceClient.getService().get_UserInfo(auth)
+        OtherApi.getService().get_UserInfo(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<UserInfo>() {
@@ -324,7 +320,7 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
         String paraString = Base64.encodeToString(str2.getBytes(), Base64.NO_WRAP);
         RequestBody data = RequestBody.create(MediaType.parse("text/plain"), paraString);
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_IsRealBinding(data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -385,7 +381,7 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
         if (StringUtils.isEmpty(vid)) {//假如没有申请过
             getIsBinding();//获取是否实名认证
         } else {
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_IsApply(auth, vid)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

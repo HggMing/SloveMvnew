@@ -19,7 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.model.bean.A1Provice;
 import com.ming.slove.mvnew.model.bean.A2City;
@@ -113,7 +113,7 @@ public class FollowR2Fragment extends Fragment {
      * 获取省列表
      */
     private void GetProvinceList() {
-        MyServiceClient.getService().getCall_Add1(auth)
+        OtherApi.getService().getCall_Add1(auth)
                 .enqueue(new Callback<A1Provice>() {
                     @Override
                     public void onResponse(Call<A1Provice> call, Response<A1Provice> response) {
@@ -202,7 +202,7 @@ public class FollowR2Fragment extends Fragment {
      * @param provinceid 省份id
      */
     private void GetCityList(String provinceid) {
-        MyServiceClient.getService().getCall_Add2(auth, provinceid)
+        OtherApi.getService().getCall_Add2(auth, provinceid)
                 .enqueue(new Callback<A2City>() {
                     @Override
                     public void onResponse(Call<A2City> call, Response<A2City> response) {
@@ -288,7 +288,7 @@ public class FollowR2Fragment extends Fragment {
      * @param cityid 市id
      */
     private void GetCountryList(String cityid) {
-        MyServiceClient.getService().getCall_Add3(auth, cityid)
+        OtherApi.getService().getCall_Add3(auth, cityid)
                 .enqueue(new Callback<A3County>() {
                     @Override
                     public void onResponse(Call<A3County> call, Response<A3County> response) {
@@ -372,7 +372,7 @@ public class FollowR2Fragment extends Fragment {
      * @param countryid 县级id
      */
     private void GetTownList(String countryid) {
-        MyServiceClient.getService().getCall_Add4(auth, countryid)
+        OtherApi.getService().getCall_Add4(auth, countryid)
                 .enqueue(new Callback<A4Town>() {
                     @Override
                     public void onResponse(Call<A4Town> call, Response<A4Town> response) {
@@ -457,7 +457,7 @@ public class FollowR2Fragment extends Fragment {
      * @param townid 省份id
      */
     private void GetVillageList(String townid) {
-        MyServiceClient.getService().getCall_Add5(auth, townid)
+        OtherApi.getService().getCall_Add5(auth, townid)
                 .enqueue(new Callback<A5Village>() {
                     @Override
                     public void onResponse(Call<A5Village> call, Response<A5Village> response) {
@@ -531,7 +531,7 @@ public class FollowR2Fragment extends Fragment {
                 selected_town_name != null &&
                 selected_village_name != null) {
             final String villageName = selected_province_name + selected_city_name + selected_country_name + selected_town_name + selected_village_name;
-            MyServiceClient.getService().postCall_FollowVillage(auth, vid)
+            OtherApi.getService().postCall_FollowVillage(auth, vid)
                     .enqueue(new Callback<Result>() {
                         @Override
                         public void onResponse(Call<Result> call, Response<Result> response) {

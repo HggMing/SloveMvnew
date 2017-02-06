@@ -4,6 +4,7 @@ import android.app.Application;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.orhanobut.hawk.Hawk;
+import com.qiniu.pili.droid.streaming.StreamingEnv;
 
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
@@ -41,5 +42,7 @@ public class APP extends Application {
                 //.wxSecret(WX_ID)
                 ;
         ShareManager.init(config);
+        //直播推流
+        StreamingEnv.init(getApplicationContext());
     }
 }

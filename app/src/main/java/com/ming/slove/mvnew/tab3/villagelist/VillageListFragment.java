@@ -5,14 +5,17 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
@@ -20,6 +23,7 @@ import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.FollowVillageList;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.tab3.addfollow.FollowVillageActivity;
+import com.ming.slove.mvnew.tab3.livevideo.VideoRoomListActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.VillageBbsActivity;
 import com.orhanobut.hawk.Hawk;
 
@@ -66,9 +70,7 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_follow) {
+        if (item.getItemId() == R.id.action_follow) {
             Intent intent = new Intent(getContext(), FollowVillageActivity.class);
             startActivityForResult(intent, 12355);
             return true;
@@ -107,8 +109,7 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
         mXRecyclerView.setRefreshProgressStyle(ProgressStyle.BallSpinFadeLoader);
         mXRecyclerView.setLoadingMoreProgressStyle(ProgressStyle.BallRotate);
 //        mXRecyclerView.setArrowImageView(R.drawable.iconfont_downgrey);//自定义下拉刷新箭头图标
-//        View header =   LayoutInflater.from(this).inflate(R.layout.recyclerview_header, (ViewGroup)findViewById(android.R.id.content),false);
-//        mRecyclerView.addHeaderView(header);
+
         mXRecyclerView.setLoadingListener(new XRecyclerView.LoadingListener() {
             @Override
             public void onRefresh() {
@@ -125,10 +126,21 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
                 mXRecyclerView.loadMoreComplete();
             }
         });
+        //添加直播入口head
+        View header = LayoutInflater.from(getContext()).inflate(R.layout.head_live_video, (ViewGroup) getActivity().findViewById(android.R.id.content), false);
+        mXRecyclerView.addHeaderView(header);
+        header.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                Toast.makeText(getContext(), "进入直播间", Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(getContext(), VideoRoomListActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void getDataList(int page) {
-        MyServiceClient.getService().getCall_FollowList(auth, page, PAGE_SIZE)
+        OtherApi.getService().getCall_FollowList(auth, page, PAGE_SIZE)
                 .enqueue(new Callback<FollowVillageList>() {
                     @Override
                     public void onResponse(Call<FollowVillageList> call, Response<FollowVillageList> response) {
@@ -201,7 +213,7 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
      */
     private void removeFromServer(final int position) {
         String vid = mList.get(position).getVillage_id();
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .getCall_DelFollowList(auth, vid)
                 .enqueue(new Callback<Result>() {
                              @Override

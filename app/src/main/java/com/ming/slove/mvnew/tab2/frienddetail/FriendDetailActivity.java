@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -192,7 +192,7 @@ public class FriendDetailActivity extends BackActivity {
                 }
             }
         };
-        MyServiceClient.getService().get_FriendDetail(auth, uid)
+        OtherApi.getService().get_FriendDetail(auth, uid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(subscriber);
@@ -230,7 +230,7 @@ public class FriendDetailActivity extends BackActivity {
                 } else {
 //                    Toast.makeText(FriendDetailActivity.this, "请求添加好友", Toast.LENGTH_SHORT).show();
                     String phone = userinfoBean.getPhone();
-                    MyServiceClient.getService()
+                    OtherApi.getService()
                             .get_AddFriendRequest(auth, phone)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())

@@ -21,7 +21,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MediaUtils;
@@ -37,6 +37,7 @@ import com.ming.slove.mvnew.model.bean.ZanList;
 import com.ming.slove.mvnew.tab2.frienddetail.FriendDetailActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.likeusers.LikeUsersArea;
 import com.orhanobut.hawk.Hawk;
+import com.yalantis.ucrop.ui.VideoPlayActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -121,7 +122,7 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
                     holder.triangle.setVisibility(View.VISIBLE);
 
                     String pid = mList.get(position).getId();
-                    MyServiceClient.getService().getCall_ClickLike(auth, pid).enqueue(new Callback<Result>() {
+                    OtherApi.getService().getCall_ClickLike(auth, pid).enqueue(new Callback<Result>() {
                         @Override
                         public void onResponse(Call<Result> call, Response<Result> response) {
                             if (response.isSuccessful()) {
@@ -265,7 +266,11 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
                 holder.mPlayer.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        JCVideoPlayerStandard.startFullscreen(mContext, MyVideoPlayer.class, url, "");
+                        // FIXME: 2017/1/24
+//                        JCVideoPlayerStandard.startFullscreen(mContext, MyVideoPlayer.class, url, "");//通过节操播放器播放
+                        Intent intent = new Intent(mContext, VideoPlayActivity.class);
+                        intent.putExtra("video_path", url);
+                        mContext.startActivity(intent);
                     }
                 });
             } else {
@@ -314,7 +319,7 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
 
 
     private void getLikeList(String pid, final ViewHolder holder) {
-        MyServiceClient.getService().get_ZanList(auth, pid, 1, 99)
+        OtherApi.getService().get_ZanList(auth, pid, 1, 99)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<ZanList>() {
@@ -336,7 +341,7 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
     }
 
     private void getCommentList(String pid, final ViewHolder holder) {
-        MyServiceClient.getService().get_BbsCommentList(auth, pid, 1, 6)
+        OtherApi.getService().get_BbsCommentList(auth, pid, 1, 6)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<BbsCommentList>() {

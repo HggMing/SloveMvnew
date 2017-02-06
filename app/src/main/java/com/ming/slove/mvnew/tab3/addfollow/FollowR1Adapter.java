@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.model.bean.A4Town;
@@ -134,7 +134,7 @@ public class FollowR1Adapter extends BaseRecyclerViewAdapter<FollowTreeData, Rec
     private void showTree1(final FollowTreeData itemData, final int position, final ParentViewHolder holder) {
         String auth = Hawk.get(APPS.USER_AUTH);
         String countryid = itemData.getCountry_id();
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .getCall_Add4(auth, countryid)
                 .enqueue(new Callback<A4Town>() {
                     @Override
@@ -173,7 +173,7 @@ public class FollowR1Adapter extends BaseRecyclerViewAdapter<FollowTreeData, Rec
     private void showTree2(final FollowTreeData itemData, final int position, final ParentViewHolder holder) {
         String auth = Hawk.get(APPS.USER_AUTH);
         String townid = itemData.getTown_id();
-        MyServiceClient.getService().getCall_Add5(auth, townid)
+        OtherApi.getService().getCall_Add5(auth, townid)
                 .enqueue(new Callback<A5Village>() {
                     @Override
                     public void onResponse(Call<A5Village> call, Response<A5Village> response) {

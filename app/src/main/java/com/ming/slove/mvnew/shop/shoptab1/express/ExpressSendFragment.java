@@ -13,7 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -69,7 +69,7 @@ public class ExpressSendFragment extends LazyLoadFragment implements BaseRecycle
         expressStatus = getArguments().getInt(ExpressSendActivity.EXPRESS_STATUS);
         if (expressStatus == 0) {//待寄送快递
             mList0.clear();
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_ExpressList(vid, "5")
                     .subscribeOn(Schedulers.io())
                     .flatMap(new Func1<ExpressList, Observable<ExpressList.DataBean.ListBean>>() {
@@ -110,7 +110,7 @@ public class ExpressSendFragment extends LazyLoadFragment implements BaseRecycle
                     });
         } else {//已寄送快递
             mList1.clear();
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .get_ExpressList(vid, "5")
                     .subscribeOn(Schedulers.io())
                     .flatMap(new Func1<ExpressList, Observable<ExpressList.DataBean.ListBean>>() {

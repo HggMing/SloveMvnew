@@ -16,7 +16,7 @@ import android.widget.TextView;
 import com.bilibili.magicasakura.widgets.TintButton;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -179,7 +179,7 @@ class NewFriendAdapter extends BaseRecyclerViewAdapter<NewFriendModel, NewFriend
         holder.buttonOk.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_AddAgree(authBody, uidBody)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -216,7 +216,7 @@ class NewFriendAdapter extends BaseRecyclerViewAdapter<NewFriendModel, NewFriend
         holder.buttonCancle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_AddUnagree(authBody, uidBody)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

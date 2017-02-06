@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
@@ -34,9 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -69,7 +66,7 @@ public class MessageFragment extends LazyLoadFragment implements MessageAdapter.
         page = 1;
         String auth = Hawk.get(APPS.USER_AUTH);
 
-        MyServiceClient.getService().get_FriendList(auth, page, PAGE_SIZE)
+        OtherApi.getService().get_FriendList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Subscriber<FriendList>() {
@@ -148,7 +145,7 @@ public class MessageFragment extends LazyLoadFragment implements MessageAdapter.
 
     //产品推荐数据
     private void initData2(int page) {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_RecommendList(page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

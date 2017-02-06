@@ -28,7 +28,7 @@ import com.bilibili.magicasakura.widgets.TintImageView;
 import com.bilibili.magicasakura.widgets.TintTextView;
 import com.google.gson.Gson;
 import com.igexin.sdk.PushManager;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.IpPort;
@@ -149,11 +149,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void autoConnect() {
         final String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService().get_IpPort()
+        OtherApi.getService().get_IpPort()
                 .flatMap(new Func1<IpPort, Observable<EbankWifiConnect>>() {
                     @Override
                     public Observable<EbankWifiConnect> call(IpPort ipPort) {
-                        return MyServiceClient.getService().get_EbankWifiConnect(ipPort.getIp(), ipPort.getPort(), ipPort.getMac(), auth);
+                        return OtherApi.getService().get_EbankWifiConnect(ipPort.getIp(), ipPort.getPort(), ipPort.getMac(), auth);
                     }
                 })
                 .subscribeOn(Schedulers.io())
@@ -186,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
     private void getMessageList(final Context context) {
         //请求消息
         final String me_uid = Hawk.get(APPS.ME_UID, "");
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_MessageList(me_uid, "yxj", 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -271,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
                                     EventBus.getDefault().post(new InstantMsgEvent());
                                 } else {//如果消息来自非好友（新增：客户联系店长）
                                     String auth = Hawk.get(APPS.USER_AUTH);
-                                    MyServiceClient.getService().get_FriendDetail(auth, uid)
+                                    OtherApi.getService().get_FriendDetail(auth, uid)
                                             .subscribeOn(Schedulers.io())
                                             .observeOn(AndroidSchedulers.mainThread())
                                             .subscribe(new Subscriber<FriendDetail>() {

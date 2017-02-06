@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_floating_material_dark">
+
+    <SurfaceView
+        android:id="@+id/ext_camerapreview_surfaceview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/log_info"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/camera_switch_btn"
+        android:layout_marginTop="@dimen/padding_12"
+        android:layout_centerHorizontal="true"
+        android:text="switch"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/stream_status"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="50dp"
+        android:background="@android:color/transparent"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/encoding_mirror_btn"
+        android:text="Mirror\n(Encode)"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:textColor="@color/white"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <include layout="@layout/status" />
+    <include layout="@layout/camera_button_holder" />
+
+</RelativeLayout>

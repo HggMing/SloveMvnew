@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -56,7 +56,7 @@ public class UpdateIdcardActivity extends BackActivity {
             if (!BaseTools.checkIdcard(newIdcard)) {
                 Toast.makeText(UpdateIdcardActivity.this, "请输入正确的身份证号！！", Toast.LENGTH_SHORT).show();
             } else {
-                MyServiceClient.getService().postCall_UpdateInfo(auth, null, null, newIdcard, null)
+                OtherApi.getService().postCall_UpdateInfo(auth, null, null, newIdcard, null)
                         .enqueue(new Callback<Result>() {
                             @Override
                             public void onResponse(Call<Result> call, Response<Result> response) {

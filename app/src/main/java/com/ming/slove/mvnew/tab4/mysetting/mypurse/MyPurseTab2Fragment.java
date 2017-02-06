@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.widgets.CustomItem;
@@ -52,7 +52,7 @@ public class MyPurseTab2Fragment extends LazyLoadFragment {
     @Override
     public void loadData() {
         //显示账号本月收入
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Money_Month(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -73,7 +73,7 @@ public class MyPurseTab2Fragment extends LazyLoadFragment {
                     }
                 });
         //当月收入概览
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Income_Month(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -113,7 +113,7 @@ public class MyPurseTab2Fragment extends LazyLoadFragment {
                 intent1.putExtra(IncomeBaseActivity.TYPE,1);
                 startActivity(intent1);
                 break;
-            case R.id.income_business://业务提成 //// FIXME: 2016/12/28 返回不太确定
+            case R.id.income_business://业务提成 // FIXME: 2016/12/28 返回不太确定
                 Intent intent2 = new Intent(getContext(), IncomeBaseActivity.class);
                 intent2.putExtra(IncomeBaseActivity.TYPE,2);
                 startActivity(intent2);

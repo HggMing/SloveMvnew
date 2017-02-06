@@ -19,7 +19,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.melnykov.fab.FloatingActionButton;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -135,7 +135,7 @@ public class VillageBbsActivity extends BaseActivity implements VillageBbsAdapte
 
     private void getBBSList(int page) {
         String auth = Hawk.get(APPS.USER_AUTH);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_BBSList(auth, mVid, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

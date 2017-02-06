@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -69,7 +69,7 @@ public class TakeMoneyActivity extends BackActivity {
         auth = Hawk.get(APPS.USER_AUTH);
         mSelectedCard = Hawk.get(APPS.SELECTED_CARD, 0);
         //获取银行卡信息
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_CardList(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -110,7 +110,7 @@ public class TakeMoneyActivity extends BackActivity {
 
     private void initData() {
         //获取余额信息
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Money(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -205,7 +205,7 @@ public class TakeMoneyActivity extends BackActivity {
                                     return;
                                 }
 
-                                MyServiceClient.getService()
+                                OtherApi.getService()
                                         .post_TakeMoney(auth, money, pwd, bank_name, bank_no, bank_user_name)
                                         .subscribeOn(Schedulers.io())
                                         .observeOn(AndroidSchedulers.mainThread())

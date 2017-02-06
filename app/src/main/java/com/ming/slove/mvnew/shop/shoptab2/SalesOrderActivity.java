@@ -18,7 +18,7 @@ import com.bilibili.magicasakura.widgets.TintButton;
 import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -120,7 +120,7 @@ public class SalesOrderActivity extends BackActivity {
 
 
     private void initData(final int page) {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_SalesOrderList(auth, page, PAGE_SIZE)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

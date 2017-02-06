@@ -12,7 +12,7 @@ import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -66,7 +66,7 @@ public class ChooseAddressActivity extends BackActivity {
                     sd_is_def = "1";
                 }
 
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .post_EditShoppingAddress(auth, data.getId(), data.getUname(), data.getAddr(), data.getTel(), sd_is_def, data.getZipcode())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
@@ -117,7 +117,7 @@ public class ChooseAddressActivity extends BackActivity {
 
     private void initData() {
         //设置数据
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_ShoppingAddress(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

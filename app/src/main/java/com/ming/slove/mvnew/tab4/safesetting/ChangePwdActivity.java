@@ -8,7 +8,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -77,7 +77,7 @@ public class ChangePwdActivity extends BackActivity {
                 return true;
             }
             String auth = Hawk.get(APPS.USER_AUTH);
-            MyServiceClient.getService().getCall_ChangePwd(auth, oldpwd, newpwd1)
+            OtherApi.getService().getCall_ChangePwd(auth, oldpwd, newpwd1)
                     .enqueue(new Callback<Result>() {
                         @Override
                         public void onResponse(Call<Result> call, Response<Result> response) {

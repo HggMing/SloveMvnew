@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintButton;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -85,7 +85,7 @@ public class ChangePursePwdActivity extends BackActivity {
                 Toast.makeText(this, "密码必须在6位", Toast.LENGTH_SHORT).show();
                 return true;
             }
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_EditPursePWD(auth, oldpwd, newpwd1)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

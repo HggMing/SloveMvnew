@@ -1,8 +1,6 @@
 package com.ming.slove.mvnew.tab4.mysetting.mypurse.tab2;
 
 import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +8,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -53,7 +51,7 @@ public class IncomeHistoryActivity extends BackActivity {
     }
 
     private void loadData() {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Income_History(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

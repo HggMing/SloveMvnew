@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -236,7 +236,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
             FriendsModel friend = MyDB.createDb(this).queryById(uid, FriendsModel.class);
             if (friend == null) {//如果消息来自非好友（新增：客户联系店长）
                 String auth = Hawk.get(APPS.USER_AUTH);
-                MyServiceClient.getService().get_FriendDetail(auth, uid)
+                OtherApi.getService().get_FriendDetail(auth, uid)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Subscriber<FriendDetail>() {
@@ -415,7 +415,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                     EventBus.getDefault().post(new InstantMsgEvent());
                 } else {//如果发消息给非好友（新增：客户联系店长）
                     String auth = Hawk.get(APPS.USER_AUTH);
-                    MyServiceClient.getService().get_FriendDetail(auth, other)
+                    OtherApi.getService().get_FriendDetail(auth, other)
                             .subscribeOn(Schedulers.io())
                             .observeOn(AndroidSchedulers.mainThread())
                             .subscribe(new Subscriber<FriendDetail>() {
@@ -451,7 +451,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                 }
             }
             //开始发送
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_sendMessage(me, other, "0", "yxj", msg, null, null, 1, "2")
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -582,7 +582,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                 EventBus.getDefault().post(new InstantMsgEvent());
             } else {//如果发消息给非好友（新增：客户联系店长）
                 String auth = Hawk.get(APPS.USER_AUTH);
-                MyServiceClient.getService().get_FriendDetail(auth, other)
+                OtherApi.getService().get_FriendDetail(auth, other)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new Subscriber<FriendDetail>() {
@@ -618,7 +618,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
             }
         }
         //发送图片
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_sendMessage(me, other, "1", "yxj", "[图片]", source, null, 1, "2")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

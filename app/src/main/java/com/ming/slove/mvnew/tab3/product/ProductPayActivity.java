@@ -27,8 +27,7 @@ import com.ming.slove.mvnew.model.event.RefreshMyOrderListEvent;
 import com.ming.slove.mvnew.tab4.mysetting.myorder.MyOrderListActivity;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.app.APP;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.StringUtils;
@@ -40,8 +39,6 @@ import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.ResultOther;
 import com.ming.slove.mvnew.model.bean.ShoppingAddress;
 import com.ming.slove.mvnew.model.event.ProductBuyEvent;
-import com.ming.slove.mvnew.tab4.mysetting.shoppingaddress.EditShoppingAdressActivity;
-import com.orhanobut.logger.Logger;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -139,7 +136,7 @@ public class ProductPayActivity extends BackActivity {
     }
 
     private void initPay() {
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_Money(auth)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -218,7 +215,7 @@ public class ProductPayActivity extends BackActivity {
         tvPhoneName.setText("用户默认收货信息为空！");
         tvAdd.setText("请点击选择收货地址信息。");
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_ShoppingAddress(auth)
                 .subscribeOn(Schedulers.io())
                 .flatMap(new Func1<ShoppingAddress, Observable<ShoppingAddress.DataBean>>() {
@@ -310,7 +307,7 @@ public class ProductPayActivity extends BackActivity {
         String postscript = etBeizhu.getEditableText().toString();
         String vid = buyProductList.valueAt(0).getVid();
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_NewOrder(auth, uname, product, addr, addr, addr, addr, zCode, phone, postscript, vid, vid, vid)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -359,7 +356,7 @@ public class ProductPayActivity extends BackActivity {
                             Toast.makeText(ProductPayActivity.this, "交易密码不能为空", Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        MyServiceClient.getService()
+                        OtherApi.getService()
                                 .post_PayByYuer(auth, data.getNo(), pwd, data.getTol() + "")
                                 .subscribeOn(Schedulers.io())
                                 .observeOn(AndroidSchedulers.mainThread())

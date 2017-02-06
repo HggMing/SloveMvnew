@@ -15,7 +15,7 @@ import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.melnykov.fab.FloatingActionButton;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
@@ -113,7 +113,7 @@ public class BooksTab2Fragment extends LazyLoadFragment {
 
     private void initData(final int page) {
         String vid = Hawk.get(APPS.MANAGER_VID);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_BookListTab2(vid, page, PAGE_SIZE)
                 .flatMap(new Func1<Book2List, Observable<Book2List.DataBean.ListBean>>() {
                     @Override

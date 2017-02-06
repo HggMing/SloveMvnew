@@ -9,7 +9,7 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -73,7 +73,7 @@ public class SafeSettingActivity extends BackActivity {
         String paraString = Base64.encodeToString(str2.getBytes(), Base64.NO_WRAP);
         RequestBody data = RequestBody.create(MediaType.parse("text/plain"), paraString);
 
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .post_IsRealBinding(data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -134,7 +134,7 @@ public class SafeSettingActivity extends BackActivity {
                 //Toast.makeText(SettingCommonActivity.this, "新建or修改钱包密码", Toast.LENGTH_SHORT).show();
                 //检测是否设置钱包密码
                 String auth = Hawk.get(APPS.USER_AUTH);
-                MyServiceClient.getService()
+                OtherApi.getService()
                         .get_IsSetPWD(auth)
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())

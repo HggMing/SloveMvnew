@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/live_video_head"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/list_item_selector"
+    android:foreground="?attr/selectableItemBackground"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/img_head"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@drawable/default_nine_picture"
+        android:scaleType="centerCrop"
+        android:src="@mipmap/img_live_video_head" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_alignBottom="@id/img_head">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/alpha_village" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:maxLines="1"
+            android:text="我们村直播"
+            android:textColor="@color/white"
+            android:textSize="@dimen/textsize_large"
+            android:textStyle="italic" />
+    </FrameLayout>
+</RelativeLayout>

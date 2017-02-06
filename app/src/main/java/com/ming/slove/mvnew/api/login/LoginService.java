@@ -17,7 +17,7 @@ import retrofit2.http.QueryMap;
 import rx.Observable;
 
 /**
- * 网络相关服务器接口
+ * 登录相关接口
  */
 interface LoginService {
 

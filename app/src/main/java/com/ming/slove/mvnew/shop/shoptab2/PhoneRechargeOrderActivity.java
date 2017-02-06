@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +13,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintButton;
-import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
@@ -122,7 +118,7 @@ public class PhoneRechargeOrderActivity extends BackActivity {
     }
     private void initData(final int page) {
         String vid = Hawk.get(APPS.MANAGER_VID);
-        MyServiceClient.getService()
+        OtherApi.getService()
                 .get_RechargeList(vid, 9, page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

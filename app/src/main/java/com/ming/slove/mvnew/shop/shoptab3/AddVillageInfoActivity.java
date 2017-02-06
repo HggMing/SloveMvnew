@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.MyServiceClient;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
@@ -104,7 +104,7 @@ public class AddVillageInfoActivity extends BackActivity {
             RequestBody contentBody = RequestBody.create(MediaType.parse("text/plain"), content);
             RequestBody typeBody = RequestBody.create(MediaType.parse("text/plain"), typeS);
 
-            MyServiceClient.getService()
+            OtherApi.getService()
                     .post_AddVillageInfo(authBody, titleBody, contentBody, typeBody, imgPictureBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())

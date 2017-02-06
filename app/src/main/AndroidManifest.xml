@@ -31,6 +31,27 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!--直播播放器-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!--直播推流相关-->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:name=".app.APP"
@@ -155,8 +176,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".tab3.villagebbs.VillageBbsActivity"
-            android:label="@string/title_activity_village_bbs"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/title_activity_village_bbs"
             android:screenOrientation="portrait" />
         <activity
             android:name=".common.widgets.bigimageview.BigImageViewActivity"
@@ -179,8 +200,8 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".tab3.villagebbs.bbsdetail.BbsDetailActivity"
-            android:label="@string/title_activity_bbs_detail"
             android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/title_activity_bbs_detail"
             android:screenOrientation="portrait" />
         <activity
             android:name=".tab4.scommon.SettingCommonActivity"
@@ -357,16 +378,41 @@
         <activity
             android:name=".tab4.mysetting.myorder.MyOrderListActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".tab4.mysetting.mypurse.tab2.IncomeBaseActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".tab4.mysetting.mypurse.tab2.IncomeRewardActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".tab4.mysetting.mypurse.tab2.IncomeHistoryActivity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".tab4.mysetting.mypurse.MyPurse2Activity"
-            android:screenOrientation="portrait"/>
-        <activity android:name=".ui.share.ShareFriendListActivity"
-            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".tab4.mysetting.mypurse.tab2.IncomeBaseActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tab4.mysetting.mypurse.tab2.IncomeRewardActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tab4.mysetting.mypurse.tab2.IncomeHistoryActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tab4.mysetting.mypurse.MyPurse2Activity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.share.ShareFriendListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tab3.livevideo.VideoRoomListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tab3.livevideo.inroom.VideoRoomDetailActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".common.widgets.video.FullLiveVideoActivity"
+            android:theme="@style/AppThemeFullscreen" />
+        <activity
+            android:name=".tab3.livevideo.newroom.AddNewLiveRoomActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
+        <activity
+            android:name=".tab3.livevideo.newroom.streamutil.SWCodecCameraStreamingActivity"
+            android:configChanges="orientation|screenSize"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize" />
+
     </application>
 
 </manifest>
