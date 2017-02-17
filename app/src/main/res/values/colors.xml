@@ -45,4 +45,5 @@
 
     <color name="red">#ffff0000</color>
     <color name="yellow">#ffffff00</color>
+    <color name="alpha_btn">#41000000</color>
 </resources>

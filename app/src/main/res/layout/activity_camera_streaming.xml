@@ -1,136 +1,202 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/content"
-    android:background="@color/black"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@color/black">
 
     <com.qiniu.pili.droid.streaming.widget.AspectFrameLayout
         android:id="@+id/cameraPreview_afl"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center_horizontal" >
+        android:layout_gravity="center_horizontal">
 
         <com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.CameraPreviewFrameView
             android:id="@+id/cameraPreview_surfaceView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center" />
-        <include layout="@layout/focus_indicator"/>
+
+        <include layout="@layout/focus_indicator" />
 
     </com.qiniu.pili.droid.streaming.widget.AspectFrameLayout>
 
     <TextView
         android:id="@+id/log_info"
-        android:visibility="gone"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:visibility="gone" />
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginTop="40dp"
-        android:layout_gravity="left|top"
-        android:gravity="center_vertical" >
-
-        <include layout="@layout/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <TextView
-            android:id="@+id/stream_status"
-            android:background="@android:color/transparent"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:textColor="@color/white"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
         android:layout_gravity="left|center"
-        android:gravity="center_vertical">
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <Button
             android:id="@+id/preview_mirror_btn"
-            android:text="镜像\n(预览)"
-            android:textColor="@color/white"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:text="镜像\n(预览)"
+            android:textColor="@color/white" />
 
         <Button
             android:id="@+id/encoding_mirror_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="镜像\n(编码)"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
+            android:textColor="@color/white" />
     </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
-        >
-        <Button
-            android:id="@+id/camera_switch_btn"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Button
-            android:id="@+id/orientation_btn"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/mute_btn"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/fb_btn"
-            android:textColor="@color/white"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/capture_btn"
-            android:textColor="@color/white"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/torch_btn"
-            android:textColor="@color/white"
-            android:text="开"
-            android:visibility="gone"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-    </LinearLayout>
-
-    <SeekBar
-        android:id="@+id/beautyLevel_seekBar"
+    <com.ming.slove.mvnew.ui.main.MyViewPager
+        android:id="@+id/view_pager_live"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:visibility="gone"
-        android:layout_marginBottom="80dp"
-        android:max="100"
-        android:progress="100"/>
+        android:layout_height="match_parent" />
 
-    <include layout="@layout/camera_button_holder" />
+    <RelativeLayout
+        android:id="@+id/ly_control_ui"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
+        <LinearLayout
+            android:id="@+id/button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@color/alpha_btn"
+            android:orientation="horizontal"
+            android:paddingBottom="10dp"
+            android:paddingTop="10dp">
+
+            <ImageView
+                android:id="@+id/orientation_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/aic_live_orientation_port"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/camera_switch_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/aic_live_camera_front"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+
+            <ImageView
+                android:id="@+id/fb_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/aic_live_fb_on"
+                android:textColor="@color/white" />
+
+            <include
+                layout="@layout/status"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2" />
+
+            <ImageView
+                android:id="@+id/mute_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/aic_live_mic_on"
+                android:textColor="@color/white" />
+
+            <Button
+                android:id="@+id/capture_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+
+            <ImageView
+                android:id="@+id/torch_btn"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:src="@drawable/aic_live_flash_off"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/button_layout"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical">
+
+            <SeekBar
+                android:id="@+id/beautyLevel_seekBar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:max="100"
+                android:progress="100"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/stream_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@android:color/transparent"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/toggleRecording_button"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/padding_16"
+            android:background="@drawable/selector_shutter_button"
+            android:clickable="true"
+            android:focusable="true"
+            android:scaleType="center" />
+    </RelativeLayout>
+
+    <!--<include layout="@layout/camera_button_holder" />-->
+    <LinearLayout
+        android:layout_width="120dp"
+        android:layout_height="400dp"
+        android:layout_gravity="bottom|right"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.ming.slove.mvnew.common.widgets.likeview.PeriscopeLayout
+            android:id="@+id/periscope"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:id="@+id/btn_like"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/selector_btn_live_gift" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/btn_close"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="16dp"
+        android:scaleType="centerInside"
+        android:src="@drawable/selector_btn_close" />
 </FrameLayout>

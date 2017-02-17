@@ -37,7 +37,7 @@
             </com.bilibili.magicasakura.widgets.TintToolbar>
         </android.support.design.widget.AppBarLayout>
 
-        <com.ming.slove.mvnew.ui.main.MainViewPager
+        <com.ming.slove.mvnew.ui.main.MyViewPager
             android:id="@+id/viewPager_main"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -146,7 +146,7 @@
                     android:layout_height="16dp"
                     android:layout_alignRight="@id/img_tab2_main"
                     android:layout_marginRight="-8dp"
-                    android:background="@drawable/shape_red_circle"
+                    android:background="@drawable/shape_circle_red"
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="8sp"

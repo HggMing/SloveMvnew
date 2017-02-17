@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.bilibili.magicasakura.widgets.TintTextView
+        android:id="@+id/live_uname"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxEms="6"
+        android:textColor="@color/theme_color_primary"
+        android:textSize="@dimen/textsize_small"
+        tools:text="昵称昵" />
+
+    <TextView
+        android:id="@+id/live_content"
+        android:layout_marginLeft="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/white"
+        android:textSize="@dimen/textsize_small"
+        tools:text="内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容内容" />
+</LinearLayout>

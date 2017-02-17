@@ -151,7 +151,7 @@ public class AddBookActivity extends BackActivity {
                         imgAdd.setVisibility(View.GONE);
                         Glide.with(this)
                                 .load(imagPath)
-                                .placeholder(R.drawable.default_nine_picture)
+                                .placeholder(R.drawable.shape_picture_background)
                                 .into(imgBook);
                         File file = new File(imagPath);
                         imgBookBody = RequestBody.create(MediaType.parse("image/*"), file);

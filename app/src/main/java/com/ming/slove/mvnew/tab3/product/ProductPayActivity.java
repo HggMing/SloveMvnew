@@ -422,7 +422,7 @@ public class ProductPayActivity extends BackActivity {
             String imageUrl = APPS.BASE_URL + data.getPicurl_1();
             Glide.with(mContext).load(imageUrl)
                     .centerCrop()
-                    .placeholder(R.drawable.default_nine_picture)
+                    .placeholder(R.drawable.shape_picture_background)
                     .into(holder.img);
             //商品名称
             holder.tvContent.setText(data.getTitle());

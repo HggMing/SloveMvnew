@@ -196,7 +196,7 @@
 
         <include layout="@layout/divide_15_top_bottom" />
 
-        <com.ming.slove.mvnew.ui.main.MainViewPager
+        <com.ming.slove.mvnew.ui.main.MyViewPager
             android:id="@+id/viewPager"
             android:layout_width="match_parent"
             android:layout_height="0dp"

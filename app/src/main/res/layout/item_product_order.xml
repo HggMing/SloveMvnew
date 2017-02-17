@@ -137,7 +137,7 @@
                     android:layout_marginLeft="20dp"
                     android:layout_marginRight="10dp"
                     android:layout_marginTop="10dp"
-                    android:background="@drawable/button_theme"
+                    android:background="@drawable/selector_btn_theme"
                     android:text="付款"
                     android:textColor="@color/white"
                     android:textSize="@dimen/textsize_normal" />
@@ -148,7 +148,7 @@
                     android:layout_height="36dp"
                     android:layout_alignBottom="@id/btn_order_send"
                     android:layout_toLeftOf="@id/btn_order_send"
-                    android:background="@drawable/button_white"
+                    android:background="@drawable/selector_btn_white"
                     android:text="取消订单"
                     android:textColor="@color/theme_color_primary"
                     android:textSize="@dimen/textsize_normal" />

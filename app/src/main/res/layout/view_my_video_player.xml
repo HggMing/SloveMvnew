@@ -56,7 +56,7 @@
             android:minHeight="4dp"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
-            android:progressDrawable="@drawable/video_seek_progress"
+            android:progressDrawable="@drawable/list_video_seek_progress"
             android:thumb="@drawable/jc_seek_thumb" />
 
         <TextView
@@ -83,7 +83,7 @@
         android:layout_height="1.5dp"
         android:layout_alignParentBottom="true"
         android:max="100"
-        android:progressDrawable="@drawable/video_progress" />
+        android:progressDrawable="@drawable/list_video_progress" />
 
     <ImageView
         android:id="@+id/back_tiny"

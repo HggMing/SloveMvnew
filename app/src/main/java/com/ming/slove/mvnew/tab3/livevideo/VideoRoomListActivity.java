@@ -16,7 +16,7 @@ import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.RoomList;
-import com.ming.slove.mvnew.tab3.livevideo.inroom.VideoRoomDetailActivity;
+import com.ming.slove.mvnew.tab3.livevideo.inroom.LiveVideoActivity;
 import com.ming.slove.mvnew.tab3.livevideo.newroom.AddNewLiveRoomActivity;
 import com.orhanobut.hawk.Hawk;
 
@@ -118,10 +118,10 @@ public class VideoRoomListActivity extends BackActivity implements BaseRecyclerV
     @Override
     public void onItemClick(View view, int position) {
 //        Toast.makeText(this, "进入直播间", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, VideoRoomDetailActivity.class);
-        intent.putExtra(VideoRoomDetailActivity.VIDEO_ROOM_INFO, mList.get(position));
-        intent.putExtra(VideoRoomDetailActivity.VIDEO_ROOM_OWNER, (String) view.getTag());
-        startActivityForResult(intent,REQUEST_CODE);
+        Intent intent = new Intent(this, LiveVideoActivity.class);
+        intent.putExtra(LiveVideoActivity.VIDEO_ROOM_INFO, mList.get(position));
+        intent.putExtra(LiveVideoActivity.VIDEO_ROOM_OWNER_HEAD, (String) view.getTag());
+        startActivityForResult(intent, REQUEST_CODE);
     }
 
     @Override

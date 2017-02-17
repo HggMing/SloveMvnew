@@ -69,7 +69,7 @@ public class BaseFragment extends Fragment {
         TSnackbar snackbar = TSnackbar
                 .make(getView(), text, TSnackbar.LENGTH_LONG);
         snackbar.setActionTextColor(Color.WHITE);
-        snackbar.setIconLeft(R.drawable.ic_toast, 18);
+        snackbar.setIconLeft(R.drawable.aic_toast, 18);
         snackbar.setIconPadding(16);
         View snackbarView = snackbar.getView();
         snackbarView.setBackgroundColor(ThemeUtils.getColorById(getContext(), R.color.theme_color_primary_trans));//背景颜色

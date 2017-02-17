@@ -3,7 +3,6 @@ package com.ming.slove.mvnew.ui.facelogin;
 import com.ming.slove.mvnew.common.base.BasePresenter;
 import com.ming.slove.mvnew.common.base.BaseView;
 import com.ming.slove.mvnew.model.bean.Login;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 public interface FaceLoginContract {
     interface View extends BaseView<Presenter> {
@@ -24,6 +23,6 @@ public interface FaceLoginContract {
 
         void saveShopAddress(Login login);//存储店长所在村id及地址
 
-        void saveUserInfo(String auth, String uid, int is_shopowner, String loginName,int is_show_yingshan);//储存登录用户信息
+        void saveUserInfo(String auth, String uid, int is_shopowner, String loginName, int is_show_yingshan);//储存登录用户信息
     }
 }

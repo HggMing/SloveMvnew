@@ -35,7 +35,7 @@
         android:id="@+id/badge"
         android:layout_width="20dp"
         android:layout_height="20dp"
-        android:background="@drawable/shape_red_circle"
+        android:background="@drawable/shape_circle_red"
         android:gravity="center"
         android:visibility="gone"
         android:layout_alignParentRight="true"

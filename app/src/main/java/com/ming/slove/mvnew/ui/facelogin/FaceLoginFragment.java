@@ -18,7 +18,6 @@ import com.ming.slove.mvnew.common.base.BaseFragment;
 import com.ming.slove.mvnew.common.utils.ImageUtils;
 import com.ming.slove.mvnew.common.widgets.customcamera.TakePhotoActivity;
 import com.ming.slove.mvnew.ui.main.MainActivity;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

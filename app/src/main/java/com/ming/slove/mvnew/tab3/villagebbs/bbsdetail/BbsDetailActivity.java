@@ -271,7 +271,7 @@ public class BbsDetailActivity extends BackActivity implements BbsDetailAdapter.
                 }
                 Glide.with(context).load(imageUrl)
                         .asBitmap()
-                        .placeholder(R.drawable.default_nine_picture)
+                        .placeholder(R.drawable.shape_picture_background)
                         .into(imageView);
             }
 

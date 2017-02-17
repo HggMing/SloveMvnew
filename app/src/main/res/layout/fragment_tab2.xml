@@ -21,7 +21,7 @@
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_gravity="center"
-            android:background="@drawable/shape_circle"
+            android:background="@drawable/shape_circle_theme_trans"
             android:gravity="center"
             android:textColor="@color/white"
             android:textSize="30sp"

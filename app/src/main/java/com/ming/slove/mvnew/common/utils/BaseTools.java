@@ -57,8 +57,7 @@ public class BaseTools {
         WindowManager.LayoutParams params = activity.getWindow().getAttributes();
         params.flags |= WindowManager.LayoutParams.FLAG_FULLSCREEN;
         activity.getWindow().setAttributes(params);
-        activity.getWindow().addFlags(
-                WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        activity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
     }
 
     /**

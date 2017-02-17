@@ -29,7 +29,6 @@ import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.bigimageview.BigImageViewActivity;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageView;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageViewAdapter;
-import com.ming.slove.mvnew.common.widgets.video.MyVideoPlayer;
 import com.ming.slove.mvnew.model.bean.BBSList;
 import com.ming.slove.mvnew.model.bean.BbsCommentList;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -44,7 +43,6 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import fm.jiecao.jcvideoplayer_lib.JCVideoPlayerStandard;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -231,7 +229,7 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
                 }
                 Glide.with(context).load(imageUrl)
                         .asBitmap()
-                        .placeholder(R.drawable.default_nine_picture)
+                        .placeholder(R.drawable.shape_picture_background)
                         .diskCacheStrategy(DiskCacheStrategy.ALL)
                         .into(imageView);
             }

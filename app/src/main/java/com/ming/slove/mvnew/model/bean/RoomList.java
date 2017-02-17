@@ -71,6 +71,8 @@ public class RoomList {
              * pic : http://pili-live-snapshot.live.isall.com.cn/ourvillage-live/livestrram1485074731.jpg
              * url_flv : http://pili-live-hdl.live.isall.com.cn/ourvillage-live/livestrram1485074731.flv
              * pic_1 : /Public/bbs/file/11015/2017-01-22/20170122s20170122985797979951.jpeg
+             * zan_num": "49",
+             *"head": "http://product.yibanke.com/Public/head/11015/KJ6AJETWVGRP1456121024.png"
              */
 
             private String room_id;
@@ -83,6 +85,8 @@ public class RoomList {
             private String pic;
             private String url_flv;
             private String pic_1;
+            private String zan_num;
+            private String head;
 
             public String getRoom_id() {
                 return room_id;
@@ -164,6 +168,22 @@ public class RoomList {
                 this.pic_1 = pic_1;
             }
 
+            public String getHead() {
+                return head;
+            }
+
+            public void setHead(String head) {
+                this.head = head;
+            }
+
+            public String getZan_num() {
+                return zan_num;
+            }
+
+            public void setZan_num(String zan_num) {
+                this.zan_num = zan_num;
+            }
+
             @Override
             public int describeContents() {
                 return 0;
@@ -181,6 +201,8 @@ public class RoomList {
                 dest.writeString(this.pic);
                 dest.writeString(this.url_flv);
                 dest.writeString(this.pic_1);
+                dest.writeString(this.zan_num);
+                dest.writeString(this.head);
             }
 
             public ListBean() {
@@ -197,6 +219,8 @@ public class RoomList {
                 this.pic = in.readString();
                 this.url_flv = in.readString();
                 this.pic_1 = in.readString();
+                this.zan_num = in.readString();
+                this.head = in.readString();
             }
 
             public static final Parcelable.Creator<ListBean> CREATOR = new Parcelable.Creator<ListBean>() {

@@ -122,7 +122,7 @@ public class ChatKeyBoard extends XhsEmoticonsKeyBoard {
                     mBtnSend.setVisibility(VISIBLE);
                     mBtnMultimedia.setVisibility(GONE);
 //                    mBtnSend.setBackgroundResource(com.keyboard.view.R.drawable.btn_send_bg);
-                    mBtnSend.setBackgroundResource(R.drawable.button_theme);
+                    mBtnSend.setBackgroundResource(R.drawable.selector_btn_theme);
                 } else {
                     mBtnMultimedia.setVisibility(VISIBLE);
                     mBtnSend.setVisibility(GONE);

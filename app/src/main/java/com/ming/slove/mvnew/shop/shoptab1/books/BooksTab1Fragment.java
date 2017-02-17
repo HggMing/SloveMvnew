@@ -189,7 +189,7 @@ public class BooksTab1Fragment extends LazyLoadFragment {
             String imageUrl = APPS.BASE_URL + data.getPic_s();
             Glide.with(mContext).load(imageUrl)
                     .centerCrop()
-                    .placeholder(R.drawable.default_nine_picture)
+                    .placeholder(R.drawable.shape_picture_background)
                     .into(holder.imgBook);
             //显示书号
             holder.tvNum.setText("书号：  " + data.getBnum());

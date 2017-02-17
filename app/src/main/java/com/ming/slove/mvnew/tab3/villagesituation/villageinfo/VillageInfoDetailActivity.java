@@ -63,7 +63,7 @@ public class VillageInfoDetailActivity extends BackActivity {
         } else {
             String imageUrl = APPS.BASE_URL + data.getPic();
             Glide.with(this).load(imageUrl)
-                    .placeholder(R.drawable.default_nine_picture)
+                    .placeholder(R.drawable.shape_picture_background)
                     .into(mImage);
         }
         //内容

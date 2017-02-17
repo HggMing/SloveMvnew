@@ -104,7 +104,7 @@ public class FollowVillageActivity extends BaseActivity implements FollowVillage
         //是否使用语音搜索
         searchView.setVoiceSearch(false);
         //自定义光标
-        searchView.setCursorDrawable(R.drawable.custom_cursor);
+        searchView.setCursorDrawable(R.drawable.shape_cursor_white);
         searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {

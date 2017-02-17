@@ -74,6 +74,7 @@ public class InRoomPeopleList {
             private String k;
             private String ctime;
             private String is_zb;
+            private String head;
 
             public String getId() {
                 return id;
@@ -129,6 +130,14 @@ public class InRoomPeopleList {
 
             public void setIs_zb(String is_zb) {
                 this.is_zb = is_zb;
+            }
+
+            public String getHead() {
+                return head;
+            }
+
+            public void setHead(String head) {
+                this.head = head;
             }
         }
     }

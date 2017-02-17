@@ -262,7 +262,7 @@ public class SalesOrderActivity extends BackActivity {
             //商品图片
             String imageUrl = APPS.BASE_URL + data.getPicurl();
             Glide.with(mContext).load(imageUrl)
-                    .placeholder(R.drawable.default_nine_picture)
+                    .placeholder(R.drawable.shape_picture_background)
                     .centerCrop()
                     .into(holder.img);
             //购买商品简略信息

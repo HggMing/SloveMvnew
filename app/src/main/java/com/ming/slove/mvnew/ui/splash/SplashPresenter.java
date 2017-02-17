@@ -76,7 +76,10 @@ public class SplashPresenter implements SplashContract.Presenter {
                             });
                         } else {
                             //用户没有勾选不再询问，返回true
-                            rxPermissions.shouldShowRequestPermissionRationale(mView.getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA)
+                            rxPermissions.shouldShowRequestPermissionRationale(mView.getActivity(),
+                                    Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                                    Manifest.permission.CAMERA,
+                                    Manifest.permission.RECORD_AUDIO)
                                     .subscribe(new Subscriber<Boolean>() {
                                         @Override
                                         public void onCompleted() {
@@ -93,7 +96,7 @@ public class SplashPresenter implements SplashContract.Presenter {
                                             if (aBoolean) {
                                                 String msg = "1、储存空间权限，用于储存用户信息;\n" +
                                                         "2、相机权限，用于发帖时，发布照片。\n"+
-                                                        "3、电话权限，购物支付及消息接收。";
+                                                        "3、麦克风权限，用于直播时录音。";
                                                 mView.showDialog(msg, new ClickDialog.OnClickDialog() {
                                                     @Override
                                                     public void dialogOk() {

@@ -25,7 +25,7 @@ import com.ming.slove.mvnew.shop.shoptab1.ShopTab1Fragment;
 import com.ming.slove.mvnew.shop.shoptab2.ShopTab2Fragment;
 import com.ming.slove.mvnew.shop.shoptab3.ShopTab3Fragment;
 import com.ming.slove.mvnew.shop.shoptab4.ShopTab4Fragment;
-import com.ming.slove.mvnew.ui.main.MainViewPager;
+import com.ming.slove.mvnew.ui.main.MyViewPager;
 import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,7 +55,7 @@ public class MyShopFragment extends LazyLoadFragment {
     @Bind(R.id.text_tab4)
     TintTextView tTab4;
     @Bind(R.id.viewPager)
-    MainViewPager viewPager;
+    MyViewPager viewPager;
     @Bind(R.id.view_tab1)
     TintView vTab1;
     @Bind(R.id.tab1Layout)

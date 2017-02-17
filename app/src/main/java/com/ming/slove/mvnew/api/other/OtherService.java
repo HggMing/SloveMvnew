@@ -301,7 +301,7 @@ public interface OtherService {
      * @return 村圈列表信息
      */
     @GET("vill/followlist")
-    Call<FollowVillageList> getCall_FollowList(
+    Observable<FollowVillageList> get_FollowList(
             @Query("auth") String auth,
             @Query("page") int page,
             @Query("pagesize") int pagesize);

@@ -148,7 +148,9 @@ android {
         compile 'com.qiniu:happy-dns:0.2.11'
         //图库
         compile 'com.github.LuckSiege:PictureSelector:v1.1.0'
-        //jar包
+        //socket长连接工具
+        compile 'com.github.vilyever:AndroidSocketClient:3.0.3'
+        // jar包
         compile files('lib/lite-orm-1.9.2.jar')
         compile files('lib/alipaySdk-20160825.jar')
         compile files('lib/tbs_sdk_thirdapp_v3.0.0.1038_43000_sharewithdownload_obfs_20170110_144724.jar')

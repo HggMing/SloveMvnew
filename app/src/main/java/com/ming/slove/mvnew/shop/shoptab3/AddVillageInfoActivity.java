@@ -156,7 +156,7 @@ public class AddVillageInfoActivity extends BackActivity {
                         imgAdd.setVisibility(View.GONE);
                         Glide.with(this)
                                 .load(imagPath)
-                                .placeholder(R.drawable.default_nine_picture)
+                                .placeholder(R.drawable.shape_picture_background)
                                 .into(imgPicture);
                         File file = new File(imagPath);
                         imgPictureBody = RequestBody.create(MediaType.parse("image/*"), file);

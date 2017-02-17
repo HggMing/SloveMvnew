@@ -34,6 +34,9 @@ import butterknife.Bind;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 
 public class VillageListFragment extends LazyLoadFragment implements VillageListAdapter.OnItemClickListener {
@@ -42,6 +45,8 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
     XRecyclerView mXRecyclerView;
     @Bind(R.id.content_empty)
     TextView contentEmpty;
+    @Bind(R.id.error)
+    View onError;
 
     private VillageListAdapter mAdapter;
     List<FollowVillageList.DataEntity.ListEntity> mList = new ArrayList<>();
@@ -61,6 +66,17 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
 
         setHasOptionsMenu(true);
         configXRecyclerView();//XRecyclerView配置
+
+        onError.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onError.setVisibility(View.GONE);
+                mAdapter.clear();
+                mList.clear();
+                page = 1;
+                getDataList(page);
+            }
+        });
     }
 
     @Override
@@ -133,35 +149,38 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
             @Override
             public void onClick(View v) {
 //                Toast.makeText(getContext(), "进入直播间", Toast.LENGTH_SHORT).show();
-                Intent intent=new Intent(getContext(), VideoRoomListActivity.class);
+                Intent intent = new Intent(getContext(), VideoRoomListActivity.class);
                 startActivity(intent);
             }
         });
     }
 
     private void getDataList(int page) {
-        OtherApi.getService().getCall_FollowList(auth, page, PAGE_SIZE)
-                .enqueue(new Callback<FollowVillageList>() {
+        OtherApi.getService().get_FollowList(auth, page, PAGE_SIZE)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<FollowVillageList>() {
                     @Override
-                    public void onResponse(Call<FollowVillageList> call, Response<FollowVillageList> response) {
-                        if (response.isSuccessful()) {
-                            FollowVillageList followVillageListResult = response.body();
-                            if (followVillageListResult != null && followVillageListResult.getErr() == 0) {
-                                mList.addAll(followVillageListResult.getData().getList());
-                                if (contentEmpty != null) {
-                                    if (mList.isEmpty() || mList == null) {
-                                        contentEmpty.setVisibility(View.VISIBLE);
-                                    } else {
-                                        contentEmpty.setVisibility(View.GONE);
-                                    }
-                                }
-                                mAdapter.setItem(mList);
-                            }
-                        }
+                    public void onCompleted() {
+
                     }
 
                     @Override
-                    public void onFailure(Call<FollowVillageList> call, Throwable t) {
+                    public void onError(Throwable e) {
+                        onError.setVisibility(View.VISIBLE);
+                    }
+
+                    @Override
+                    public void onNext(FollowVillageList followVillageList) {
+                        if (followVillageList != null && followVillageList.getErr() == 0) {
+                            mList.addAll(followVillageList.getData().getList());
+                            if (mList.isEmpty() || mList == null) {
+                                contentEmpty.setVisibility(View.VISIBLE);
+                            } else {
+                                contentEmpty.setVisibility(View.GONE);
+                            }
+                            mAdapter.setItem(mList);
+                        }
                     }
                 });
     }

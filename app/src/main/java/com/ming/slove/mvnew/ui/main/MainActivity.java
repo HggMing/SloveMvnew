@@ -78,7 +78,7 @@ import rx.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.viewPager_main)
-    MainViewPager viewPager;
+    MyViewPager viewPager;
     @Bind(R.id.img_tab1_main_1)
     ImageView mTab11;
     @Bind(R.id.img_tab1_main_0)

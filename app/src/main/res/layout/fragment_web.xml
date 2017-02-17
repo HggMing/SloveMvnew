@@ -42,6 +42,6 @@
             android:layout_width="match_parent"
             android:layout_height="3dp"
             android:layout_gravity="center_horizontal|top"
-            android:progressDrawable="@drawable/progressbar_bg" />
+            android:progressDrawable="@drawable/list_progressbar_bg" />
     </FrameLayout>
 </RelativeLayout>

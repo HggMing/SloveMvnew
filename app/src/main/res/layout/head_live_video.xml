@@ -11,7 +11,7 @@
         android:id="@+id/img_head"
         android:layout_width="match_parent"
         android:layout_height="180dp"
-        android:background="@drawable/default_nine_picture"
+        android:background="@drawable/shape_picture_background"
         android:scaleType="centerCrop"
         android:src="@mipmap/img_live_video_head" />
 

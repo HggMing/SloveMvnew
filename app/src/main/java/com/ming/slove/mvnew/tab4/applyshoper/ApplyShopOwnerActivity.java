@@ -457,7 +457,7 @@ public class ApplyShopOwnerActivity extends BackActivity {
                         photoPath3 = mediaList.get(0).getCompressPath();
                         Glide.with(this)
                                 .load(photoPath3)
-                                .placeholder(R.drawable.default_nine_picture)
+                                .placeholder(R.drawable.shape_picture_background)
                                 .into(imgPhoto3);
                         File file = new File(photoPath3);
                         RequestBody requestBody3 = RequestBody.create(MediaType.parse("image/*"), file);

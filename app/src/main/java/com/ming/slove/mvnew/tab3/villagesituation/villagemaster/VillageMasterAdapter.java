@@ -38,7 +38,7 @@ public class VillageMasterAdapter extends BaseRecyclerViewAdapter<VillageMaster.
         String imageUrl = APPS.BASE_URL + data.getHead();
         Glide.with(mContext).load(imageUrl)
                 .centerCrop()
-                .placeholder(R.drawable.default_nine_picture)
+                .placeholder(R.drawable.shape_picture_background)
                 .into(holder.imageView1);
         //内容显示
         String name = data.getUname();

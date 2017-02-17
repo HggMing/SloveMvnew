@@ -38,6 +38,7 @@ public class APPS {
     public static final String USER_AUTH = "user_auth";//用户认证信息
     public static final String ME_UID = "me_id";//登录用户的uid
     public static final String ME_HEAD = "me_head";//登录用户的头像
+    public static final String ME_NAME = "me_name";//登录用户的昵称
     public static final String IS_SHOW_YINGSHAN = "is_show_yingshan";//是否为县长，1是0不是
     public static final String IS_SHOP_OWNER = "is_shop_owner";//是否为店长，1是0不是
     public static final String FRIEND_LIST_UID = "friend_list_uid";//好友uid，用于判定是否为好友。

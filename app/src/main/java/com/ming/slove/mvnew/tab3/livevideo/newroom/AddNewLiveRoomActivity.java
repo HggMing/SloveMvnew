@@ -6,24 +6,20 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bilibili.magicasakura.widgets.TintEditText;
 import com.bumptech.glide.Glide;
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.api.video.VideoApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
+import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.NewRoomInfo;
-import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.Config;
-import com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.SWCodecCameraStreamingActivity;
-import com.ming.slove.mvnew.tab3.newpost.NewPostActivity;
 import com.orhanobut.hawk.Hawk;
 import com.yalantis.ucrop.entity.LocalMedia;
 import com.yalantis.ucrop.util.PictureConfig;
@@ -73,6 +69,9 @@ public class AddNewLiveRoomActivity extends BackActivity {
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
         if (item.getItemId() == R.id.action_submit) {
+            //隐藏软键盘
+            BaseTools.closeInputMethod(this);
+
             String title = etTitle.getEditableText().toString();
             if (StringUtils.isEmpty(title)) {
                 Toast.makeText(this, "请输入直播标题！", Toast.LENGTH_SHORT).show();
@@ -103,6 +102,10 @@ public class AddNewLiveRoomActivity extends BackActivity {
                         @Override
                         public void onError(Throwable e) {
                             item.setEnabled(true);
+                            if (dialog != null) {
+                                dialog.dismiss();
+                            }
+                            Toast.makeText(AddNewLiveRoomActivity.this, "添加失败，请检查网络情况。", Toast.LENGTH_SHORT).show();
                         }
 
                         @Override
@@ -110,7 +113,7 @@ public class AddNewLiveRoomActivity extends BackActivity {
                             if (newRoomInfo.getErr() == 0) {
                                 //添加房间成功后转预览推流页面，并且关闭该页面
                                 String pubUrl=Config.EXTRA_PUBLISH_URL_PREFIX+newRoomInfo.getData().getUrl_1();//推流地址
-                                Intent intent = new Intent(AddNewLiveRoomActivity.this, SWCodecCameraStreamingActivity.class);
+                                Intent intent = new Intent(AddNewLiveRoomActivity.this, LiveCameraStreamingActivity.class);
                                 intent.putExtra(Config.EXTRA_KEY_PUB_URL, pubUrl);
                                 intent.putExtra(Config.EXTRA_KEY_ROOM_ID, newRoomInfo.getData().getRoom_id());
                                 startActivity(intent);
@@ -148,7 +151,7 @@ public class AddNewLiveRoomActivity extends BackActivity {
                         imgAdd.setVisibility(View.GONE);
                         Glide.with(this)
                                 .load(imagPath)
-                                .placeholder(R.drawable.default_nine_picture)
+                                .placeholder(R.drawable.shape_picture_background)
                                 .into(imgPicture);
                         File file = new File(imagPath);
                         imgPictureBody = RequestBody.create(MediaType.parse("image/*"), file);

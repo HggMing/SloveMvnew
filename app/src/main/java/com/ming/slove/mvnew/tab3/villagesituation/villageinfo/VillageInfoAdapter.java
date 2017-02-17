@@ -35,7 +35,7 @@ public class VillageInfoAdapter extends BaseRecyclerViewAdapter<VillageInfo.Data
         //图片加载
         String imageUrl = APPS.BASE_URL + mList.get(position).getPic1();
         Glide.with(mContext).load(imageUrl)
-                .placeholder(R.drawable.default_nine_picture)
+                .placeholder(R.drawable.shape_picture_background)
                 .into(holder.imageView1);
         //标题及内容显示
         String title = mList.get(position).getTitle();

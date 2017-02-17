@@ -135,7 +135,7 @@ public class BrowserActivity extends BaseActivity {
     private void initProgressBar() {
         mPageLoadingProgressBar = (ProgressBar) findViewById(R.id.progressBar1);// new
         mPageLoadingProgressBar.setMax(100);
-        mPageLoadingProgressBar.setProgressDrawable(this.getResources().getDrawable(R.drawable.color_progressbar));
+        mPageLoadingProgressBar.setProgressDrawable(this.getResources().getDrawable(R.drawable.list_color_progressbar));
     }
 
 

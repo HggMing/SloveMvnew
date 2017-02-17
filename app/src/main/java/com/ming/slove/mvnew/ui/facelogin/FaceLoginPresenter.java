@@ -1,17 +1,13 @@
 package com.ming.slove.mvnew.ui.facelogin;
 
-import android.Manifest;
 import android.support.annotation.NonNull;
 import android.util.Base64;
 
 import com.google.gson.Gson;
 import com.ming.slove.mvnew.api.login.LoginApi;
-import com.ming.slove.mvnew.common.base.ClickDialog;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.CheckPhone;
 import com.ming.slove.mvnew.model.bean.Login;
-import com.tbruyelle.rxpermissions.Permission;
-import com.tbruyelle.rxpermissions.RxPermissions;
 
 import java.io.IOException;
 

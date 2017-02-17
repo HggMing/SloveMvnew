@@ -231,6 +231,7 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
                             }
 
                             String uName = dataEntity.getUname();
+                            Hawk.put(APPS.ME_NAME,uName);
                             String sexNumber = dataEntity.getSex();
                             String accountNo = dataEntity.getLogname();
                             //头像

@@ -257,6 +257,10 @@ public class NewPostActivity extends BackActivity implements NewPostAdapter.OnIt
 
                 @Override
                 public void onError(Throwable e) {
+                    if (dialog != null) {
+                        dialog.dismiss();
+                    }
+                    Toast.makeText(NewPostActivity.this, "发布失败，请检查网络。", Toast.LENGTH_SHORT).show();
                     Log.i("mm", e.getMessage());
                 }
 

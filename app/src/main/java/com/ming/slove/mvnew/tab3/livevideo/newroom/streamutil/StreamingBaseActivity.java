@@ -1,8 +1,6 @@
 package com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.pm.ActivityInfo;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -18,19 +16,15 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ming.slove.mvnew.R;
-import com.ming.slove.mvnew.api.video.VideoApi;
-import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
-import com.ming.slove.mvnew.model.bean.Result;
-import com.ming.slove.mvnew.tab3.livevideo.VideoRoomListActivity;
+import com.ming.slove.mvnew.tab3.livevideo.inroom.VideoPlayerBaseActivity;
 import com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.gles.FBO;
 import com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.ui.RotateLayout;
-import com.orhanobut.hawk.Hawk;
 import com.qiniu.android.dns.DnsManager;
 import com.qiniu.android.dns.IResolver;
 import com.qiniu.android.dns.NetworkInfo;
@@ -64,11 +58,7 @@ import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.util.List;
 
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
-
-public class StreamingBaseActivity extends Activity implements
+public class StreamingBaseActivity extends VideoPlayerBaseActivity implements
         View.OnLayoutChangeListener,
         StreamStatusCallback,
         StreamingPreviewCallback,
@@ -92,14 +82,15 @@ public class StreamingBaseActivity extends Activity implements
 
     private Context mContext;
 
-    protected Button mShutterButton;
-    private Button mMuteButton;
-    private Button mTorchBtn;
-    private Button mCameraSwitchBtn;
+    protected Button mShutterButton;//快门
+    private ImageView mMuteButton;//是否开启麦克风
+    private ImageView mTorchBtn;//是否打开闪光灯（后置摄像头时显示）
+    private ImageView mCameraSwitchBtn;//前后置摄像头切换
     private Button mCaptureFrameBtn;
-    private Button mEncodingOrientationSwitcherBtn;
-    private Button mFaceBeautyBtn;
+    private ImageView mEncodingOrientationSwitcherBtn;//横竖屏切换
+    private ImageView mFaceBeautyBtn;//是否美颜
     private RotateLayout mRotateLayout;
+    private SeekBar seekBarBeauty;//美颜程度调节
 
     protected TextView mLogTextView;
     protected TextView mStatusTextView;
@@ -136,7 +127,6 @@ public class StreamingBaseActivity extends Activity implements
 
     private int mCurrentCamFacingIndex;
 
-    private String roomId;//房间号
 
     protected Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
@@ -281,16 +271,16 @@ public class StreamingBaseActivity extends Activity implements
         mCurrentCamFacingIndex = cameraFacingId.ordinal();
         mCameraStreamingSetting = new CameraStreamingSetting();
         mCameraStreamingSetting.setCameraId(Camera.CameraInfo.CAMERA_FACING_BACK)
-                .setContinuousFocusModeEnabled(true)
+                .setContinuousFocusModeEnabled(true)//自动对焦
                 .setRecordingHint(false)
                 .setCameraFacingId(cameraFacingId)
 //                .setCameraSourceImproved(true)
                 .setResetTouchFocusDelayInMs(3000)
-//                .setFocusMode(CameraStreamingSetting.FOCUS_MODE_CONTINUOUS_PICTURE)
+                .setFocusMode(CameraStreamingSetting.FOCUS_MODE_CONTINUOUS_VIDEO)//对焦模式：自动对焦（Video）
                 .setCameraPrvSizeLevel(CameraStreamingSetting.PREVIEW_SIZE_LEVEL.MEDIUM)
                 .setCameraPrvSizeRatio(CameraStreamingSetting.PREVIEW_SIZE_RATIO.RATIO_16_9)
                 .setBuiltInFaceBeautyEnabled(true)
-                .setFaceBeautySetting(new CameraStreamingSetting.FaceBeautySetting(0.8f, 0.8f, 0.8f))
+                .setFaceBeautySetting(new CameraStreamingSetting.FaceBeautySetting(0.8f, 0.8f, 0.8f))//美颜比例0~1
                 .setVideoFilter(CameraStreamingSetting.VIDEO_FILTER_TYPE.VIDEO_FILTER_BEAUTY);
 
         mIsNeedFB = true;
@@ -472,12 +462,16 @@ public class StreamingBaseActivity extends Activity implements
         });
     }
 
+    //设置闪光灯图标显示
     private void setTorchEnabled(final boolean enabled) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                String flashlight = enabled ? getString(R.string.flash_light_off) : getString(R.string.flash_light_on);
-                mTorchBtn.setText(flashlight);
+                if (enabled) {
+                    mTorchBtn.setImageResource(R.drawable.aic_live_flash_on);
+                } else {
+                    mTorchBtn.setImageResource(R.drawable.aic_live_flash_off);
+                }
             }
         });
     }
@@ -587,14 +581,12 @@ public class StreamingBaseActivity extends Activity implements
         View rootView = findViewById(R.id.content);
         rootView.addOnLayoutChangeListener(this);
 
-        roomId=getIntent().getStringExtra(Config.EXTRA_KEY_ROOM_ID);
-
-        mMuteButton = (Button) findViewById(R.id.mute_btn);
+        mMuteButton = (ImageView) findViewById(R.id.mute_btn);
         mShutterButton = (Button) findViewById(R.id.toggleRecording_button);
-        mTorchBtn = (Button) findViewById(R.id.torch_btn);
-        mCameraSwitchBtn = (Button) findViewById(R.id.camera_switch_btn);
+        mTorchBtn = (ImageView) findViewById(R.id.torch_btn);
+        mCameraSwitchBtn = (ImageView) findViewById(R.id.camera_switch_btn);
         mCaptureFrameBtn = (Button) findViewById(R.id.capture_btn);
-        mFaceBeautyBtn = (Button) findViewById(R.id.fb_btn);
+        mFaceBeautyBtn = (ImageView) findViewById(R.id.fb_btn);
         mStatusTextView = (TextView) findViewById(R.id.streamingStatus);
         Button previewMirrorBtn = (Button) findViewById(R.id.preview_mirror_btn);
         Button encodingMirrorBtn = (Button) findViewById(R.id.encoding_mirror_btn);
@@ -685,7 +677,7 @@ public class StreamingBaseActivity extends Activity implements
         });
 
 
-        mEncodingOrientationSwitcherBtn = (Button) findViewById(R.id.orientation_btn);
+        mEncodingOrientationSwitcherBtn = (ImageView) findViewById(R.id.orientation_btn);
         mEncodingOrientationSwitcherBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -694,7 +686,7 @@ public class StreamingBaseActivity extends Activity implements
             }
         });
 
-        SeekBar seekBarBeauty = (SeekBar) findViewById(R.id.beautyLevel_seekBar);
+        seekBarBeauty = (SeekBar) findViewById(R.id.beautyLevel_seekBar);
         seekBarBeauty.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -727,11 +719,12 @@ public class StreamingBaseActivity extends Activity implements
         updateOrientationBtnText();
     }
 
+    //设置录制屏幕方向图标显示
     private void updateOrientationBtnText() {
-        if (mIsEncOrientationPort) {
-            mEncodingOrientationSwitcherBtn.setText("横向");
+        if (mIsEncOrientationPort) {//纵向
+            mEncodingOrientationSwitcherBtn.setImageResource(R.drawable.aic_live_orientation_port);
         } else {
-            mEncodingOrientationSwitcherBtn.setText("纵向");
+            mEncodingOrientationSwitcherBtn.setImageResource(R.drawable.aic_live_orientation_land);
         }
     }
 
@@ -743,26 +736,30 @@ public class StreamingBaseActivity extends Activity implements
         }
     }
 
+    //更新美颜图标状态
     private void updateFBButtonText() {
         if (mFaceBeautyBtn != null) {
-            mFaceBeautyBtn.setText(mIsNeedFB ? "普通" : "美颜");
+            mFaceBeautyBtn.setImageResource(mIsNeedFB ? R.drawable.aic_live_fb_on : R.drawable.aic_live_fb_off);
+//            seekBarBeauty.setVisibility(mIsNeedFB?View.VISIBLE:View.GONE);//美颜开启才显示
         }
     }
 
+    //更新麦克风图标状态
     private void updateMuteButtonText() {
         if (mMuteButton != null) {
-            mMuteButton.setText(mIsNeedMute ? "有声" : "静音");
+            mMuteButton.setImageResource(mIsNeedMute ? R.drawable.aic_live_mic_off : R.drawable.aic_live_mic_on);
         }
     }
 
+    //更新显示前后摄像头图标状态
     private void updateCameraSwitcherButtonText(int camId) {
         if (mCameraSwitchBtn == null) {
             return;
         }
         if (camId == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-            mCameraSwitchBtn.setText("后置");
+            mCameraSwitchBtn.setImageResource(R.drawable.aic_live_camera_front);
         } else {
-            mCameraSwitchBtn.setText("前置");
+            mCameraSwitchBtn.setImageResource(R.drawable.aic_live_camera_black);
         }
     }
 
@@ -842,8 +839,7 @@ public class StreamingBaseActivity extends Activity implements
             setRequestedOrientation(mIsEncOrientationPort ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             mMediaStreamingManager.notifyActivityOrientationChanged();
             updateOrientationBtnText();
-            Toast.makeText(StreamingBaseActivity.this, Config.HINT_ENCODING_ORIENTATION_CHANGED,
-                    Toast.LENGTH_SHORT).show();
+            Toast.makeText(StreamingBaseActivity.this, Config.HINT_ENCODING_ORIENTATION_CHANGED, Toast.LENGTH_LONG).show();
             Log.i(TAG, "EncodingOrientationSwitcher -");
         }
     }
@@ -879,58 +875,5 @@ public class StreamingBaseActivity extends Activity implements
                 }
             });
         }
-    }
-
-    @Override
-    public void onBackPressed() {
-        MyDialog.Builder builder = new MyDialog.Builder(this);
-        builder.setTitle("提示")
-                .setMessage("是否退出直播,并关闭此直播间?")
-                .setPositiveButton("确定",
-                        new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                delRoom();
-                                finish();
-                                dialog.dismiss();
-                            }
-                        })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                })
-                .create()
-                .show();
-    }
-
-    private void delRoom() {
-        String auth = Hawk.get(APPS.USER_AUTH);
-        VideoApi.getService()
-                .post_DelRoom(auth, roomId)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<Result>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(Result result) {
-                        if (result.getErr() == 0) {
-                            Toast.makeText(StreamingBaseActivity.this, "直播结束", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(StreamingBaseActivity.this, result.getMsg(), Toast.LENGTH_SHORT).show();
-                        }
-
-                    }
-                });
     }
 }

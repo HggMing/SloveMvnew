@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="@color/black"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
@@ -15,7 +15,7 @@
         android:id="@+id/CoverView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center" />
+        android:layout_gravity="center"/>
 
     <LinearLayout
         android:id="@+id/LoadingView"
@@ -30,44 +30,65 @@
             android:layout_height="wrap_content" />
 
         <TextView
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="加载中，请稍等..."
             android:textColor="@android:color/white"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:visibility="gone" />
     </LinearLayout>
+
+    <com.ming.slove.mvnew.ui.main.MyViewPager
+        android:id="@+id/view_pager_live"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:layout="@layout/fragment_live_msg" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|right"
-        android:layout_margin="20dp"
-        android:orientation="horizontal">
+        android:layout_width="120dp"
+        android:layout_height="400dp"
+        android:layout_gravity="bottom|right"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.ming.slove.mvnew.common.widgets.likeview.PeriscopeLayout
+            android:id="@+id/periscope"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:visibility="gone"
-            android:onClick="onClickRotate"
-            android:src="@drawable/btn_fullscreen_selector" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:onClick="onClickSwitchScreen"
-            android:src="@drawable/btn_live_more_selector" />
+            android:id="@+id/btn_like"
+            android:layout_width="42dp"
+            android:layout_height="42dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/selector_btn_live_gift" />
     </LinearLayout>
-    <ImageView
-        android:id="@+id/back"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:paddingLeft="10dp"
+
+    <TextView
+        android:id="@+id/play_end"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white"
+        android:gravity="center"
         android:visibility="gone"
+        android:text="直播已结束！"
+        android:textColor="@color/font_black_6"
+        android:textSize="@dimen/textsize_normal" />
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_gravity="top|right"
+        android:layout_margin="16dp"
         android:onClick="onClickClose"
         android:scaleType="centerInside"
-        android:src="@drawable/ic_gf_clear" />
+        android:src="@drawable/selector_btn_close" />
 </FrameLayout>

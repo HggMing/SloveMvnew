@@ -92,4 +92,16 @@ public interface VideoService {
             @Query("room_id") String room_id,
             @Query("page") int page,
             @Query("pagesize") int pagesize);
+
+    /**
+     * 直播点赞
+     * @param auth 认证信息
+     * @param room_id 房间号
+     * @return Result
+     */
+    @FormUrlEncoded
+    @POST("live_video/zan")
+    Observable<Result> post_LiveZan(
+            @Field("auth") String auth,
+            @Field("room_id") String room_id);
 }

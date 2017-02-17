@@ -153,7 +153,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                     Glide.with(mContext)
                             .load(imageUrl)
                             .asBitmap()
-                            .error(R.drawable.default_nine_picture)
+                            .error(R.drawable.shape_picture_background)
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {
@@ -186,7 +186,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
 
                     Glide.with(mContext)
                             .load(data.getShare_image())
-                            .error(R.drawable.default_nine_picture)
+                            .error(R.drawable.shape_picture_background)
                             .into(((LeftViewHolder) holder).shareImg);
                     ((LeftViewHolder) holder).shareTitle.setText(data.getShare_title());
                     ((LeftViewHolder) holder).shareDetail.setText(data.getShare_detail());
@@ -361,7 +361,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                     Glide.with(mContext)
                             .load(imageUrl)
                             .asBitmap()
-                            .error(R.drawable.default_nine_picture)
+                            .error(R.drawable.shape_picture_background)
                             .into(new SimpleTarget<Bitmap>() {
                                 @Override
                                 public void onResourceReady(Bitmap resource, GlideAnimation<? super Bitmap> glideAnimation) {

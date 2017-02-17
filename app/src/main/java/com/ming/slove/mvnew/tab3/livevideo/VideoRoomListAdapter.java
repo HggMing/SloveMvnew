@@ -16,6 +16,7 @@ import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
+import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.RoomList;
 import com.ming.slove.mvnew.model.bean.UserInfoByPhone;
 import com.orhanobut.hawk.Hawk;
@@ -31,7 +32,7 @@ import rx.schedulers.Schedulers;
  * Created by Ming on 2016/7/13.
  */
 public class VideoRoomListAdapter extends BaseRecyclerViewAdapter<RoomList.DataBean.ListBean, VideoRoomListAdapter.ViewHolder> {
-    private String headUrl;
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View mView = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_video_room_list, parent, false);
@@ -44,10 +45,19 @@ public class VideoRoomListAdapter extends BaseRecyclerViewAdapter<RoomList.DataB
         //直播封面图片加载
         String imageUrl = APPS.BASE_URL + mList.get(position).getPic_1();
         Glide.with(mContext).load(imageUrl)
-                .placeholder(R.drawable.default_nine_picture)
+                .placeholder(R.drawable.shape_picture_background)
                 .into(holder.thumbImageView);
         //主播名字
         String name = mList.get(position).getName();
+        if (StringUtils.isEmpty(name)) {
+            //若用户名为空，显示手机号，中间四位为*
+            String iphone = mList.get(position).getAccount();
+            if (!StringUtils.isEmpty(iphone)) {
+                name = iphone.substring(0, 3) + "****" + iphone.substring(7, 11);
+            } else {
+                name = "匿名";
+            }
+        }
         holder.name.setText(name);
         //标题内容显示
         String content = mList.get(position).getTitle();
@@ -60,7 +70,6 @@ public class VideoRoomListAdapter extends BaseRecyclerViewAdapter<RoomList.DataB
             holder.mPlayer.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    holder.mPlayer.setTag(headUrl);
                     mOnItemClickListener.onItemClick(holder.mPlayer, position);
                 }
             });
@@ -75,7 +84,7 @@ public class VideoRoomListAdapter extends BaseRecyclerViewAdapter<RoomList.DataB
         }
 
         //获取主播头像
-        String auth= Hawk.get(APPS.USER_AUTH);
+        String auth = Hawk.get(APPS.USER_AUTH);
         OtherApi.getService()
                 .get_UserInfoByPhone(auth, mList.get(position).getAccount())
                 .subscribeOn(Schedulers.io())
@@ -93,12 +102,13 @@ public class VideoRoomListAdapter extends BaseRecyclerViewAdapter<RoomList.DataB
 
                     @Override
                     public void onNext(UserInfoByPhone userInfoByPhone) {
-                        if(userInfoByPhone!=null){
-                            headUrl=APPS.BASE_URL + userInfoByPhone.getData().getHead();
+                        if (userInfoByPhone != null) {
+                            String headUrl = APPS.BASE_URL + userInfoByPhone.getData().getHead();
                             Glide.with(holder.itemView.getContext()).load(headUrl)
                                     .bitmapTransform(new CropCircleTransformation(holder.itemView.getContext()))
                                     .error(R.mipmap.defalt_user_circle)
                                     .into(holder.icon);
+                            holder.mPlayer.setTag(headUrl);
                         }
                     }
                 });

@@ -35,6 +35,11 @@
         <item name="android:windowIsTranslucent">false</item>
     </style>
 
+    <style name="OpaqueTheme.Fullscreen">
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
     <!--ToolBar按钮文字大小设置-->
     <style name="MyMenuAppearance" parent="TextAppearance.AppCompat.Menu">
         <item name="android:textSize">18sp</item>
@@ -106,7 +111,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginBottom">20dp</item>
-        <item name="android:background">@drawable/button_theme</item>
+        <item name="android:background">@drawable/selector_btn_theme</item>
         <item name="android:padding">4dp</item>
         <item name="android:text">确定</item>
         <item name="android:textColor">@color/white</item>
@@ -117,8 +122,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginTop">12dp</item>
-        <item name="android:background">@drawable/editview_background</item>
-        <item name="android:textCursorDrawable">@drawable/edittext_cursor</item>
+        <item name="android:background">@drawable/selector_editview_background</item>
+        <item name="android:textCursorDrawable">@drawable/shape_cursor_dark</item>
         <item name="android:padding">13dp</item>
         <item name="android:textSize">@dimen/textsize_normal</item>
     </style>
@@ -155,7 +160,7 @@
     <style name="roomRatingSmallBar" parent="@android:style/Widget.RatingBar">
         <item name="android:background">#00000000</item>
         <item name="android:alwaysDrawnWithCache">false</item>
-        <item name="android:progressDrawable">@drawable/room_small_rating_bar</item>
+        <item name="android:progressDrawable">@drawable/list_room_small_rating_bar</item>
         <item name="android:minWidth">14.0dp</item>
         <item name="android:minHeight">14.0dp</item>
         <item name="android:stepSize">1</item>

@@ -89,7 +89,7 @@ public class InRoomPeopleListAdapter extends RecyclerView.Adapter<InRoomPeopleLi
             }
         }
         holder.content.setText(uname);
-        holder.name.setVisibility(View.INVISIBLE);
+        holder.name.setVisibility(View.GONE);
         //进入房间时间
         String date = data.getCtime();
         String showTime = BaseTools.getTimeFormat(date);
