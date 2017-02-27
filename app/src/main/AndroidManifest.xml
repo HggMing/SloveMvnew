@@ -106,6 +106,9 @@
             android:name=".tab1.BrowserActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
         <activity
+            android:name=".tab4.SettingBrowserActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden" />
+        <activity
             android:name=".tab1.webutils.RefreshActivity"
             android:configChanges="orientation|screenSize|keyboardHidden" />
 
@@ -157,6 +160,9 @@
         <activity
             android:name=".tab4.selfinfo.UserDetailActivity"
             android:label="@string/title_activity_user_detail"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".tab4.SettingActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".tab4.selfinfo.UpdateUnameActivity"
@@ -405,13 +411,13 @@
             android:name=".tab3.livevideo.newroom.LiveCameraStreamingActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/OpaqueTheme.Fullscreen" />
+            android:theme="@style/OpaqueTheme.Fullscreen"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name=".tab3.livevideo.inroom.LiveVideoActivity"
             android:configChanges="orientation|screenSize"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustNothing"
-            android:theme="@style/OpaqueTheme.Fullscreen" />
+            android:theme="@style/OpaqueTheme.Fullscreen"
+            android:windowSoftInputMode="adjustNothing" />
     </application>
 </manifest>

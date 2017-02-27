@@ -33,6 +33,7 @@ import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.IpPort;
 import com.ming.slove.mvnew.shop.ShowYingShanFragment;
+import com.ming.slove.mvnew.tab4.SettingWebFragment;
 import com.orhanobut.hawk.Hawk;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -372,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             tab5Layout.setVisibility(View.GONE);
         }
-        fragments.add(new SettingFragment());
+        fragments.add(new SettingWebFragment());
 
         fragmentManager = this.getSupportFragmentManager();
 

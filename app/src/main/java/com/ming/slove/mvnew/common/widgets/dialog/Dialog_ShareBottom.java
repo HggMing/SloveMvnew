@@ -27,7 +27,15 @@ public class Dialog_ShareBottom extends BaseBottomDialog implements View.OnClick
     private String summary;
     private String targetUrl;
     private String thumb;
+    private int shareResult;//0、成功1、失败2、取消分享
 
+    public int getShareResult() {
+        return shareResult;
+    }
+
+    public void setShareResult(int shareResult) {
+        this.shareResult = shareResult;
+    }
 
     public void setShareContent(String title, String summary, String targetUrl, String thumb) {
         this.title = title;
@@ -53,6 +61,7 @@ public class Dialog_ShareBottom extends BaseBottomDialog implements View.OnClick
             @Override
             public void shareSuccess() {
                 Toast.makeText(v.getContext(), "分享成功", Toast.LENGTH_SHORT).show();
+                setShareResult(0);
             }
 
             @Override
@@ -62,12 +71,13 @@ public class Dialog_ShareBottom extends BaseBottomDialog implements View.OnClick
                 } else {
                     Toast.makeText(v.getContext(), "分享失败", Toast.LENGTH_SHORT).show();
                 }
+                setShareResult(1);
             }
 
             @Override
             public void shareCancel() {
                 Toast.makeText(v.getContext(), "取消分享", Toast.LENGTH_SHORT).show();
-
+                setShareResult(2);
             }
         };
     }

@@ -17,9 +17,13 @@ import com.vilyever.socketclient.util.CharsetUtil;
 public class SocketTools {
     private SocketClient mSocketClient;
 
+    public SocketTools() {
+        mSocketClient = getSocketClient();
+    }
+
     public void connect(SocketClientDelegate delegate) {
-        getSocketClient().registerSocketClientDelegate(delegate);
-        getSocketClient().connect();
+        mSocketClient.registerSocketClientDelegate(delegate);
+        mSocketClient.connect();
     }
 
     private SocketClient getSocketClient() {
@@ -61,40 +65,4 @@ public class SocketTools {
         }
         return mSocketClient;
     }
-
-    public void setting() {
-        // 对应removeSocketClientDelegate
-        getSocketClient().registerSocketClientDelegate(new SocketClientDelegate() {
-            /**
-             * 连接上远程端时的回调
-             */
-            @Override
-            public void onConnected(SocketClient socketClient) {
-//                SocketPacket packet = socketClient.sendString("sy hi!"); // 发送消息
-                //登录系统,发送登录系统请求
-                String phone = "";
-                String msg = "{\"type\":\"login_chat\",\"phone\":\"" + phone + "\"}";
-                mSocketClient.sendString(msg);
-            }
-
-            /**
-             * 与远程端断开连接时的回调
-             */
-            @Override
-            public void onDisconnected(SocketClient client) {
-                // 可在此实现自动重连
-                client.connect();
-            }
-
-            /**
-             * 接收到数据包时的回调
-             */
-            @Override
-            public void onResponse(final SocketClient client, @NonNull SocketResponsePacket responsePacket) {
-                byte[] data = responsePacket.getData(); // 获取接收的byte数组，不为null
-
-            }
-        });
-    }
-
 }

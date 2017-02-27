@@ -131,7 +131,7 @@ public class ThemeHelper {
     public static void setTheme(Context context, int themeId) {
         getSharePreference(context).edit()
                 .putInt(CURRENT_THEME, themeId)
-                .commit();
+                .apply();
     }
 
     public static int getTheme(Context context) {

@@ -187,7 +187,7 @@ public class PeriscopeLayout extends RelativeLayout {
     private PointF getPointF(int scale) {
 
         PointF pointF = new PointF();
-        pointF.x = random.nextInt((mWidth - 10));//减去100 是为了控制 x轴活动范围,看效果 随意~~
+        pointF.x = random.nextInt((mWidth - 20));//减去100 是为了控制 x轴活动范围,看效果 随意~~
         //再Y轴上 为了确保第二个点 在第一个点之上,我把Y分成了上下两半 这样动画效果好一些  也可以用其他方法
         pointF.y = random.nextInt((mHeight - 10)) / scale;
         return pointF;

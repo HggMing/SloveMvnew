@@ -1,6 +1,7 @@
 package com.ming.slove.mvnew.tab3.livevideo.newroom;
 
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -18,6 +19,7 @@ import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.StringUtils;
+import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.NewRoomInfo;
 import com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.Config;
 import com.orhanobut.hawk.Hawk;
@@ -88,7 +90,7 @@ public class AddNewLiveRoomActivity extends BackActivity {
             RequestBody titleBody = RequestBody.create(MediaType.parse("text/plain"), title);
 
             VideoApi.getService()
-                    .post_AddRoom(authBody,titleBody,imgPictureBody)
+                    .post_AddRoom(authBody, titleBody, imgPictureBody)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Subscriber<NewRoomInfo>() {
@@ -112,12 +114,14 @@ public class AddNewLiveRoomActivity extends BackActivity {
                         public void onNext(NewRoomInfo newRoomInfo) {
                             if (newRoomInfo.getErr() == 0) {
                                 //添加房间成功后转预览推流页面，并且关闭该页面
-                                String pubUrl=Config.EXTRA_PUBLISH_URL_PREFIX+newRoomInfo.getData().getUrl_1();//推流地址
+                                String pubUrl = Config.EXTRA_PUBLISH_URL_PREFIX + newRoomInfo.getData().getUrl_1();//推流地址
                                 Intent intent = new Intent(AddNewLiveRoomActivity.this, LiveCameraStreamingActivity.class);
                                 intent.putExtra(Config.EXTRA_KEY_PUB_URL, pubUrl);
                                 intent.putExtra(Config.EXTRA_KEY_ROOM_ID, newRoomInfo.getData().getRoom_id());
                                 startActivity(intent);
                                 finish();
+                            } else if (newRoomInfo.getErr() == 4000) {
+                                    showHasRoom(newRoomInfo.getMsg());//显示房间已存在。
                             } else {
                                 item.setEnabled(true);
                                 Toast.makeText(AddNewLiveRoomActivity.this, "添加失败，请检查输入信息是否正确。", Toast.LENGTH_SHORT).show();
@@ -127,6 +131,23 @@ public class AddNewLiveRoomActivity extends BackActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showHasRoom(String msg) {
+        MyDialog.Builder builder = new MyDialog.Builder(this);
+        builder.setTitle("提示")
+                .setCannel(false)
+                .setMessage(msg)
+                .setPositiveButton("确定",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                finish();
+                                dialog.dismiss();
+                            }
+                        })
+                .create()
+                .show();
     }
 
     @OnClick({R.id.layout_add})

@@ -467,6 +467,7 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
                 String phone = Hawk.get(APPS.KEY_LOGIN_NAME);
                 String msg = "{\"type\":\"login_chat\",\"phone\":\"" + phone + "\"}";
                 client.sendString(msg);
+                mSocketclient = client;
             }
 
             @Override
@@ -505,7 +506,6 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
                     case "new_connect"://建立socket
                         break;
                     case "login_chat"://登录成功
-                        mSocketclient = client;
                         break;
                     case "room_zan_change"://房间点赞动画
                         periscope.addHeart();

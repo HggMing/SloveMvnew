@@ -16,7 +16,7 @@ import com.orhanobut.logger.Logger;
 import java.lang.reflect.Method;
 
 /**
- * 当设置decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE）后，键盘遮挡输入框。用此解决这个问题
+ * 手动处理键盘弹出后的界面问题
  * Created by MingN on 2017/2/15.
  */
 
@@ -38,6 +38,12 @@ public class KeyboardPatch {
         this.contentView = contentView;
     }
 
+    /**
+     * 为处理直播聊天界面，专用
+     * @param act
+     * @param contentView
+     * @param fragment
+     */
     public KeyboardPatch(Activity act, View contentView, LiveMsgFragment fragment) {
         this.activity = act;
         this.decorView = act.getWindow().getDecorView();
@@ -45,6 +51,10 @@ public class KeyboardPatch {
         this.fragment = fragment;
     }
 
+    /**
+     * 默认处理acitivity
+     * @param act Activity
+     */
     public KeyboardPatch(Activity act) {
         View contentViewActivity = ((ViewGroup) act.findViewById(android.R.id.content)).getChildAt(0);
         this.activity = act;

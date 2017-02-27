@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.tab3.villagesituation.villageinfo.VillageInfoActivity;
 import com.ming.slove.mvnew.tab3.villagesituation.villagemaster.VillageMasterActivity;
+import com.ming.slove.mvnew.tab4.SettingActivity;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -48,7 +49,8 @@ public class ShopTab3Fragment extends Fragment {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.item_1:
-                Toast.makeText(mActivity, "帖子审查", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(mActivity, "帖子审查", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(mActivity,SettingActivity.class));
                 break;
             case R.id.item_2:
                 Toast.makeText(mActivity, "特产管理", Toast.LENGTH_SHORT).show();

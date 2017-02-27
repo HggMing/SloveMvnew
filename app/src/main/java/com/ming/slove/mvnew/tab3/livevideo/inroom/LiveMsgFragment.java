@@ -30,7 +30,6 @@ import com.ming.slove.mvnew.model.bean.SocketData;
 import com.ming.slove.mvnew.model.event.SocketDataEvent;
 import com.ming.slove.mvnew.tab3.newpost.SquareFrameLayout;
 import com.orhanobut.hawk.Hawk;
-import com.orhanobut.logger.Logger;
 import com.vilyever.socketclient.SocketClient;
 
 import org.greenrobot.eventbus.EventBus;
@@ -124,7 +123,7 @@ public class LiveMsgFragment extends LazyLoadFragment {
                 }
                 //设置动画
                 AlphaAnimation aa = new AlphaAnimation(1f, 0f);//透明度从不透明到透明的变化
-                aa.setDuration(2000);//动画持续时长2s
+                aa.setDuration(3000);//动画持续时长3s
                 tvPeopleIn.startAnimation(aa);
                 final String finalUname = uname;
                 aa.setAnimationListener(new Animation.AnimationListener() {
@@ -243,6 +242,7 @@ public class LiveMsgFragment extends LazyLoadFragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        EventBus.getDefault().unregister(this);
         keyboardPatch.disable();
     }
 
@@ -282,41 +282,40 @@ public class LiveMsgFragment extends LazyLoadFragment {
         getDataList(page);
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-    }
-
     @OnClick({R.id.ly_room_info, R.id.comment_post, R.id.tv_msg, R.id.fragment_live})
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.ly_room_info://点击头像，弹出显示用户列表
                 if (!isShowPeopleList) {
-                    isShowPeopleList=true;
+                    isShowPeopleList = true;
                     lyPeopleList.setVisibility(View.VISIBLE);
                     //刷新列表
                     mAdapter.setItem(null);
                     mList.clear();
                     page = 1;
                     getDataList(page);
-                }else{
-                    isShowPeopleList=false;
-                    lyPeopleList.setVisibility(View.GONE);
+                } else {
+                    hidePeopleList();
                 }
                 break;
             case R.id.comment_post://发送消息
                 postMsg();
                 break;
             case R.id.tv_msg://弹出键盘，和消息发送布局
+                hidePeopleList();
                 showSoftInput();
                 break;
             case R.id.fragment_live://其他区域，关闭键盘,关闭用户列表
-                lyPeopleList.setVisibility(View.GONE);
+                hidePeopleList();
 //                view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);//关闭导航虚拟按键
                 hideSoftInput();
                 break;
         }
+    }
+
+    private void hidePeopleList() {
+        isShowPeopleList = false;
+        lyPeopleList.setVisibility(View.GONE);
     }
 
     /**
@@ -328,9 +327,11 @@ public class LiveMsgFragment extends LazyLoadFragment {
         String conts = commentEdit.getText().toString();
         String phone = Hawk.get(APPS.KEY_LOGIN_NAME);
         String msg = "{\"type\":\"say_to_all\",\"from\":\"" + phone + "\",\"ty\":\"1\",\"room_id\":" + roomId + ",\"content\":\"" + conts + "\"}";
-        mSocketclient.sendString(msg);
-        //清空评论
-        commentEdit.setText("");
+        if (mSocketclient != null) {
+            mSocketclient.sendString(msg);
+            //清空评论
+            commentEdit.setText("");
+        }
     }
 
     // 显示软键盘

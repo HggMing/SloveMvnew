@@ -12,15 +12,15 @@
 
         <com.ming.slove.mvnew.common.widgets.MyShopItem
             android:id="@+id/item_1"
-            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            app:itemFunTitle="帖子审查"
+            app:itemFunTitle="帖子审查(老设置页面入口）"
             app:itemIconName="贴" />
 
         <com.ming.slove.mvnew.common.widgets.MyShopItem
             android:id="@+id/item_2"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

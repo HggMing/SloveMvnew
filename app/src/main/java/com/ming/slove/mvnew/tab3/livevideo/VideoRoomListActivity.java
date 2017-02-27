@@ -18,6 +18,8 @@ import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.RoomList;
 import com.ming.slove.mvnew.tab3.livevideo.inroom.LiveVideoActivity;
 import com.ming.slove.mvnew.tab3.livevideo.newroom.AddNewLiveRoomActivity;
+import com.ming.slove.mvnew.tab3.livevideo.newroom.LiveCameraStreamingActivity;
+import com.ming.slove.mvnew.tab3.livevideo.newroom.streamutil.Config;
 import com.orhanobut.hawk.Hawk;
 
 import java.util.ArrayList;
@@ -35,6 +37,8 @@ public class VideoRoomListActivity extends BackActivity implements BaseRecyclerV
     final private static int PAGE_SIZE = 5;
     private int REQUEST_CODE = 234;
 
+    private String mePhone;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +50,7 @@ public class VideoRoomListActivity extends BackActivity implements BaseRecyclerV
 
     //配置
     private void initView() {
+        mePhone = Hawk.get(APPS.KEY_LOGIN_NAME);
         showLoading(true);
         //设置adapter
         mAdapter = new VideoRoomListAdapter();
@@ -118,10 +123,18 @@ public class VideoRoomListActivity extends BackActivity implements BaseRecyclerV
     @Override
     public void onItemClick(View view, int position) {
 //        Toast.makeText(this, "进入直播间", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(this, LiveVideoActivity.class);
-        intent.putExtra(LiveVideoActivity.VIDEO_ROOM_INFO, mList.get(position));
-        intent.putExtra(LiveVideoActivity.VIDEO_ROOM_OWNER_HEAD, (String) view.getTag());
-        startActivityForResult(intent, REQUEST_CODE);
+        if (mePhone.equals(mList.get(position).getAccount())) {//主播进入，继续推流
+            String pubUrl = Config.EXTRA_PUBLISH_URL_PREFIX + mList.get(position).getUrl_1();//推流地址
+            Intent intent = new Intent(this, LiveCameraStreamingActivity.class);
+            intent.putExtra(Config.EXTRA_KEY_PUB_URL, pubUrl);
+            intent.putExtra(Config.EXTRA_KEY_ROOM_ID, mList.get(position).getRoom_id());
+            startActivity(intent);
+        }else{//观众进入直播间
+            Intent intent = new Intent(this, LiveVideoActivity.class);
+            intent.putExtra(LiveVideoActivity.VIDEO_ROOM_INFO, mList.get(position));
+            intent.putExtra(LiveVideoActivity.VIDEO_ROOM_OWNER_HEAD, (String) view.getTag());
+            startActivityForResult(intent, REQUEST_CODE);
+        }
     }
 
     @Override

@@ -50,4 +50,5 @@ public class APPS {
     public static final String MANAGER_VID = "manager_village_id";//存储店长用户的村店地址，注销登录时须清空。
 
     public static String NEW_FRIEND="new friend";//用于判定，动态页面显示“新的朋友”图标
+    public static String WEB_APP_USER_INFO="web_app_user_info";//用于web页面获取用户信息
 }

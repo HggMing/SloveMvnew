@@ -231,6 +231,7 @@ public class LiveCameraStreamingActivity extends StreamingBaseActivity {
                 String phone = Hawk.get(APPS.KEY_LOGIN_NAME);
                 String msg = "{\"type\":\"login_chat\",\"phone\":\"" + phone + "\"}";
                 client.sendString(msg);
+                mSocketclient = client;
             }
 
             @Override
@@ -269,7 +270,6 @@ public class LiveCameraStreamingActivity extends StreamingBaseActivity {
                     case "new_connect"://建立socket
                         break;
                     case "login_chat"://登录成功
-                        mSocketclient = client;
                         break;
                     case "room_zan_change"://房间点赞数量
                         periscope.addHeart();

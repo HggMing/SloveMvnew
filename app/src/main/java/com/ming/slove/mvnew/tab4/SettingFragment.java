@@ -90,7 +90,6 @@ public class SettingFragment extends LazyLoadFragment implements CardPickerDialo
     @Override
     public void initViews(View view) {
         auth = Hawk.get(APPS.USER_AUTH);
-
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
 
         setHasOptionsMenu(true);
