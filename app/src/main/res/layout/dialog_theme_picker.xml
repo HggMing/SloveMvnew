@@ -14,7 +14,7 @@
         android:ellipsize="end"
         android:paddingLeft="?attr/dialogPreferredPadding"
         android:paddingRight="?attr/dialogPreferredPadding"
-        android:paddingTop="@dimen/abc_dialog_padding_top_material"
+        android:paddingTop="18dp"
         android:text="更换主题"
         android:textAlignment="viewStart"
         android:textSize="@dimen/textsize_large"

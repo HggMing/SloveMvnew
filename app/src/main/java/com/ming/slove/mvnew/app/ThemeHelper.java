@@ -18,8 +18,11 @@ package com.ming.slove.mvnew.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.content.res.ResourcesCompat;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.ming.slove.mvnew.R;
@@ -28,7 +31,6 @@ import com.ming.slove.mvnew.R;
  * 主题颜色切换工具类
  */
 public class ThemeHelper {
-    private static final String CURRENT_THEME = "theme_current";
     public static final int CARD_01 = 0x1;
     public static final int CARD_02 = 0x2;
     public static final int CARD_03 = 0x3;
@@ -37,7 +39,7 @@ public class ThemeHelper {
     public static final int CARD_06 = 0x6;
     public static final int CARD_07 = 0x7;
     public static final int CARD_08 = 0x8;
-
+    private static final String CURRENT_THEME = "theme_current";
     private static ThemeUtils.switchColor mSwitchColor;
 
     static ThemeUtils.switchColor getSwitchColor() {
@@ -52,13 +54,13 @@ public class ThemeHelper {
             @Override
             public int replaceColorById(Context context, @ColorRes int colorId) {
                 if (isDefaultTheme(context)) {
-                    return context.getResources().getColor(colorId);
+                    return ContextCompat.getColor(context,colorId);
                 }
                 String colorName = getThemeColorName(context);
                 if (colorName != null) {
                     colorId = getThemeColorId(context, colorId, colorName);
                 }
-                return context.getResources().getColor(colorId);
+                return ContextCompat.getColor(context,colorId);
             }
 
             @ColorRes
@@ -84,7 +86,7 @@ public class ThemeHelper {
                 if (colorName != null) {
                     colorId = getThemeColor(context, color, colorName);
                 }
-                return colorId != -1 ? context.getResources().getColor(colorId) : color;
+                return colorId != -1 ? ContextCompat.getColor(context,colorId) : color;
             }
 
             private

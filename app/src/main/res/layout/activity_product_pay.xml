@@ -226,9 +226,11 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_toLeftOf="@id/btn_commit"
             android:textColor="@color/white"
             android:textSize="@dimen/textsize_large"
-            tools:text="总价￥0.05" />
+            tools:text="总价￥0.05 " />
 
         <Button
             android:id="@+id/btn_commit"

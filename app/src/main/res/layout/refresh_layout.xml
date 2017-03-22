@@ -26,7 +26,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
-                android:layout_weight="1"
                 android:background="@mipmap/btn_refresh_normal0" />
         </RelativeLayout>
 
@@ -40,7 +39,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
-                android:layout_weight="1"
                 android:background="@mipmap/btn_back_fg_normal0" />
         </RelativeLayout>
 
@@ -54,7 +52,6 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_centerHorizontal="true"
-                android:layout_weight="1"
                 android:background="@mipmap/btn_home_fg_normal2" />
         </RelativeLayout>
     </LinearLayout>
@@ -99,7 +96,7 @@
                 android:gravity="center_horizontal"
                 android:text="向下拉刷新页面"
                 android:textColor="#fa1f34"
-                android:textSize="20dp" />
+                android:textSize="20sp" />
         </RelativeLayout>
     </RelativeLayout>
 

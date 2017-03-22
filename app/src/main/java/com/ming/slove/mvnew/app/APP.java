@@ -5,6 +5,7 @@ import android.app.Application;
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.orhanobut.hawk.Hawk;
 import com.qiniu.pili.droid.streaming.StreamingEnv;
+import com.squareup.leakcanary.LeakCanary;
 
 import me.shaohui.shareutil.ShareConfig;
 import me.shaohui.shareutil.ShareManager;
@@ -26,6 +27,13 @@ public class APP extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+        //内存泄露检测
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
         //主题切换初始化
         ThemeUtils.setSwitchColor(ThemeHelper.getSwitchColor());
         //用于存储

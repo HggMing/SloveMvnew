@@ -29,6 +29,7 @@ import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.bigimageview.BigImageViewActivity;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageView;
 import com.ming.slove.mvnew.common.widgets.nineimage.NineGridImageViewAdapter;
+import com.ming.slove.mvnew.common.widgets.video.MyVideoPlayActivity;
 import com.ming.slove.mvnew.model.bean.BBSList;
 import com.ming.slove.mvnew.model.bean.BbsCommentList;
 import com.ming.slove.mvnew.model.bean.Result;
@@ -36,7 +37,6 @@ import com.ming.slove.mvnew.model.bean.ZanList;
 import com.ming.slove.mvnew.tab2.frienddetail.FriendDetailActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.likeusers.LikeUsersArea;
 import com.orhanobut.hawk.Hawk;
-import com.yalantis.ucrop.ui.VideoPlayActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -266,8 +266,8 @@ public class VillageBbsAdapter extends RecyclerView.Adapter<VillageBbsAdapter.Vi
                     public void onClick(View v) {
                         // FIXME: 2017/1/24
 //                        JCVideoPlayerStandard.startFullscreen(mContext, MyVideoPlayer.class, url, "");//通过节操播放器播放
-                        Intent intent = new Intent(mContext, VideoPlayActivity.class);
-                        intent.putExtra("video_path", url);
+                        Intent intent = new Intent(mContext, MyVideoPlayActivity.class);
+                        intent.putExtra(MyVideoPlayActivity.VIDEO_PATH, url);
                         mContext.startActivity(intent);
                     }
                 });

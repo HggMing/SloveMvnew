@@ -186,6 +186,9 @@
             android:label="@string/title_activity_village_bbs"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".common.widgets.video.MyVideoPlayActivity"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".common.widgets.bigimageview.BigImageViewActivity"
             android:label="@string/title_activity_big_imageview"
             android:screenOrientation="portrait" />

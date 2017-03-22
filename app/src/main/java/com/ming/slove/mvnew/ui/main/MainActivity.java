@@ -720,7 +720,7 @@ public class MainActivity extends AppCompatActivity {
                 menu.findItem(R.id.action_theme).setVisible(false);
                 break;
             case 4://设置页面，进入主题切换
-                menu.findItem(R.id.action_refresh).setVisible(false);
+                menu.findItem(R.id.action_refresh).setVisible(true);
                 menu.findItem(R.id.action_friendlist).setVisible(false);
                 menu.findItem(R.id.action_follow).setVisible(false);
                 menu.findItem(R.id.action_theme).setVisible(true);

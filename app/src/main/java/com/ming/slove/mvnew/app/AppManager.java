@@ -57,11 +57,10 @@ public class AppManager {
     /**
      * 结束指定的Activity
      */
-    public void finishActivity(Activity activity) {
+    private void finishActivity(Activity activity) {
         if (activity != null) {
             activityStack.remove(activity);
             activity.finish();
-            activity = null;
         }
     }
 
@@ -98,7 +97,7 @@ public class AppManager {
                     (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
             activityMgr.killBackgroundProcesses(context.getPackageName());
             System.exit(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
     }
 

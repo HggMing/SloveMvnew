@@ -28,10 +28,10 @@
         android:layout_marginStart="10dp"
         android:layout_toEndOf="@id/expand"
         android:layout_toRightOf="@id/expand"
-        android:singleLine="true"
         android:textColor="#666666"
         android:textSize="20sp"
-        tools:text="推荐的村" />
+        tools:text="推荐的村"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/count"
@@ -43,9 +43,9 @@
         android:layout_toEndOf="@id/text"
         android:layout_toRightOf="@id/text"
         android:gravity="center"
-        android:singleLine="true"
         android:textSize="14sp"
-        tools:text="(1)" />
+        tools:text="(1)"
+        android:maxLines="1" />
 
     <View
         android:layout_width="match_parent"

@@ -94,10 +94,10 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:background="@drawable/selector_btn_theme"
-                    android:singleLine="true"
                     android:text="确定"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/textsize_normal" />
+                    android:textSize="@dimen/textsize_normal"
+                    android:maxLines="1" />
 
                 <View
                     android:layout_width="0dp"

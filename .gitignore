@@ -8,6 +8,11 @@
 # Java class files
 *.class
 
+#api
+LoginService.java
+OtherService.java
+VideoService.java
+
 # Generated files
 bin/
 gen/
@@ -43,3 +48,5 @@ captures/
 
 # External native build folder generated in Android Studio 2.2 and later
 .externalNativeBuild
+.idea/vcs.xml
+projectFilesBackup/

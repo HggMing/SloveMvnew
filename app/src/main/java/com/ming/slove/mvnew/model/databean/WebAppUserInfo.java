@@ -9,6 +9,7 @@ public class WebAppUserInfo {
     private String auth;
     private String uname;
     private String headpic;
+    private String level;
 
     public String getAuth() {
         return auth;
@@ -32,5 +33,13 @@ public class WebAppUserInfo {
 
     public void setUname(String uname) {
         this.uname = uname;
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
     }
 }

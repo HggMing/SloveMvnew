@@ -19,7 +19,7 @@ public class Login {
     private String msg;
     private InfoEntity info;
     private ShopownerBean shopowner;
-    private Map<String,VidInfoBean> vid_info;
+    private Map<String, VidInfoBean> vid_info;
     private String auth;
     private int is_show_yingshan;
 
@@ -110,6 +110,9 @@ public class Login {
         private String head;
         private String rank;
         private String user_star;
+        private String addr;
+        private String level;//0普通1带推广员的店长2推广员
+        private String parid;
 
         public void setUid(String uid) {
             this.uid = uid;
@@ -230,6 +233,30 @@ public class Login {
         public String getRank() {
             return rank;
         }
+
+        public String getAddr() {
+            return addr;
+        }
+
+        public void setAddr(String addr) {
+            this.addr = addr;
+        }
+
+        public String getLevel() {
+            return level;
+        }
+
+        public void setLevel(String level) {
+            this.level = level;
+        }
+
+        public String getParid() {
+            return parid;
+        }
+
+        public void setParid(String parid) {
+            this.parid = parid;
+        }
     }
 
     public static class ShopownerBean {
@@ -272,8 +299,8 @@ public class Login {
          * village_name : 西埔村
          * bid : 0
          * pwd :
-         *office_id :  6
-         *groupid :  0
+         * office_id :  6
+         * groupid :  0
          */
 
         private String id;

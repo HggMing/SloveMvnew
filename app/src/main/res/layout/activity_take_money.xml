@@ -41,20 +41,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:singleLine="true"
                     android:textColor="#222222"
                     android:textSize="16sp"
-                    tools:text="中国工商银行" />
+                    tools:text="中国工商银行"
+                    android:maxLines="1" />
 
                 <TextView
                     android:id="@+id/bank_number"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
-                    android:singleLine="true"
                     android:textColor="@color/font_black_8"
                     android:textSize="14sp"
-                    tools:text="尾号8888" />
+                    tools:text="尾号8888"
+                    android:maxLines="1" />
             </LinearLayout>
 
             <View

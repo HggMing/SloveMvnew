@@ -27,10 +27,10 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="12dp"
         android:layout_marginTop="2dp"
-        android:singleLine="true"
         android:textColor="@color/font_black_8"
         android:textSize="12sp"
-        tools:text="2017-09-16" />
+        tools:text="2017-09-16"
+        android:maxLines="1" />
 
     <TextView
         android:id="@+id/name"
@@ -40,11 +40,11 @@
         android:layout_toLeftOf="@id/time"
         android:layout_toRightOf="@id/icon"
         android:layout_toStartOf="@id/time"
-        android:singleLine="true"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/font_black_4"
         android:textSize="@dimen/textsize_large"
-        tools:text="昵称" />
+        tools:text="昵称"
+        android:maxLines="1" />
 
 
     <!--...只能针对文字，表情图片是没有的，singleLine=false-->

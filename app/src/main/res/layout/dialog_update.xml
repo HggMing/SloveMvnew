@@ -99,10 +99,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/selector_btn_white"
-                android:singleLine="true"
                 android:textColor="@color/theme_color_primary"
                 android:textSize="@dimen/textsize_normal"
-                tools:text="取消" />
+                tools:text="取消"
+                android:maxLines="1" />
 
             <View
                 android:id="@+id/is_show"
@@ -116,10 +116,10 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:background="@drawable/selector_btn_theme"
-                android:singleLine="true"
                 android:textColor="@color/white"
                 android:textSize="@dimen/textsize_normal"
-                tools:text="确定" />
+                tools:text="确定"
+                android:maxLines="1" />
 
             <View
                 android:layout_width="0dp"

@@ -23,12 +23,16 @@ import android.widget.Toast;
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.google.gson.Gson;
 import com.ming.slove.mvnew.R;
+import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseActivity;
+import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
 import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
+import com.ming.slove.mvnew.model.bean.OrderInfo;
 import com.ming.slove.mvnew.model.bean.ShoppingAddress;
 import com.ming.slove.mvnew.model.databean.WebAppUserInfo;
+import com.ming.slove.mvnew.tab1.BrowserActivity;
 import com.ming.slove.mvnew.tab1.webutils.X5WebView;
 import com.orhanobut.hawk.Hawk;
 import com.tencent.smtt.export.external.interfaces.JsResult;
@@ -45,6 +49,10 @@ import com.tencent.smtt.sdk.WebViewClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 
 import static com.ming.slove.mvnew.tab3.product.ProductPayActivity.KEY_USER_ADDR_INFO;
 
@@ -427,6 +435,36 @@ public class SettingBrowserActivity extends BaseActivity {
         public void Logout() {
             Toast.makeText(mContext, "退出登录，此处一般不会调用", Toast.LENGTH_SHORT).show();
         }
+
+        @JavascriptInterface
+        public String Alipay(final String order_sn) {
+//            Toast.makeText(BrowserActivity.this, "order_sn:" + order_sn, Toast.LENGTH_SHORT).show();
+            String auth = Hawk.get(APPS.USER_AUTH);
+            OtherApi.getService()
+                    .get_OrderInfo(order_sn, auth)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Subscriber<OrderInfo>() {
+                        @Override
+                        public void onCompleted() {
+
+                        }
+
+                        @Override
+                        public void onError(Throwable e) {
+
+                        }
+
+                        @Override
+                        public void onNext(OrderInfo orderInfo) {
+                            OrderInfo.DataBean data = orderInfo.getData();
+                            PayUtils payUtils = new PayUtils(SettingBrowserActivity.this, 6);
+                            payUtils.pay(data.getOrder_title(), "订单支付",
+                                    String.valueOf(data.getMoney()), data.getOrder_sn(), data.getUrl());
+                        }
+                    });
+            return "{\"err\":\"0\"}";
+        }
     }
 
     @Override
@@ -469,9 +507,13 @@ public class SettingBrowserActivity extends BaseActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
-        if (intent == null || mWebView == null || intent.getData() == null)
+        if (mWebView == null)
             return;
-        mWebView.loadUrl(intent.getData().toString());
+        if (intent == null || intent.getData() == null) {
+            mWebView.reload();
+        } else {
+            mWebView.loadUrl(intent.getData().toString());
+        }
     }
 
     @Override
@@ -487,9 +529,10 @@ public class SettingBrowserActivity extends BaseActivity {
         String themeJsColor = "#" + Integer.toHexString(themeColor).substring(2);
         // 这段js函数的功能就是，改变web界面的主题颜色
         mWebView.loadUrl("javascript:(function() {" +
-                "    var b, c, a = $('.btn-primary');" +
-                "    for (b = 0; b < a.length; b++) a[b].style.background = '"+themeJsColor+"', a[b].style.borderColor = '"+themeJsColor+"';" +
-                "    for (c = $(\".fa\"), b = 0; b < c.length; b++) c[b].style.color = '"+themeJsColor+"';" +
+                "    var a,b,c,d ;" +
+                "    for (b = $('.btn-primary'),a = 0; a < b.length; a++) b[a].style.background = '" + themeJsColor + "', b[a].style.borderColor = '" + themeJsColor + "';" +
+                "    for (c = $('.statusMsg'), a = 0; a < c.length; a++) c[a].style.background = '"+themeJsColor+"';" +
+                "    for (d = $('div [style*=#36c]'), a = 0; a < d.length; a++) d[a].style.background = '"+themeJsColor+"';" +
                 "})();");
     }
 }

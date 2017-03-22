@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.2"
+    buildToolsVersion '25.0.2'
     defaultConfig {
         applicationId "com.ming.slove.mvnew"
         minSdkVersion 16
         targetSdkVersion 22
-        versionCode 1
-        versionName "1.0.30"
+        versionCode 2
+        versionName "1.0.38"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 
@@ -21,7 +21,9 @@ android {
         ]
         ndk {
 //            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
-            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86"
+//            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86"
+//              abiFilters "armeabi", "armeabi-v7a"
+              abiFilters "x86"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -91,7 +93,11 @@ android {
             exclude group: 'com.android.support', module: 'support-annotations'
         })
         testCompile 'junit:junit:4.12'
-        //log工具
+        //内存泄露检测
+        debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+        releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+        testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+        // log工具
         compile 'com.orhanobut:logger:1.15'
         compile 'com.androidadvance:topsnackbar:1.1.1'
         //主题选择

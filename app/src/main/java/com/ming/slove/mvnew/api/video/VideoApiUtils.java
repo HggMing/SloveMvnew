@@ -1,9 +1,7 @@
-package com.ming.slove.mvnew.api;
+package com.ming.slove.mvnew.api.video;
 
 import android.content.Context;
 
-import com.ming.slove.mvnew.api.login.LoginApi;
-import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APP;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -22,28 +20,16 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.ming.slove.mvnew.app.APPS.BASE_URL;
-
 /**
  * 服务器连接客服端,网络工具
  * Created by MingN on 2017/1/22.
  */
 
-public class ApiUtils {
+class VideoApiUtils {
     private static OkHttpClient mOkClient;
     private static Retrofit mRetrofit;
 
     private static boolean isNewRetrofit;//BaseUrl改变时,新建一个Retrofit实例
-
-    //baseUrl改变时，重建retrofit实例
-    public static void changeApi(String baseUrl) {
-        APPS.BASE_URL = baseUrl;
-        isNewRetrofit = true;
-        //base改变后，所有接口重新生成实例
-        OtherApi.isApiChanged = true;
-        LoginApi.isApiChanged = true;
-//        VideoApi.isApiChanged=true;//暂时正式服和测试服用相同URL
-    }
 
     public static <T> T createService(Class<T> service) {
         if (mRetrofit == null || isNewRetrofit) {
@@ -56,8 +42,9 @@ public class ApiUtils {
         if (mOkClient == null) {
             createOkHttp();
         }
+        String video_url = "http://product1.yibanke.com/";
         mRetrofit = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
+                .baseUrl(video_url)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
                 .client(mOkClient)

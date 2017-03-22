@@ -3,7 +3,6 @@ package com.ming.slove.mvnew.api.login;
 import android.util.Base64;
 
 import com.ming.slove.mvnew.api.ApiUtils;
-import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.PhotoOperate;
 import com.ming.slove.mvnew.model.bean.Login;
@@ -25,13 +24,13 @@ import rx.schedulers.Schedulers;
  */
 
 public class LoginApi {
-    private static LoginService mService;
     public static boolean isApiChanged;
+    private static LoginService mService;
 
     private static LoginService getService() {
-        if (mService == null||isApiChanged) {
+        if (mService == null || isApiChanged) {
             mService = ApiUtils.createService(LoginService.class);
-            isApiChanged=false;
+            isApiChanged = false;
         }
         return mService;
     }
@@ -66,8 +65,8 @@ public class LoginApi {
      * @return Login
      */
     public static Observable<ResponseBody> getFaceLoginSign(String phone, String photoPath) {
-        /**
-         *  compid	机构id
+        /*
+         compid	机构id
          did	设备id
          phone	用户电话号码
          type	类型	1001:人脸验证，1002：指纹验证， 1010：综合验证

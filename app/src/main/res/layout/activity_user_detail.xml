@@ -41,10 +41,10 @@
                 android:layout_marginRight="15dp"
                 android:layout_toLeftOf="@id/bbs_head"
                 android:ellipsize="end"
-                android:singleLine="true"
                 android:text="头像"
                 android:textColor="@color/font_black_2"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                android:maxLines="1" />
         </RelativeLayout>
 
         <include layout="@layout/divide_15_top_bottom" />

@@ -88,7 +88,6 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
     private boolean isLoadError;
 
     private UserInfo.DataEntity dataEntity;
-    WebAppUserInfo webAppUserInfo = new WebAppUserInfo();
     private String auth;
     private int isShopOwner;//是否是店长,1是0不是
     private boolean isUpdataMyInfo;//是否更新完个人信息
@@ -106,7 +105,12 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         auth = Hawk.get(APPS.USER_AUTH);
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
 
-        url = "http://118.178.232.77:8090/view/set/index.html";
+        boolean isTest = Hawk.get(APPS.KEY_IS_TEST, true);//默认为测试
+        if (isTest){
+            url = "http://html1.yibanke.com/view/set/";
+        }else{
+            url = "http://html.yibanke.com/view/set/";
+        }
         setHasOptionsMenu(true);
     }
 
@@ -181,6 +185,7 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         @JavascriptInterface
         public String getUserInfo() {
             //返回UserInfo！
+            WebAppUserInfo webAppUserInfo = Hawk.get(APPS.WEB_APP_USER_INFO);
             String jsonStr = new Gson().toJson(webAppUserInfo);
             return jsonStr;
         }
@@ -497,12 +502,6 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
                             Hawk.put(APPS.ME_NAME, uName);
 
                             Hawk.put(APPS.IS_UPDATA_MY_INFO, true);
-
-                            //设置要上次给web的数据
-                            webAppUserInfo.setAuth(auth);
-                            webAppUserInfo.setHeadpic(dataEntity.getHead());
-                            webAppUserInfo.setUname(uName);
-                            Hawk.put(APPS.WEB_APP_USER_INFO,webAppUserInfo);
                         }
                     }
                 });

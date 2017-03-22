@@ -25,7 +25,6 @@ import com.ming.slove.mvnew.model.bean.IncomeMonth;
 import com.ming.slove.mvnew.model.bean.IncomeReward;
 import com.ming.slove.mvnew.model.bean.InsuranceOrderList;
 import com.ming.slove.mvnew.model.bean.IpPort;
-import com.ming.slove.mvnew.model.bean.Login;
 import com.ming.slove.mvnew.model.bean.MessageList;
 import com.ming.slove.mvnew.model.bean.MoneyDetail;
 import com.ming.slove.mvnew.model.bean.MyOrderList;
@@ -472,10 +471,11 @@ public interface OtherService {
 
     /**
      * 该接口用户帖子的附件上传，上传视频
+     *
      * @param auth 验证参数
      * @param type 0图片2视频（图片可以不传，默认0）
      * @param file 附件上传
-     * @return
+     * @return UploadFiles
      */
     @Multipart
     @POST("bbs/ufiles")
@@ -1047,7 +1047,7 @@ public interface OtherService {
      * @param pagesize 每页数
      * @return MyOrderList
      */
-    @GET("orders/orderlist")
+    @GET("orders/orderlist_mimi")
     Observable<MyOrderList> get_OrderList(
             @Query("auth") String auth,
             @Query("page") int page,

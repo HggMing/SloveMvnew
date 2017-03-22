@@ -7,6 +7,7 @@ import com.ming.slove.mvnew.api.login.LoginApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.model.bean.Login;
+import com.ming.slove.mvnew.model.databean.WebAppUserInfo;
 import com.orhanobut.hawk.Hawk;
 
 import rx.Subscriber;
@@ -134,6 +135,15 @@ public class LoginPresenter implements LoginContract.Presenter {
                     @Override
                     public void onNext(Login login) {
                         if (login.getErr() == 0) {
+
+                            //设置要上传给web的数据
+                            WebAppUserInfo webAppUserInfo=new WebAppUserInfo();
+                            webAppUserInfo.setAuth(login.getAuth());
+                            webAppUserInfo.setHeadpic(login.getInfo().getHead());
+                            webAppUserInfo.setUname(login.getInfo().getUname());
+                            webAppUserInfo.setLevel(login.getInfo().getLevel());
+                            Hawk.put(APPS.WEB_APP_USER_INFO,webAppUserInfo);
+
                             //储存店长管理村地址
                             if (login.getShopowner().getIs_shopowner() == 1) {
                                 mModel.saveShopAddress(login);

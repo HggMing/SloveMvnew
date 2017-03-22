@@ -6,7 +6,6 @@ import com.ming.slove.mvnew.model.bean.Result;
 import com.ming.slove.mvnew.model.bean.RoomList;
 
 import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -43,6 +42,7 @@ public interface VideoService {
             @Part("auth") RequestBody auth,
             @Part("title") RequestBody title,
             @Part("files\"; filename=\"jpg") RequestBody pic);
+
     /**
      * 3、删除房间V
      *
@@ -95,7 +95,8 @@ public interface VideoService {
 
     /**
      * 直播点赞
-     * @param auth 认证信息
+     *
+     * @param auth    认证信息
      * @param room_id 房间号
      * @return Result
      */
