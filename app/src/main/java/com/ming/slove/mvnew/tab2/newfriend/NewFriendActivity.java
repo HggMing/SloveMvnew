@@ -98,7 +98,7 @@ public class NewFriendActivity extends BackActivity {
             EventBus.getDefault().post(new NewFriendEvent());
         }
         //进入新的朋友界面，清零动态的新的朋友计数
-        InstantMsgModel iMsg = MyDB.createDb(this).queryById("-9999", InstantMsgModel.class);
+        InstantMsgModel iMsg = MyDB.getInstance().queryById("-9999", InstantMsgModel.class);
         if (iMsg != null) {
             iMsg.setCount(0);
             MyDB.update(iMsg);

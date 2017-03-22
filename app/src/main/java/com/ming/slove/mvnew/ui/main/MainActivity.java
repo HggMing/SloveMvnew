@@ -2,10 +2,8 @@ package com.ming.slove.mvnew.ui.main;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -28,18 +26,15 @@ import com.bilibili.magicasakura.widgets.TintImageView;
 import com.bilibili.magicasakura.widgets.TintTextView;
 import com.google.gson.Gson;
 import com.igexin.sdk.PushManager;
+import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.utils.StringUtils;
-import com.ming.slove.mvnew.model.bean.IpPort;
-import com.ming.slove.mvnew.shop.ShowYingShanFragment;
-import com.ming.slove.mvnew.tab4.SettingWebFragment;
-import com.orhanobut.hawk.Hawk;
-import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.common.utils.BaseTools;
+import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.model.bean.AddFriendRequest;
 import com.ming.slove.mvnew.model.bean.EbankWifiConnect;
 import com.ming.slove.mvnew.model.bean.FriendDetail;
+import com.ming.slove.mvnew.model.bean.IpPort;
 import com.ming.slove.mvnew.model.bean.MessageList;
 import com.ming.slove.mvnew.model.bean.ShareMsg;
 import com.ming.slove.mvnew.model.database.ChatMsgModel;
@@ -53,11 +48,13 @@ import com.ming.slove.mvnew.model.event.NewFriendEvent;
 import com.ming.slove.mvnew.model.event.RefreshTab2Event;
 import com.ming.slove.mvnew.model.event.ShopApplyPassEvent;
 import com.ming.slove.mvnew.shop.MyShopFragment;
+import com.ming.slove.mvnew.shop.ShowYingShanFragment;
 import com.ming.slove.mvnew.tab1.WebFragment;
 import com.ming.slove.mvnew.tab2.friendlist.FriendListActivity;
 import com.ming.slove.mvnew.tab2.message.MessageFragment;
 import com.ming.slove.mvnew.tab3.villagelist.VillageListFragment;
-import com.ming.slove.mvnew.tab4.SettingFragment;
+import com.ming.slove.mvnew.tab4.SettingWebFragment;
+import com.orhanobut.hawk.Hawk;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -78,6 +75,7 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
+    public List<Fragment> fragments = new ArrayList<>();
     @Bind(R.id.viewPager_main)
     MyViewPager viewPager;
     @Bind(R.id.img_tab1_main_1)
@@ -120,15 +118,12 @@ public class MainActivity extends AppCompatActivity {
     TintTextView tTab5;
     @Bind(R.id.tab5Layout)
     RelativeLayout tab5Layout;
-
-    public List<Fragment> fragments = new ArrayList<>();
     private MyOnPageChangeListener myOnPageChangeListener;
 
     private FragmentManager fragmentManager;
     private boolean isExit;//是否退出
     private int idToolbar = 1;//toolbar 功能按钮页
     private boolean isFirstRun;//是否初次运行
-
     private int isShopOwner;//是否是店长,1是0不是
     private int isShowYingshan;//是否是县长,1是0不是
 
@@ -145,7 +140,13 @@ public class MainActivity extends AppCompatActivity {
         //登录后，向后台获取消息
         getMessageList(this);
         //WiFi连接到ebank网络的认证
-        autoConnect();
+//        autoConnect();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     private void autoConnect() {
@@ -177,7 +178,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 });
     }
-
 
     /**
      * 获取消息，并本地保存，发出通知
@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                                 MyDB.insert(chatMsg);//保存到数据库
 
                                 final String uid = chatMsg.getFrom();
-                                final FriendsModel friend = MyDB.createDb(context).queryById(uid, FriendsModel.class);
+                                final FriendsModel friend = MyDB.getInstance().queryById(uid, FriendsModel.class);
 
                                 if (friend != null) {
                                     //新消息条数，读取及更新
@@ -314,12 +314,6 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }
                 });
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -463,15 +457,93 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == R.id.action_friendlist) {
+            Intent intent = new Intent(this, FriendListActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        switch (idToolbar) {
+            case 1://首页，刷新页面
+                menu.findItem(R.id.action_refresh).setVisible(true);
+                menu.findItem(R.id.action_friendlist).setVisible(false);
+                menu.findItem(R.id.action_follow).setVisible(false);
+                menu.findItem(R.id.action_theme).setVisible(false);
+                break;
+            case 2://消息页面，进入好友列表
+                menu.findItem(R.id.action_refresh).setVisible(false);
+                menu.findItem(R.id.action_friendlist).setVisible(true);
+                menu.findItem(R.id.action_follow).setVisible(false);
+                menu.findItem(R.id.action_theme).setVisible(false);
+                break;
+            case 3://村圈页面，进入关注村圈
+                menu.findItem(R.id.action_refresh).setVisible(false);
+                menu.findItem(R.id.action_friendlist).setVisible(false);
+                menu.findItem(R.id.action_follow).setVisible(true);
+                menu.findItem(R.id.action_theme).setVisible(false);
+                break;
+            case 4://设置页面，进入主题切换
+                menu.findItem(R.id.action_refresh).setVisible(true);
+                menu.findItem(R.id.action_friendlist).setVisible(false);
+                menu.findItem(R.id.action_follow).setVisible(false);
+                menu.findItem(R.id.action_theme).setVisible(true);
+                break;
+            case 5://我的县，刷新页面
+                if (isShowYingshan == 1) {
+                    menu.findItem(R.id.action_refresh).setVisible(true);
+                    menu.findItem(R.id.action_friendlist).setVisible(false);
+                    menu.findItem(R.id.action_follow).setVisible(false);
+                    menu.findItem(R.id.action_theme).setVisible(false);
+                }
+                break;
+            default://其他页面，无快捷按钮
+                menu.findItem(R.id.action_refresh).setVisible(false);
+                menu.findItem(R.id.action_friendlist).setVisible(false);
+                menu.findItem(R.id.action_follow).setVisible(false);
+                menu.findItem(R.id.action_theme).setVisible(false);
+                break;
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!isExit) {
+            isExit = true;
+            Toast.makeText(getApplicationContext(), "再按一次退出程序",
+                    Toast.LENGTH_SHORT).show();
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    isExit = false;
+                }
+            }, 2000);
+        } else {
+            super.onBackPressed();
+        }
+    }
 
     /**
      * 页卡切换监听,点击改变图标外观
      */
-    public class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
+    private class MyOnPageChangeListener implements ViewPager.OnPageChangeListener {
         @Override
         public void onPageSelected(int arg0) {
             int themeColor = ThemeUtils.getColorById(MainActivity.this, R.color.theme_color_primary);
-            ColorStateList colorStateList = ThemeUtils.getThemeColorStateList(MainActivity.this, R.color.theme_color_primary);
             switch (arg0) {
                 case 0://首页
                     toolbarTitle.setText(R.string.tab1_main_1);
@@ -677,90 +749,5 @@ public class MainActivity extends AppCompatActivity {
             }
             return fragment.getView();
         }
-
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        if (id == R.id.action_friendlist) {
-            Intent intent = new Intent(this, FriendListActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        switch (idToolbar) {
-            case 1://首页，刷新页面
-                menu.findItem(R.id.action_refresh).setVisible(true);
-                menu.findItem(R.id.action_friendlist).setVisible(false);
-                menu.findItem(R.id.action_follow).setVisible(false);
-                menu.findItem(R.id.action_theme).setVisible(false);
-                break;
-            case 2://消息页面，进入好友列表
-                menu.findItem(R.id.action_refresh).setVisible(false);
-                menu.findItem(R.id.action_friendlist).setVisible(true);
-                menu.findItem(R.id.action_follow).setVisible(false);
-                menu.findItem(R.id.action_theme).setVisible(false);
-                break;
-            case 3://村圈页面，进入关注村圈
-                menu.findItem(R.id.action_refresh).setVisible(false);
-                menu.findItem(R.id.action_friendlist).setVisible(false);
-                menu.findItem(R.id.action_follow).setVisible(true);
-                menu.findItem(R.id.action_theme).setVisible(false);
-                break;
-            case 4://设置页面，进入主题切换
-                menu.findItem(R.id.action_refresh).setVisible(true);
-                menu.findItem(R.id.action_friendlist).setVisible(false);
-                menu.findItem(R.id.action_follow).setVisible(false);
-                menu.findItem(R.id.action_theme).setVisible(true);
-                break;
-            case 5://我的县，刷新页面
-                if (isShowYingshan == 1) {
-                    menu.findItem(R.id.action_refresh).setVisible(true);
-                    menu.findItem(R.id.action_friendlist).setVisible(false);
-                    menu.findItem(R.id.action_follow).setVisible(false);
-                    menu.findItem(R.id.action_theme).setVisible(false);
-                }
-                break;
-            default://其他页面，无快捷按钮
-                menu.findItem(R.id.action_refresh).setVisible(false);
-                menu.findItem(R.id.action_friendlist).setVisible(false);
-                menu.findItem(R.id.action_follow).setVisible(false);
-                menu.findItem(R.id.action_theme).setVisible(false);
-                break;
-        }
-        return super.onPrepareOptionsMenu(menu);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (!isExit) {
-            isExit = true;
-            Toast.makeText(getApplicationContext(), "再按一次退出程序",
-                    Toast.LENGTH_SHORT).show();
-            mHandler.sendEmptyMessageDelayed(0, 2000);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            isExit = false;
-        }
-    };
-
-
 }

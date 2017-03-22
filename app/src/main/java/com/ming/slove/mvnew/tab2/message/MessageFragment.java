@@ -96,7 +96,7 @@ public class MessageFragment extends LazyLoadFragment implements MessageAdapter.
 
                             //生成欢迎语动态
                             FriendList.DataBean.ListBean user2 = mFList.get(1);//我们村客服
-                            InstantMsgModel user2_msg = MyDB.createDb(getContext()).queryById(user2.getUid(), InstantMsgModel.class);
+                            InstantMsgModel user2_msg = MyDB.getInstance().queryById(user2.getUid(), InstantMsgModel.class);
                             if (user2_msg == null) {//动态不存在才添加
                                 String user2_icon = APPS.BASE_URL + user2.getHead();
                                 String time = String.valueOf(System.currentTimeMillis()).substring(0, 10);//13位时间戳，截取前10位，主要统一

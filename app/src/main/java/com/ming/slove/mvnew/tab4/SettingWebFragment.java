@@ -354,7 +354,7 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
                                 //停止个推SDK服务
                                 PushManager.getInstance().stopService(getContext());
                                 //关闭数据库
-                                MyDB.createDb(getContext()).close();
+                                MyDB.getInstance().close();
                                 MyDB.setLiteOrm(null);
 
                                 Intent intent = new Intent(getContext(), LoginActivity.class);

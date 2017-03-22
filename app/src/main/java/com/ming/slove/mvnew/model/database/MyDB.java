@@ -6,8 +6,11 @@ import com.litesuits.orm.LiteOrm;
 import com.litesuits.orm.db.assit.QueryBuilder;
 import com.litesuits.orm.db.assit.WhereBuilder;
 import com.litesuits.orm.db.model.ConflictAlgorithm;
+import com.ming.slove.mvnew.app.APP;
 import com.ming.slove.mvnew.app.APPS;
 import com.orhanobut.hawk.Hawk;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.util.List;
@@ -42,6 +45,14 @@ public class MyDB {
             }
         }
         return liteOrm;
+    }
+
+    /**
+     * 创建数据库单例
+     * @return LiteOrm
+     */
+    public static LiteOrm getInstance() {
+        return createDb(APP.getInstance().getApplicationContext());
     }
 
     /**

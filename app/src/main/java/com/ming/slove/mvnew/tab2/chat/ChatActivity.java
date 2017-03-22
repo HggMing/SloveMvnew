@@ -116,13 +116,13 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
         other = getIntent().getStringExtra(UID);
 
         //进入聊天界面，清零当前好友的新消息计数
-        FriendsModel friend = MyDB.createDb(this).queryById(other, FriendsModel.class);
+        FriendsModel friend = MyDB.getInstance().queryById(other, FriendsModel.class);
         if (friend != null) {
             friend.setCount(0);
             MyDB.update(friend);
         }
         //进入聊天界面，清零动态的新消息计数
-        InstantMsgModel iMsg = MyDB.createDb(this).queryById(other, InstantMsgModel.class);
+        InstantMsgModel iMsg = MyDB.getInstance().queryById(other, InstantMsgModel.class);
         if (iMsg != null) {
             iMsg.setCount(0);
             MyDB.update(iMsg);
@@ -147,7 +147,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                 .whereAppendAnd()
                 .whereEquals("_type", 0);
 
-        final List<ChatMsgModel> chatMsgModels = MyDB.createDb(this).query(qb);
+        final List<ChatMsgModel> chatMsgModels = MyDB.getInstance().query(qb);
         mAdapter.addData(chatMsgModels);
         mXRecyclerView.scrollToPosition(mAdapter.getItemCount() - 1);
 
@@ -173,7 +173,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                                         mAdapter.removeItem(position);
                                         //删除最后一条，更新动态
                                         if (position == mAdapter.getItemCount()) {
-                                            InstantMsgModel iMsg = MyDB.createDb(ChatActivity.this).queryById(other, InstantMsgModel.class);
+                                            InstantMsgModel iMsg = MyDB.getInstance().queryById(other, InstantMsgModel.class);
                                             if (iMsg != null) {//动态存在，即更新
                                                 String msg = "";
                                                 if (mAdapter.getItemCount() != 0) {//删除后，列表不为空，取最后一条记录
@@ -233,7 +233,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
         } else {
             //其他好友消息发送通知
             final String uid = chatMsg.getFrom();
-            FriendsModel friend = MyDB.createDb(this).queryById(uid, FriendsModel.class);
+            FriendsModel friend = MyDB.getInstance().queryById(uid, FriendsModel.class);
             if (friend == null) {//如果消息来自非好友（新增：客户联系店长）
                 String auth = Hawk.get(APPS.USER_AUTH);
                 OtherApi.getService().get_FriendDetail(auth, uid)
@@ -398,14 +398,14 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
             chatMsg.setTxt(msg);//消息内容
 
             //发送消息后，更新动态
-            InstantMsgModel iMsg = MyDB.createDb(this).queryById(other, InstantMsgModel.class);
+            InstantMsgModel iMsg = MyDB.getInstance().queryById(other, InstantMsgModel.class);
             if (iMsg != null) {//动态存在，即更新
                 iMsg.setTime(String.valueOf(System.currentTimeMillis()).substring(0, 10));
                 iMsg.setContent(msg);
                 MyDB.update(iMsg);
                 EventBus.getDefault().post(new InstantMsgEvent());
             } else {//动态不存在就创建
-                FriendsModel friend = MyDB.createDb(this).queryById(other, FriendsModel.class);
+                FriendsModel friend = MyDB.getInstance().queryById(other, FriendsModel.class);
                 if (friend != null) {
                     String uicon = friend.getUicon();
                     String uname = friend.getUname();
@@ -565,14 +565,14 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
         chatMsg.setLink(imagePath);
 
         //发送消息后，更新动态
-        InstantMsgModel iMsg = MyDB.createDb(this).queryById(other, InstantMsgModel.class);
+        InstantMsgModel iMsg = MyDB.getInstance().queryById(other, InstantMsgModel.class);
         if (iMsg != null) {
             iMsg.setTime(String.valueOf(System.currentTimeMillis()).substring(0, 10));
             iMsg.setContent("[图片]");
             MyDB.update(iMsg);
             EventBus.getDefault().post(new InstantMsgEvent());
         } else {
-            FriendsModel friend = MyDB.createDb(this).queryById(other, FriendsModel.class);
+            FriendsModel friend = MyDB.getInstance().queryById(other, FriendsModel.class);
             if (friend != null) {
                 String uicon = friend.getUicon();
                 String uname = friend.getUname();

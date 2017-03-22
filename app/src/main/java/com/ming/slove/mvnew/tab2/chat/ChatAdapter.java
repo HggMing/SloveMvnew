@@ -125,7 +125,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
             String timeFormat = BaseTools.getTimeFormat(date);
             ((LeftViewHolder) holder).time.setText(timeFormat);
             //头像
-            FriendsModel friend = MyDB.createDb(mContext).queryById(data.getFrom(), FriendsModel.class);
+            FriendsModel friend = MyDB.getInstance().queryById(data.getFrom(), FriendsModel.class);
             String headUrl = friend.getUicon();
             Glide.with(mContext)
                     .load(headUrl)
