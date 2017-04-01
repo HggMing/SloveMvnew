@@ -71,6 +71,7 @@ public class RoomList {
              * pic : http://pili-live-snapshot.live.isall.com.cn/ourvillage-live/livestrram1485074731.jpg
              * url_flv : http://pili-live-hdl.live.isall.com.cn/ourvillage-live/livestrram1485074731.flv
              * pic_1 : /Public/bbs/file/11015/2017-01-22/20170122s20170122985797979951.jpeg
+             * url_m3u8:http://pili-live-hdl.live.isall.com.cn/ourvillage-live/livestrram1490241160.m3u8
              * zan_num": "49",
              *"head": "http://product.yibanke.com/Public/head/11015/KJ6AJETWVGRP1456121024.png"
              */
@@ -85,6 +86,7 @@ public class RoomList {
             private String pic;
             private String url_flv;
             private String pic_1;
+            private String url_m3u8;
             private String zan_num;
             private String head;
 
@@ -168,6 +170,14 @@ public class RoomList {
                 this.pic_1 = pic_1;
             }
 
+            public String getUrl_m3u8() {
+                return url_m3u8;
+            }
+
+            public void setUrl_m3u8(String url_m3u8) {
+                this.url_m3u8 = url_m3u8;
+            }
+
             public String getHead() {
                 return head;
             }
@@ -201,6 +211,7 @@ public class RoomList {
                 dest.writeString(this.pic);
                 dest.writeString(this.url_flv);
                 dest.writeString(this.pic_1);
+                dest.writeString(this.url_m3u8);
                 dest.writeString(this.zan_num);
                 dest.writeString(this.head);
             }
@@ -219,6 +230,7 @@ public class RoomList {
                 this.pic = in.readString();
                 this.url_flv = in.readString();
                 this.pic_1 = in.readString();
+                this.url_m3u8 = in.readString();
                 this.zan_num = in.readString();
                 this.head = in.readString();
             }

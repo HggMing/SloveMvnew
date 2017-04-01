@@ -206,6 +206,7 @@ class NewFriendAdapter extends BaseRecyclerViewAdapter<NewFriendModel, NewFriend
                                 String uid = data.getUid();
                                 Intent intent = new Intent(mContext, FriendDetailActivity.class);
                                 intent.putExtra(FriendDetailActivity.FRIEND_UID, uid);
+                                intent.putExtra(FriendDetailActivity.SHOW_FRIEND, true);
                                 mContext.startActivity(intent);
                                 activity.finish();
                             }

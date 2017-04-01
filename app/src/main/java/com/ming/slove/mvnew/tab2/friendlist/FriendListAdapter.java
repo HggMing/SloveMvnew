@@ -88,7 +88,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         String showName = mList.get(position).getName();
         holder.userName.setText(showName);
         //好友头像的显示
-        if (position == 0) {
+        if (mList.get(position).getHead() == null) {//新的朋友图标
             Glide.with(mContext).load(R.mipmap.tab2_new_friend)
                     .bitmapTransform(new CropCircleTransformation(mContext))
                     .into(holder.userHead);

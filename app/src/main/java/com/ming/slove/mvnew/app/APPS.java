@@ -10,6 +10,7 @@ import android.os.Environment;
 public class APPS {
     public static final String CHAT_BASE_URL = "http://push.traimo.com/source/";//聊天资源文件base_url
     public static final String DEFAULT_HEAD = "/Public/head/default.png";//服务器提供的默认头像，这里是为了方便替换为本地图片
+    public static final String LIVE_SHARE_BASE_URL = "http://html1.yibanke.com/live/live.php?url_m3u8=";//直播分享的base_url
     //SharedPreferences相关参数C
     public static final String KEY_IS_TEST = "key_is_test";
     public static final String KEY_BASE_URL = "key_base_url";//正式服务器与测试服务器的切换，默认为正式

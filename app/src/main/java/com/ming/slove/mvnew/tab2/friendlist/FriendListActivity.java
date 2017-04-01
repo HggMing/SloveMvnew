@@ -1,10 +1,12 @@
 package com.ming.slove.mvnew.tab2.friendlist;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +67,7 @@ public class FriendListActivity extends BaseActivity {
 
         //设置搜索好友
         configSearch();
+        searchView.showSearch(false);
     }
 
     @Override
@@ -112,6 +115,7 @@ public class FriendListActivity extends BaseActivity {
 //                Toast.makeText(MainActivity.this, "搜索关闭", Toast.LENGTH_SHORT).show();
 //                viewPager.setVisibility(View.VISIBLE);
                 searchPage.setVisibility(View.GONE);
+                finish();
             }
         });
     }
@@ -146,6 +150,7 @@ public class FriendListActivity extends BaseActivity {
                             intent.putExtra(FriendDetailActivity.FRIEND_UID, uid);
                             startActivity(intent);
                             searchView.closeSearch();
+                            finish();
                         } else {//没有查找到
                             Toast.makeText(FriendListActivity.this, userInfoByPhone.getMsg(), Toast.LENGTH_SHORT).show();
                         }
@@ -164,7 +169,7 @@ public class FriendListActivity extends BaseActivity {
     @Override
     public void onBackPressed() {
         if (searchView.isSearchOpen()) {
-            searchView.closeSearch();
+//            searchView.closeSearch();
         } else {
             super.onBackPressed();
         }

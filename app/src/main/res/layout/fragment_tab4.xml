@@ -1,4 +1,5 @@
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -86,7 +87,7 @@
 
             <include layout="@layout/divide_15_top_bottom" />
 
-            <LinearLayout xmlns:listItem1="http://schemas.android.com/apk/res-auto"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/stand_bg"
@@ -97,8 +98,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    listItem1:itemIcon="@mipmap/tab4_my_setting"
-                    listItem1:itemTitle="我的" />
+                    app:itemIcon="@mipmap/tab4_my_setting"
+                    app:itemTitle="我的" />
 
                 <include layout="@layout/divide_1_12" />
 
@@ -107,8 +108,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    listItem1:itemIcon="@mipmap/tab4_store_manager"
-                    listItem1:itemTitle="申请店长" />
+                    app:itemIcon="@mipmap/tab4_store_manager"
+                    app:itemTitle="申请店长" />
 
                 <include layout="@layout/divide_1_12" />
 
@@ -117,8 +118,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    listItem1:itemIcon="@mipmap/tab4_safe_center"
-                    listItem1:itemTitle="账号安全" />
+                    app:itemIcon="@mipmap/tab4_safe_center"
+                    app:itemTitle="账号安全" />
 
                 <include layout="@layout/divide_1_12" />
 
@@ -127,8 +128,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    listItem1:itemIcon="@mipmap/tab4_setting_common"
-                    listItem1:itemTitle="通用" />
+                    app:itemIcon="@mipmap/tab4_setting_common"
+                    app:itemTitle="通用" />
 
                 <include layout="@layout/divide_15_top" />
 
@@ -137,9 +138,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:focusable="false"
-                    listItem1:itemIcon="@mipmap/tab4_logout"
-                    listItem1:itemTitle="退出当前账号"
-                    listItem1:showArrow="false" />
+                    app:itemIcon="@mipmap/tab4_logout"
+                    app:itemTitle="退出当前账号"
+                    app:showArrow="false" />
             </LinearLayout>
 
             <Button

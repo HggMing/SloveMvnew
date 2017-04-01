@@ -25,6 +25,7 @@ import com.ming.slove.mvnew.api.video.VideoApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.utils.SocketTools;
 import com.ming.slove.mvnew.common.utils.StringUtils;
+import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.common.widgets.likeview.PeriscopeLayout;
 import com.ming.slove.mvnew.common.widgets.video.Utils;
@@ -57,6 +58,9 @@ import rx.schedulers.Schedulers;
  * 播放直播页面
  */
 public class LiveVideoActivity extends VideoPlayerBaseActivity {
+    public static final String VIDEO_ROOM_INFO = "video_room_info";//直播房间信息
+    public static final String VIDEO_ROOM_OWNER_HEAD = "video_room_owner_head";//主播头像地址
+    private static final int MESSAGE_ID_RECONNECTING = 0x01;
     @Bind(R.id.VideoView)
     PLVideoTextureView mVideoView;
     @Bind(R.id.CoverView)
@@ -65,35 +69,112 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
     LinearLayout mLoadingView;
     @Bind(R.id.view_pager_live)
     MyViewPager viewPager;
-
     @Bind(R.id.periscope)
     PeriscopeLayout periscope;
     @Bind(R.id.btn_like)
     ImageView btnLike;
     @Bind(R.id.play_end)
     TextView tvPlayEnd;
-
-
-    private static final int MESSAGE_ID_RECONNECTING = 0x01;
-
     private Toast mToast = null;
     private String mVideoPath = null;
     private int mRotation = 0;
     private int mDisplayAspectRatio = PLVideoTextureView.ASPECT_RATIO_FIT_PARENT; //default
     private boolean mIsActivityPaused = true;
+    protected Handler mHandler = new Handler(Looper.getMainLooper()) {
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what != MESSAGE_ID_RECONNECTING) {
+                return;
+            }
+            if (mIsActivityPaused || !Utils.isLiveStreamingAvailable()) {
+                finish();
+                return;
+            }
+            if (!Utils.isNetworkAvailable(LiveVideoActivity.this)) {
+                sendReconnectMessage();
+                return;
+            }
+            mVideoView.setVideoPath(mVideoPath);
+            mVideoView.start();
+        }
+    };
     private int mIsLiveStreaming = 1;
-
     private String roomId;//房间id
     private String auth;
-
-    public static final String VIDEO_ROOM_INFO = "video_room_info";//直播房间信息
-    public static final String VIDEO_ROOM_OWNER_HEAD = "video_room_owner_head";//主播头像地址
     private RoomList.DataBean.ListBean roomInfo;
-
     private List<Fragment> fragments = new ArrayList<>();
     private FragmentManager fragmentManager;
-
     private SocketClient mSocketclient;
+    private PLMediaPlayer.OnErrorListener mOnErrorListener = new PLMediaPlayer.OnErrorListener() {
+        @Override
+        public boolean onError(PLMediaPlayer mp, int errorCode) {
+            boolean isNeedReconnect = false;
+            switch (errorCode) {
+                case PLMediaPlayer.ERROR_CODE_INVALID_URI:
+                    showToastTips("无效的URL!");
+                    break;
+                case PLMediaPlayer.ERROR_CODE_404_NOT_FOUND:
+                    showToastTips("播放资源不存在!");
+                    break;
+                case PLMediaPlayer.ERROR_CODE_CONNECTION_REFUSED:
+                    showToastTips("服务器拒绝连接!");
+                    break;
+                case PLMediaPlayer.ERROR_CODE_CONNECTION_TIMEOUT:
+                    showToastTips("连接超时!");
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.ERROR_CODE_EMPTY_PLAYLIST:
+                    showToastTips("空的播放列表!");
+                    break;
+                case PLMediaPlayer.ERROR_CODE_STREAM_DISCONNECTED:
+                    showToastTips("与服务器连接断开!");
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.ERROR_CODE_IO_ERROR:
+                    showToastTips("网络异常!");
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.ERROR_CODE_UNAUTHORIZED:
+                    showToastTips("未授权，播放一个禁播的流!");
+                    break;
+                case PLMediaPlayer.ERROR_CODE_PREPARE_TIMEOUT:
+                    showToastTips("播放器准备超时!");
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.ERROR_CODE_READ_FRAME_TIMEOUT:
+                    showToastTips("读取数据超时!");
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.ERROR_CODE_HW_DECODE_FAILURE:
+//                    showToastTips("硬解码失败!");
+                    setOptions(AVOptions.MEDIA_CODEC_SW_DECODE);
+                    isNeedReconnect = true;
+                    break;
+                case PLMediaPlayer.MEDIA_ERROR_UNKNOWN:
+                    showToastTips("未知错误!");
+                    break;
+                default:
+                    showToastTips("未知错误!");
+                    break;
+            }
+            // Todo pls handle the error status here, reconnect or call finish()
+            if (isNeedReconnect) {
+                sendReconnectMessage();
+            } else {
+                finish();
+            }
+            // Return true means the error has been handled
+            // If return false, then `onCompletion` will be called
+            return true;
+        }
+    };
+    private PLMediaPlayer.OnCompletionListener mOnCompletionListener = new PLMediaPlayer.OnCompletionListener() {
+        @Override
+        public void onCompletion(PLMediaPlayer plMediaPlayer) {
+            showToastTips("已播放完成!");
+            finish();
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,6 +185,27 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
         initView();
         initVideoView();
         initData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mIsActivityPaused = false;
+        mVideoView.start();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mToast = null;
+        mVideoView.pause();
+        mIsActivityPaused = true;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mVideoView.stopPlayback();
     }
 
     private void initView() {
@@ -147,42 +249,6 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
         bundle.putString(LiveMsgFragment.VIDEO_ROOM_OWNER_HEAD, headUrl);
         bundle.putString(LiveMsgFragment.VIDEO_ROOM_OWNER_NAME, name);
         fragments.get(0).setArguments(bundle);
-    }
-
-    /**
-     * 填充ViewPager的数据适配器
-     */
-    private class MyPagerAdapter extends PagerAdapter {
-        @Override
-        public int getCount() {
-            return fragments.size();
-        }
-
-        @Override
-        public boolean isViewFromObject(View arg0, Object arg1) {
-            return arg0 == arg1;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(fragments.get(position).getView());
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            Fragment fragment = fragments.get(position);
-            if (!fragment.isAdded()) { // 如果fragment还没有added
-                FragmentTransaction ft = fragmentManager.beginTransaction();
-                ft.add(fragment, fragment.getClass().getSimpleName());
-                ft.commit();
-                fragmentManager.executePendingTransactions();
-            }
-
-            if (fragment.getView().getParent() == null) {
-                container.addView(fragment.getView()); // 为viewpager增加布局
-            }
-            return fragment.getView();
-        }
     }
 
     private void initVideoView() {
@@ -259,27 +325,6 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
         mVideoView.setAVOptions(options);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mToast = null;
-        mVideoView.pause();
-        mIsActivityPaused = true;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mIsActivityPaused = false;
-        mVideoView.start();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mVideoView.stopPlayback();
-    }
-
     /**
      * 旋转屏幕
      */
@@ -325,95 +370,29 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
         }
     }
 
-    /**
-     * 关闭页面
-     */
-    public void onClickClose(View v) {
-        onBackPressed();
-    }
+    @OnClick({R.id.btn_share, R.id.btn_close, R.id.btn_like})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_share://分享
+                //分享链接的网址
+                String url =APPS.LIVE_SHARE_BASE_URL+ roomInfo.getUrl_m3u8();
+                String imageUrl = APPS.BASE_URL + roomInfo.getPic_1();
 
-    /**
-     * 点赞
-     */
-    @OnClick(R.id.btn_like)
-    public void onClick() {
-        //发送点赞信息
-        String msg = "{\"type\":\"room_zan_change\",\"room_id\":\"" + roomId + "\"}";
-        if (mSocketclient != null)
-            mSocketclient.sendString(msg);
-    }
-
-    private PLMediaPlayer.OnErrorListener mOnErrorListener = new PLMediaPlayer.OnErrorListener() {
-        @Override
-        public boolean onError(PLMediaPlayer mp, int errorCode) {
-            boolean isNeedReconnect = false;
-            switch (errorCode) {
-                case PLMediaPlayer.ERROR_CODE_INVALID_URI:
-                    showToastTips("无效的URL!");
-                    break;
-                case PLMediaPlayer.ERROR_CODE_404_NOT_FOUND:
-                    showToastTips("播放资源不存在!");
-                    break;
-                case PLMediaPlayer.ERROR_CODE_CONNECTION_REFUSED:
-                    showToastTips("服务器拒绝连接!");
-                    break;
-                case PLMediaPlayer.ERROR_CODE_CONNECTION_TIMEOUT:
-                    showToastTips("连接超时!");
-                    isNeedReconnect = true;
-                    break;
-                case PLMediaPlayer.ERROR_CODE_EMPTY_PLAYLIST:
-                    showToastTips("空的播放列表!");
-                    break;
-                case PLMediaPlayer.ERROR_CODE_STREAM_DISCONNECTED:
-                    showToastTips("与服务器连接断开!");
-                    isNeedReconnect = true;
-                    break;
-                case PLMediaPlayer.ERROR_CODE_IO_ERROR:
-                    showToastTips("网络异常!");
-                    isNeedReconnect = true;
-                    break;
-                case PLMediaPlayer.ERROR_CODE_UNAUTHORIZED:
-                    showToastTips("未授权，播放一个禁播的流!");
-                    break;
-                case PLMediaPlayer.ERROR_CODE_PREPARE_TIMEOUT:
-                    showToastTips("播放器准备超时!");
-                    isNeedReconnect = true;
-                    break;
-                case PLMediaPlayer.ERROR_CODE_READ_FRAME_TIMEOUT:
-                    showToastTips("读取数据超时!");
-                    isNeedReconnect = true;
-                    break;
-                case PLMediaPlayer.ERROR_CODE_HW_DECODE_FAILURE:
-//                    showToastTips("硬解码失败!");
-                    setOptions(AVOptions.MEDIA_CODEC_SW_DECODE);
-                    isNeedReconnect = true;
-                    break;
-                case PLMediaPlayer.MEDIA_ERROR_UNKNOWN:
-                    showToastTips("未知错误!");
-                    break;
-                default:
-                    showToastTips("未知错误!");
-                    break;
-            }
-            // Todo pls handle the error status here, reconnect or call finish()
-            if (isNeedReconnect) {
-                sendReconnectMessage();
-            } else {
-                finish();
-            }
-            // Return true means the error has been handled
-            // If return false, then `onCompletion` will be called
-            return true;
+                Dialog_ShareBottom dialog = new Dialog_ShareBottom();
+                dialog.setShareContent(roomInfo.getTitle(), roomInfo.getTitle(), url, imageUrl);
+                dialog.show(getSupportFragmentManager());
+                break;
+            case R.id.btn_close://关闭页面
+                onBackPressed();
+                break;
+            case R.id.btn_like://点赞
+                //发送点赞信息
+                String msg = "{\"type\":\"room_zan_change\",\"room_id\":\"" + roomId + "\"}";
+                if (mSocketclient != null)
+                    mSocketclient.sendString(msg);
+                break;
         }
-    };
-
-    private PLMediaPlayer.OnCompletionListener mOnCompletionListener = new PLMediaPlayer.OnCompletionListener() {
-        @Override
-        public void onCompletion(PLMediaPlayer plMediaPlayer) {
-            showToastTips("已播放完成!");
-            finish();
-        }
-    };
+    }
 
     private void showToastTips(final String tips) {
         runOnUiThread(new Runnable() {
@@ -434,25 +413,6 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
         mHandler.removeCallbacksAndMessages(null);
         mHandler.sendMessageDelayed(mHandler.obtainMessage(MESSAGE_ID_RECONNECTING), 500);
     }
-
-    protected Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(Message msg) {
-            if (msg.what != MESSAGE_ID_RECONNECTING) {
-                return;
-            }
-            if (mIsActivityPaused || !Utils.isLiveStreamingAvailable()) {
-                finish();
-                return;
-            }
-            if (!Utils.isNetworkAvailable(LiveVideoActivity.this)) {
-                sendReconnectMessage();
-                return;
-            }
-            mVideoView.setVideoPath(mVideoPath);
-            mVideoView.start();
-        }
-    };
 
     private void initData() {
         createScoket(); //建立长连接
@@ -598,5 +558,41 @@ public class LiveVideoActivity extends VideoPlayerBaseActivity {
                         }
                     }
                 });
+    }
+
+    /**
+     * 填充ViewPager的数据适配器
+     */
+    private class MyPagerAdapter extends PagerAdapter {
+        @Override
+        public int getCount() {
+            return fragments.size();
+        }
+
+        @Override
+        public boolean isViewFromObject(View arg0, Object arg1) {
+            return arg0 == arg1;
+        }
+
+        @Override
+        public void destroyItem(ViewGroup container, int position, Object object) {
+            container.removeView(fragments.get(position).getView());
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            Fragment fragment = fragments.get(position);
+            if (!fragment.isAdded()) { // 如果fragment还没有added
+                FragmentTransaction ft = fragmentManager.beginTransaction();
+                ft.add(fragment, fragment.getClass().getSimpleName());
+                ft.commit();
+                fragmentManager.executePendingTransactions();
+            }
+
+            if (fragment.getView().getParent() == null) {
+                container.addView(fragment.getView()); // 为viewpager增加布局
+            }
+            return fragment.getView();
+        }
     }
 }

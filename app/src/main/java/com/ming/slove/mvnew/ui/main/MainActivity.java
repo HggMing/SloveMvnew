@@ -1,7 +1,6 @@
 package com.ming.slove.mvnew.ui.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -12,8 +11,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -47,11 +44,11 @@ import com.ming.slove.mvnew.model.event.InstantMsgEvent;
 import com.ming.slove.mvnew.model.event.NewFriendEvent;
 import com.ming.slove.mvnew.model.event.RefreshTab2Event;
 import com.ming.slove.mvnew.model.event.ShopApplyPassEvent;
+import com.ming.slove.mvnew.model.event.ShowSideBarEvent;
 import com.ming.slove.mvnew.shop.MyShopFragment;
 import com.ming.slove.mvnew.shop.ShowYingShanFragment;
 import com.ming.slove.mvnew.tab1.WebFragment;
-import com.ming.slove.mvnew.tab2.friendlist.FriendListActivity;
-import com.ming.slove.mvnew.tab2.message.MessageFragment;
+import com.ming.slove.mvnew.tab2.IMFragment;
 import com.ming.slove.mvnew.tab3.villagelist.VillageListFragment;
 import com.ming.slove.mvnew.tab4.SettingWebFragment;
 import com.orhanobut.hawk.Hawk;
@@ -355,7 +352,7 @@ public class MainActivity extends AppCompatActivity {
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
 
         fragments.add(new WebFragment());
-        fragments.add(new MessageFragment());
+        fragments.add(new IMFragment());
         fragments.add(new VillageListFragment());
         if (isShowYingshan == 1) {//若为营山县长
             fragments.add(new ShowYingShanFragment());
@@ -379,7 +376,7 @@ public class MainActivity extends AppCompatActivity {
         viewPager.setAdapter(new MyPagerAdapter());
 
         //初次运行软件，指导添加村
-        isFirstRun = Hawk.get(APPS.IS_FIRST_RUN, true);
+        isFirstRun = Hawk.get(APPS.IS_FIRST_RUN, false);//****暂时关闭此引导
         if (isShopOwner == 0) {
             if (isFirstRun) {
                 viewPager.setCurrentItem(2, true);
@@ -457,25 +454,26 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
 
-        if (id == R.id.action_friendlist) {
-            Intent intent = new Intent(this, FriendListActivity.class);
-            startActivity(intent);
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        int id = item.getItemId();
+//
+//        if (id == R.id.action_friendlist) {
+//            Intent intent = new Intent(this, FriendListActivity.class);
+//            startActivity(intent);
+//            return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
-    @Override
+    /*@Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         switch (idToolbar) {
             case 1://首页，刷新页面
@@ -518,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onPrepareOptionsMenu(menu);
-    }
+    }*/
 
     @Override
     public void onBackPressed() {
@@ -674,10 +672,10 @@ public class MainActivity extends AppCompatActivity {
                 case 0://什么都没做
                     break;
                 case 1://正在滑动
-//                    EventBus.getDefault().post(new ShowSideBarEvent(false));
+                    EventBus.getDefault().post(new ShowSideBarEvent(false));
                     break;
                 case 2://滑动完毕了
-//                    EventBus.getDefault().post(new ShowSideBarEvent(true));
+                    EventBus.getDefault().post(new ShowSideBarEvent(true));
                     break;
             }
         }

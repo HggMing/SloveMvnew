@@ -43,6 +43,7 @@ import rx.schedulers.Schedulers;
  */
 public class MessageFragment extends LazyLoadFragment implements MessageAdapter.OnItemClickListener {
 
+    final private static int PAGE_SIZE = 10;
     @Bind(R.id.m_x_recyclerview)
     RecyclerView mXRecyclerView;
     @Bind(R.id.content_empty)
@@ -51,16 +52,17 @@ public class MessageFragment extends LazyLoadFragment implements MessageAdapter.
     TextView tvRecommend;
     @Bind(R.id.m_x_recyclerview2)
     XRecyclerView mXRecyclerView2;
-
     private MessageAdapter mAdapter;
     private List<InstantMsgModel> mList;
-
     private RecommendAdapter mAdapter2;
     private List<RecommendList.DataBean.ListBean> mList2 = new ArrayList<>();//特产推荐列表
-
-
-    final private static int PAGE_SIZE = 10;
     private int page = 1;
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
+    }
 
     private void initFriendInfo() {
         page = 1;
@@ -235,14 +237,8 @@ public class MessageFragment extends LazyLoadFragment implements MessageAdapter.
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        EventBus.getDefault().unregister(this);
-    }
-
-    @Override
     public int getLayout() {
-        return R.layout.fragment_tab1;
+        return R.layout.fragment_message;
     }
 
     @Override

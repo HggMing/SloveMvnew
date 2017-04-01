@@ -12,8 +12,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
+import com.melnykov.fab.FloatingActionButton;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
@@ -22,10 +24,16 @@ import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.FollowVillageList;
 import com.ming.slove.mvnew.model.bean.Result;
+import com.ming.slove.mvnew.model.event.ChangeThemeColorEvent;
+import com.ming.slove.mvnew.tab2.friendlist.FriendListActivity;
 import com.ming.slove.mvnew.tab3.addfollow.FollowVillageActivity;
 import com.ming.slove.mvnew.tab3.livevideo.VideoRoomListActivity;
 import com.ming.slove.mvnew.tab3.villagebbs.VillageBbsActivity;
 import com.orhanobut.hawk.Hawk;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +55,8 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
     TextView contentEmpty;
     @Bind(R.id.error)
     View onError;
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
 
     private VillageListAdapter mAdapter;
     List<FollowVillageList.DataEntity.ListEntity> mList = new ArrayList<>();
@@ -77,6 +87,14 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
                 getDataList(page);
             }
         });
+        showFab();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -92,6 +110,34 @@ public class VillageListFragment extends LazyLoadFragment implements VillageList
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    //开启fab
+    public void showFab() {
+        fab.attachToRecyclerView(mXRecyclerView);//fab随recyclerView的滚动，隐藏和出现
+        int themeColor = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary);
+        int themeColor2 = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary_dark);
+        fab.setColorNormal(themeColor);//fab背景颜色
+        fab.setColorPressed(themeColor2);//fab点击后背景颜色
+        fab.setColorRipple(themeColor2);//fab点击后涟漪颜色
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), FollowVillageActivity.class);
+                startActivityForResult(intent,12355);
+            }
+        });
+    }
+
+    //更换主题后手动刷新fab颜色
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeThemeColor(ChangeThemeColorEvent event) {
+        int themeColor = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary);
+        int themeColor2 = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary_dark);
+        fab.setColorNormal(themeColor);//fab背景颜色
+        fab.setColorPressed(themeColor2);//fab点击后背景颜色
+        fab.setColorRipple(themeColor2);//fab点击后涟漪颜色
     }
 
     @Override

@@ -53,6 +53,7 @@ public class NewRoomInfo {
          * k :
          * url_flv : http://pili-live-hdl.live.isall.com.cn/ourvillage-live/livestrram1485076917.flv
          * pic_1 : /Public/bbs/file/21364/2017-01-22/20170122s20170122535453100559.files
+         * url_m3u8:http://pili-live-hdl.live.isall.com.cn/ourvillage-live/livestrram1490241160.m3u8
          * room_id : 10419
          */
 
@@ -67,6 +68,7 @@ public class NewRoomInfo {
         private String k;
         private String url_flv;
         private String pic_1;
+        private String url_m3u8;
         private String room_id;
 
         public String getTitle() {
@@ -155,6 +157,14 @@ public class NewRoomInfo {
 
         public void setPic_1(String pic_1) {
             this.pic_1 = pic_1;
+        }
+
+        public String getUrl_m3u8() {
+            return url_m3u8;
+        }
+
+        public void setUrl_m3u8(String url_m3u8) {
+            this.url_m3u8 = url_m3u8;
         }
 
         public String getRoom_id() {

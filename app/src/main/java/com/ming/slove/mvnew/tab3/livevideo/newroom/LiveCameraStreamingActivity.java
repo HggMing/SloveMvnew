@@ -15,11 +15,12 @@ import com.google.gson.Gson;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.video.VideoApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.SocketTools;
+import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.common.widgets.likeview.PeriscopeLayout;
 import com.ming.slove.mvnew.model.bean.Result;
+import com.ming.slove.mvnew.model.bean.ShareInfo;
 import com.ming.slove.mvnew.model.bean.SocketData;
 import com.ming.slove.mvnew.model.event.SocketDataEvent;
 import com.ming.slove.mvnew.tab3.livevideo.inroom.EmptyFragment;
@@ -73,6 +74,7 @@ public class LiveCameraStreamingActivity extends StreamingBaseActivity {
         final RelativeLayout lyControlUI = (RelativeLayout) findViewById(R.id.ly_control_ui);
         ImageView btnLike = (ImageView) findViewById(R.id.btn_like);
         final ImageView btnClose = (ImageView) findViewById(R.id.btn_close);
+        ImageView btnShare = (ImageView) findViewById(R.id.btn_share);
 
         //数据初始化
         roomId = getIntent().getStringExtra(Config.EXTRA_KEY_ROOM_ID);
@@ -134,6 +136,18 @@ public class LiveCameraStreamingActivity extends StreamingBaseActivity {
             @Override
             public void onClick(View v) {
                 onBackPressed();
+            }
+        });
+        //分享
+        btnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //分享链接的网址
+                ShareInfo shareInfo=getIntent().getParcelableExtra(Config.EXTRA_KEY_SHARE_INFO);
+
+                Dialog_ShareBottom dialog = new Dialog_ShareBottom();
+                dialog.setShareContent(shareInfo.getTitle(),shareInfo.getSummary(),shareInfo.getTargetUrl(),shareInfo.getThumb());
+                dialog.show(getSupportFragmentManager());
             }
         });
     }

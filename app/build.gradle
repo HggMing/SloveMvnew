@@ -7,7 +7,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 22
         versionCode 2
-        versionName "1.0.38"
+        versionName "1.0.42"
         //指定打包成Jar文件时候的文件名称
         archivesBaseName = "slove-$versionName"
 
@@ -21,9 +21,9 @@ android {
         ]
         ndk {
 //            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "mips", "mips64", "x86", "x86_64"
-//            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86"
+            abiFilters "armeabi", "armeabi-v7a", "arm64-v8a", "x86"
 //              abiFilters "armeabi", "armeabi-v7a"
-              abiFilters "x86"
+//              abiFilters "x86"
         }
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
@@ -118,6 +118,8 @@ android {
         compile "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
         compile "com.android.support:design:$rootProject.supportLibraryVersion"
         compile "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
+//        compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
+        compile 'com.flyco.tablayout:FlycoTabLayout_Lib:2.1.2@aar'
 
 //    compile 'com.google.guava:guava:19.0'
         compile "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"

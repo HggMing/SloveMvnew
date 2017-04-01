@@ -14,6 +14,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
+import com.melnykov.fab.FloatingActionButton;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
@@ -30,6 +32,7 @@ import com.ming.slove.mvnew.model.database.ChatMsgModel;
 import com.ming.slove.mvnew.model.database.FriendsModel;
 import com.ming.slove.mvnew.model.database.InstantMsgModel;
 import com.ming.slove.mvnew.model.database.MyDB;
+import com.ming.slove.mvnew.model.event.ChangeThemeColorEvent;
 import com.ming.slove.mvnew.model.event.InstantMsgEvent;
 import com.ming.slove.mvnew.model.event.NewFriendEvent;
 import com.ming.slove.mvnew.model.event.RefreshFriendList;
@@ -49,6 +52,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -57,6 +61,7 @@ import rx.schedulers.Schedulers;
  * 老乡
  */
 public class FriendListFragment extends Fragment implements FriendListAdapter.OnItemClickListener {
+    final private static int PAGE_SIZE = 50;//
     AppCompatActivity mActivity;
     @Bind(R.id.contact_member)
     RecyclerView mXRecyclerView;
@@ -64,11 +69,12 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
     TextView mUserDialog;
     @Bind(R.id.contact_sidebar)
     SideBar mSideBar;
+    @Bind(R.id.fab)
+    FloatingActionButton fab;
 
-    private FriendListAdapter mAdapter;
     List<FriendList.DataBean.ListBean> mList = new ArrayList<>();
+    private FriendListAdapter mAdapter;
     private int cnt;//列表数据总条数
-    final private static int PAGE_SIZE = 50;//
     private int page = 1;
     private String auth;
     private List<String> friendUids = new ArrayList<>();
@@ -99,6 +105,34 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
     public void onDestroyView() {
         super.onDestroyView();
         EventBus.getDefault().unregister(this);
+        ButterKnife.unbind(this);
+    }
+
+    //开启fab
+    public void showFab() {
+        fab.attachToRecyclerView(mXRecyclerView);//fab随recyclerView的滚动，隐藏和出现
+        int themeColor = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary);
+        int themeColor2 = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary_dark);
+        fab.setColorNormal(themeColor);//fab背景颜色
+        fab.setColorPressed(themeColor2);//fab点击后背景颜色
+        fab.setColorRipple(themeColor2);//fab点击后涟漪颜色
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(getActivity(),FriendListActivity.class));
+            }
+        });
+    }
+
+    //更换主题后手动刷新fab颜色
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void changeThemeColor(ChangeThemeColorEvent event) {
+        int themeColor = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary);
+        int themeColor2 = ThemeUtils.getColorById(getContext().getApplicationContext(), R.color.theme_color_primary_dark);
+        fab.setColorNormal(themeColor);//fab背景颜色
+        fab.setColorPressed(themeColor2);//fab点击后背景颜色
+        fab.setColorRipple(themeColor2);//fab点击后涟漪颜色
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -106,7 +140,8 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
         //是否显示好友列表，右边导航栏
         if (event.isShow()) {
             mSideBar.setVisibility(View.VISIBLE);
-            mSideBar.setBackgroundDrawable(new ColorDrawable(0x00000000));
+            mSideBar.setBackground(new ColorDrawable(0x00000000));
+            mUserDialog.setVisibility(View.GONE);
         } else {
             mSideBar.setVisibility(View.GONE);
             mUserDialog.setVisibility(View.GONE);
@@ -136,7 +171,7 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
     }
 
     private void initView() {
-        setHasOptionsMenu(true);
+//        setHasOptionsMenu(true);
         characterParser = CharacterParser.getInstance();
         pinyinComparator = new PinyinComparator();
         mSideBar.setTextView(mUserDialog);
@@ -150,6 +185,7 @@ public class FriendListFragment extends Fragment implements FriendListAdapter.On
                 }
             }
         });
+        showFab();
     }
 
     //配置RecyclerView

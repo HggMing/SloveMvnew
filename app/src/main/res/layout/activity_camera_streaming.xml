@@ -190,13 +190,25 @@
             android:layout_marginTop="10dp"
             android:src="@drawable/selector_btn_live_gift" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/btn_close"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
+    <LinearLayout
         android:layout_gravity="top|right"
         android:layout_margin="16dp"
-        android:scaleType="centerInside"
-        android:src="@drawable/selector_btn_close" />
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/btn_share"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_btn_share" />
+
+        <ImageView
+            android:id="@+id/btn_close"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/selector_btn_close" />
+    </LinearLayout>
 </FrameLayout>

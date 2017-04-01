@@ -3,6 +3,10 @@ package com.ming.slove.mvnew.tab1;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -10,6 +14,7 @@ import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.bilibili.magicasakura.widgets.TintProgressBar;
 import com.ming.slove.mvnew.R;
@@ -38,10 +43,13 @@ public class WebFragment extends LazyLoadFragment {
     TintProgressBar progressBar;
     @Bind(R.id.content_empty)
     FrameLayout contentEmpty;
+    @Bind(R.id.toolbar)
+    Toolbar mToolBar;
+    @Bind(R.id.toolbar_title)
+    TextView toolbarTitle;
 
     private String url;
     private boolean isLoadError;
-
 
     @Override
     public int getLayout() {
@@ -50,14 +58,26 @@ public class WebFragment extends LazyLoadFragment {
 
     @Override
     public void initViews(View view) {
+        setHasOptionsMenu(true);
+
+        mToolBar.setTitle("");
+        toolbarTitle.setText(getResources().getText(R.string.tab1_main_1));
+        ((AppCompatActivity) getActivity()).setSupportActionBar(mToolBar);
+
         String auth = Hawk.get(APPS.USER_AUTH);
         url = APPS.BASE_URL + "/mobile/index?auth=" + auth + "&device_type=1";//device_type 普通浏览器：0  app:1  微信：2
-        setHasOptionsMenu(true);
     }
 
     @Override
     public void loadData() {
         initData();
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+//        menu.clear();
+        inflater.inflate(R.menu.menu_refresh, menu);
     }
 
     @Override
@@ -216,7 +236,7 @@ public class WebFragment extends LazyLoadFragment {
         @Override
         public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
             super.onPageStarted(webView, s, bitmap);
-            isLoadError=false;
+            isLoadError = false;
         }
 
         @Override

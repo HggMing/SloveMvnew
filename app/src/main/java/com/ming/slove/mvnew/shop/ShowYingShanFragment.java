@@ -43,7 +43,7 @@ public class ShowYingShanFragment extends LazyLoadFragment {
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_web;
+        return R.layout.fragment_web_yinshan;
     }
 
     @Override

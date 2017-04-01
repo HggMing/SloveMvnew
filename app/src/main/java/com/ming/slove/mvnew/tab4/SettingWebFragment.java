@@ -8,13 +8,20 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
+import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
@@ -52,6 +59,7 @@ import com.ming.slove.mvnew.ui.login.LoginActivity;
 import com.ming.slove.mvnew.ui.main.MainActivity;
 import com.ming.slove.mvnew.ui.update.UpdateApp;
 import com.orhanobut.hawk.Hawk;
+import com.orhanobut.logger.Logger;
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.sdk.WebChromeClient;
@@ -65,6 +73,7 @@ import java.io.File;
 import java.io.IOException;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 import butterknife.OnClick;
 import okhttp3.MediaType;
 import okhttp3.RequestBody;
@@ -83,6 +92,14 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
     TintProgressBar progressBar;
     @Bind(R.id.content_empty)
     FrameLayout contentEmpty;
+    @Bind(R.id.toolbar)
+    Toolbar mToolBar;
+    @Bind(R.id.refresh)
+    ImageView refresh;
+    @Bind(R.id.theme)
+    ImageView theme;
+    @Bind(R.id.tab4_button)
+    LinearLayout tab4Button;
 
     private String url;
     private boolean isLoadError;
@@ -97,18 +114,20 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
 
     @Override
     public int getLayout() {
-        return R.layout.fragment_web;
+        return R.layout.fragment_web_setting;
     }
 
     @Override
     public void initViews(View view) {
+        mToolBar.setVisibility(View.GONE);
+
         auth = Hawk.get(APPS.USER_AUTH);
         isShopOwner = Hawk.get(APPS.IS_SHOP_OWNER);
 
         boolean isTest = Hawk.get(APPS.KEY_IS_TEST, true);//默认为测试
-        if (isTest){
+        if (isTest) {
             url = "http://html1.yibanke.com/view/set/";
-        }else{
+        } else {
             url = "http://html.yibanke.com/view/set/";
         }
         setHasOptionsMenu(true);
@@ -119,6 +138,8 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         initData();
         getUserInfoDetail();//在线获取用户信息
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -140,6 +161,25 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         return super.onOptionsItemSelected(item);
     }
 
+    @OnClick({R.id.refresh, R.id.theme})
+    public void onViewClicked(View view) {
+        switch (view.getId()) {
+            case R.id.refresh:
+                if (isLoadError) {
+                    webView.setVisibility(View.GONE);
+                }
+                webView.reload();
+                contentEmpty.setVisibility(View.GONE);
+                break;
+            case R.id.theme:
+                //更换主题
+                CardPickerDialog dialog = new CardPickerDialog();
+                dialog.setClickListener(this);
+                dialog.show(getActivity().getSupportFragmentManager(), CardPickerDialog.TAG);
+                break;
+        }
+    }
+
     @SuppressLint("SetJavaScriptEnabled")
     private void initData() {
         //添加进度条
@@ -159,7 +199,28 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
 
         // 打开链接。
         webView.loadUrl(url);
+
+        webView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_MOVE:
+                        if(webView.getWebScrollY()>160){
+                            tab4Button.setVisibility(View.GONE);
+                        }else{
+                            tab4Button.setVisibility(View.VISIBLE);
+                        }
+                            break;
+                    case MotionEvent.ACTION_UP:
+                    case MotionEvent.ACTION_CANCEL:
+                        break;
+                }
+                return false;
+            }
+        });
     }
+
+
 
     class WebAppJsInterface {
         Context mContext;
@@ -207,7 +268,7 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         public int saveFile(String filename, String value) {
             //成功0，失败1
             //saveFile//// FIXME: 2017/2/23
-            Toast.makeText(mContext, "保存文件，暂未实现，文件名："+filename+",文件值："+value, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "保存文件，暂未实现，文件名：" + filename + ",文件值：" + value, Toast.LENGTH_SHORT).show();
             return 0;
         }
 
@@ -215,7 +276,7 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         public String loadFile(String filename) {
             String rtn = "";
             //loadFile！//// FIXME: 2017/2/23
-            Toast.makeText(mContext, "读取本地文件，暂未实现，文件名："+filename, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "读取本地文件，暂未实现，文件名：" + filename, Toast.LENGTH_SHORT).show();
             return rtn;
         }
 
@@ -236,7 +297,7 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
         @JavascriptInterface
         public int createBtn(String btn, String img) {
             //0、成功1、失败
-            Toast.makeText(mContext, "创建按钮，暂未实现，按键："+btn+",图片："+img, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "创建按钮，暂未实现，按键：" + btn + ",图片：" + img, Toast.LENGTH_SHORT).show();
             return 0;
         }
 
@@ -248,7 +309,7 @@ public class SettingWebFragment extends LazyLoadFragment implements CardPickerDi
 
         @JavascriptInterface
         public void goURL(String url, boolean isNewWin, String a) {
-            Toast.makeText(mContext, "进入链接，暂未实现，URL："+url+",是否新窗口："+isNewWin+",未知参数："+a, Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "进入链接，暂未实现，URL：" + url + ",是否新窗口：" + isNewWin + ",未知参数：" + a, Toast.LENGTH_SHORT).show();
             if (isNewWin) {
             }
         }

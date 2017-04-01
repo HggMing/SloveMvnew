@@ -37,6 +37,8 @@ public class FriendDetailActivity extends BackActivity {
 
     public static String FRIEND_UID = "the_friend_uid";//所选择用户的UID
     public static String NEW_NAME = "the_user_new_name";//添加或修改后的用户备注名
+    public static String SHOW_FRIEND = "show_friend";//同意添加好友后，直接显示好友信息界面，而不是申请界面
+    private final int SET_REMARK_NAME = 11;//设置备注名
     @Bind(R.id.icon_head)
     ImageView iconHead;
     @Bind(R.id.name)
@@ -69,10 +71,8 @@ public class FriendDetailActivity extends BackActivity {
     RelativeLayout fdPhotos;
     @Bind(R.id.line_12)
     View line12;
-
     private FriendDetail.DataBean.UserinfoBean userinfoBean;
     private String uid;
-    private final int SET_REMARK_NAME = 11;//设置备注名
     private boolean isFriend;//用于判定是否为好友
     private boolean isMySelf;//用于判定是否为自己
 
@@ -88,10 +88,13 @@ public class FriendDetailActivity extends BackActivity {
         ButterKnife.bind(this);
         setToolbarTitle(R.string.title_activity_friend_detail);
 
-        //用于判定是否为好友
         uid = getIntent().getStringExtra(FRIEND_UID);
-        List<String> friendUids = Hawk.get(APPS.FRIEND_LIST_UID);
-        isFriend = friendUids.contains(uid);
+        //用于判定是否为好友
+        isFriend = getIntent().getBooleanExtra(SHOW_FRIEND, false);
+        if (!isFriend) {
+            List<String> friendUids = Hawk.get(APPS.FRIEND_LIST_UID);
+            isFriend = friendUids.contains(uid);
+        }
         //判定是否为本人
         String me_uid = Hawk.get(APPS.ME_UID);
         isMySelf = me_uid.equals(uid);

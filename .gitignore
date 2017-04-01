@@ -50,3 +50,4 @@ captures/
 .externalNativeBuild
 .idea/vcs.xml
 projectFilesBackup/
+app/src/main/res/drawable/aic_cry.xml

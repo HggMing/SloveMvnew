@@ -21,6 +21,7 @@ public class Config {
 
     public static final String EXTRA_KEY_PUB_URL = "pub_url";
     public static final String EXTRA_KEY_ROOM_ID = "room_id";
+    public static final String EXTRA_KEY_SHARE_INFO = "share_info";
 
     public static final String HINT_ENCODING_ORIENTATION_CHANGED = "直播录制方向改变,已暂停，请手动启动开始录制。";
 }

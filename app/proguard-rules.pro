@@ -146,6 +146,8 @@
 -dontwarn android.net.**
 -keep class android.net.SSLCertificateSocketFactory{*;}
 
+-keepattributes EnclosingMethod
+
 #mob
 -keep class android.net.http.SslError
 -keep class android.webkit.**{*;}
