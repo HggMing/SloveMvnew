@@ -6,13 +6,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
@@ -26,53 +34,56 @@ import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseActivity;
+import com.ming.slove.mvnew.common.utils.FileUtils;
 import com.ming.slove.mvnew.common.widgets.alipay.PayUtils;
 import com.ming.slove.mvnew.common.widgets.dialog.Dialog_ShareBottom;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.OrderInfo;
-import com.ming.slove.mvnew.model.bean.ShoppingAddress;
 import com.ming.slove.mvnew.model.databean.WebAppUserInfo;
-import com.ming.slove.mvnew.tab1.BrowserActivity;
 import com.ming.slove.mvnew.tab1.webutils.X5WebView;
 import com.orhanobut.hawk.Hawk;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient;
 import com.tencent.smtt.export.external.interfaces.JsResult;
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
-import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.CookieSyncManager;
 import com.tencent.smtt.sdk.DownloadListener;
+import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebSettings.LayoutAlgorithm;
 import com.tencent.smtt.sdk.WebView;
 import com.tencent.smtt.sdk.WebViewClient;
+import com.yalantis.ucrop.entity.LocalMedia;
+import com.yalantis.ucrop.util.PictureConfig;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.List;
 
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-import static com.ming.slove.mvnew.tab3.product.ProductPayActivity.KEY_USER_ADDR_INFO;
-
 
 public class SettingBrowserActivity extends BaseActivity {
+    public static String KEY_URL = "key_url";
+    public static String WEB_TITLE = "the_title";
+    WebSettings webSetting;
     private TextView toolbarTitle;
     private Toolbar toolbar;
     private X5WebView mWebView;
     private FrameLayout contentEmpty;
     private ProgressBar mPageLoadingProgressBar = null;
     private FrameLayout mViewParent;
-
-    WebSettings webSetting;
-
-    public static String KEY_URL = "key_url";
     private String mIntentUrl;
-
-    public static String WEB_TITLE = "the_title";
     private String mIntentTitle;
     private boolean isLoadError;
+    private boolean isShowToolbarAction;
+    private JSONObject infoJSONObject = null;//存储title的JSONObject
+
+    private ValueCallback<Uri> mUploadMessage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,7 +145,7 @@ public class SettingBrowserActivity extends BaseActivity {
     private void initProgressBar() {
         mPageLoadingProgressBar = (ProgressBar) findViewById(R.id.progressBar1);// new
         mPageLoadingProgressBar.setMax(100);
-        mPageLoadingProgressBar.setProgressDrawable(this.getResources().getDrawable(R.drawable.list_color_progressbar));
+        mPageLoadingProgressBar.setProgressDrawable(ContextCompat.getDrawable(this, R.drawable.list_color_progressbar));
     }
 
 
@@ -144,113 +155,8 @@ public class SettingBrowserActivity extends BaseActivity {
         mViewParent.addView(mWebView);
 
         initProgressBar();
-        mWebView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-                //如果不需要其他对点击链接事件的处理返回true，否则返回false
-                return false;
-            }
-
-            @Override
-            public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                return super.shouldInterceptRequest(view, request);
-            }
-
-            @Override
-            public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
-                super.onPageStarted(webView, s, bitmap);
-                isLoadError = false;
-            }
-
-            @Override
-            public void onPageFinished(WebView webView, String url) {
-                super.onPageFinished(webView, url);
-                if (mIntentTitle == null) {
-                    String title = webView.getTitle();
-                    toolbarTitle.setText(title);
-                }
-                addJsFunction();
-                webView.setVisibility(View.VISIBLE);
-            }
-
-            @Override
-            public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
-                super.onReceivedError(webView, webResourceRequest, webResourceError);
-                if (webResourceError.getErrorCode() != -6) {
-                    contentEmpty.setVisibility(View.VISIBLE);
-                    isLoadError = true;
-                }
-            }
-        });
-
-        mWebView.setWebChromeClient(new WebChromeClient() {
-            @Override
-            public void onReceivedTitle(WebView webView, String title) {
-                super.onReceivedTitle(webView, title);
-                if (mIntentTitle == null) {
-                    toolbarTitle.setText(title);
-                }
-            }
-
-            @Override
-            public void onProgressChanged(WebView view, int newProgress) {
-                mPageLoadingProgressBar.setProgress(newProgress);
-                if (mPageLoadingProgressBar != null && newProgress != 100) {
-                    mPageLoadingProgressBar.setVisibility(View.VISIBLE);
-                } else if (mPageLoadingProgressBar != null) {
-                    mPageLoadingProgressBar.setVisibility(View.GONE);
-                }
-            }
-
-            //处理javascript中的alert
-            @Override
-            public boolean onJsAlert(WebView webView, String s, String s1, final JsResult jsResult) {
-                MyDialog.Builder builder = new MyDialog.Builder(SettingBrowserActivity.this);
-                builder.setTitle("提示")
-                        .setCannel(false)
-                        .setMessage(s1)
-                        .setPositiveButton("确定",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog,
-                                                        int which) {
-                                        //点击确定按钮之后，继续执行网页中的操作
-                                        jsResult.confirm();
-                                        dialog.dismiss();
-                                    }
-                                });
-                if (!isFinishing()) {
-                    builder.create().show();
-                }
-                return true;
-            }
-
-            //处理javascript中的confirm
-            @Override
-            public boolean onJsConfirm(WebView webView, String s, String s1, final JsResult jsResult) {
-                MyDialog.Builder builder = new MyDialog.Builder(SettingBrowserActivity.this);
-                builder.setTitle("提示")
-                        .setMessage(s1)
-                        .setPositiveButton("确定",
-                                new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        jsResult.confirm();
-                                        dialog.dismiss();
-                                    }
-                                })
-                        .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                jsResult.cancel();
-                                dialog.dismiss();
-                            }
-                        })
-                        .create().show();
-                return true;
-            }
-        });
+        mWebView.setWebViewClient(new MyWebViewClient());
+        mWebView.setWebChromeClient(new MyWebChromeClient());
 
         mWebView.setDownloadListener(new DownloadListener() {
 
@@ -320,7 +226,302 @@ public class SettingBrowserActivity extends BaseActivity {
         CookieSyncManager.getInstance().sync();
     }
 
-    class WebAppJsInterface {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case PictureConfig.REQUEST_IMAGE:
+                    if (mUploadMessage == null) return;
+                    List<LocalMedia> mediaList = (List<LocalMedia>) data.getSerializableExtra(PictureConfig.REQUEST_OUTPUT);
+                    if (mediaList != null) {
+                        String imagPath = mediaList.get(0).getCompressPath();
+                        Uri result = FileUtils.FilePathToUri(this.getApplicationContext(), imagPath);
+                        mUploadMessage.onReceiveValue(result);
+                        mUploadMessage = null;
+                    }
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_refresh, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+
+        if (isShowToolbarAction) {
+            menu.findItem(R.id.action_refresh).setVisible(true);
+            menu.findItem(R.id.action_other).setVisible(true);
+            menu.findItem(R.id.action_other).setTitle(mIntentTitle);
+        } else {
+            menu.findItem(R.id.action_refresh).setVisible(true);
+            menu.findItem(R.id.action_other).setVisible(false);
+        }
+        isShowToolbarAction = false;
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_refresh:
+                if (isLoadError) {
+                    mWebView.setVisibility(View.GONE);
+                }
+                mWebView.reload();
+                contentEmpty.setVisibility(View.GONE);
+                return true;
+            case R.id.action_other:
+                mWebView.loadUrl("javascript:onTilteBtnClick(" + infoJSONObject + ")");
+                invalidateOptionsMenu();
+                toolbarTitle.setText(mIntentTitle);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView != null && mWebView.canGoBack()) {
+//            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            if (isLoadError) {
+                mWebView.setVisibility(View.GONE);
+            }
+            mWebView.goBack();
+            contentEmpty.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (mWebView == null)
+            return;
+        if (intent == null || intent.getData() == null) {
+            mWebView.reload();
+        } else {
+            mWebView.loadUrl(intent.getData().toString());
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mWebView != null)
+            mWebView.destroy();
+        super.onDestroy();
+    }
+
+    // 注入js函数监听
+    private void addJsFunction() {
+        int themeColor = ThemeUtils.getColorById(this, R.color.theme_color_primary);
+        String themeJsColor = "#" + Integer.toHexString(themeColor).substring(2);
+        // 这段js函数的功能就是，改变web界面的主题颜色
+        mWebView.loadUrl("javascript:(function() {" +
+                "    var a,b,c,d ;" +
+                "    for (b = $('.btn-primary'),a = 0; a < b.length; a++) b[a].style.background = '" + themeJsColor + "', b[a].style.borderColor = '" + themeJsColor + "';" +
+                "    for (c = $('.statusMsg'), a = 0; a < c.length; a++) c[a].style.background = '" + themeJsColor + "';" +
+                "    for (d = $('div [style*=#36c]'), a = 0; a < d.length; a++) d[a].style.background = '" + themeJsColor + "';" +
+                "})();");
+    }
+
+    class MyWebChromeClient extends WebChromeClient {
+        ///////////////////////////////////////////////////////////
+        View myVideoView;
+        View myNormalView;
+        IX5WebChromeClient.CustomViewCallback callback;
+
+        @Override
+        public void onReceivedTitle(WebView webView, String title) {
+            super.onReceivedTitle(webView, title);
+            if (mIntentTitle == null) {
+                toolbarTitle.setText(title);
+            }
+        }
+
+        @Override
+        public void onProgressChanged(WebView view, int newProgress) {
+            mPageLoadingProgressBar.setProgress(newProgress);
+            if (mPageLoadingProgressBar != null && newProgress != 100) {
+                mPageLoadingProgressBar.setVisibility(View.VISIBLE);
+            } else if (mPageLoadingProgressBar != null) {
+                mPageLoadingProgressBar.setVisibility(View.GONE);
+            }
+        }
+
+        //处理javascript中的alert
+        @Override
+        public boolean onJsAlert(WebView webView, String s, String s1, final JsResult jsResult) {
+            MyDialog.Builder builder = new MyDialog.Builder(SettingBrowserActivity.this);
+            builder.setTitle("提示")
+                    .setCannel(false)
+                    .setMessage(s1)
+                    .setPositiveButton("确定",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog,
+                                                    int which) {
+                                    //点击确定按钮之后，继续执行网页中的操作
+                                    jsResult.confirm();
+                                    dialog.dismiss();
+                                }
+                            });
+            if (!isFinishing()) {
+                builder.create().show();
+            }
+            return true;
+        }
+
+        //处理javascript中的confirm
+        @Override
+        public boolean onJsConfirm(WebView webView, String s, String s1, final JsResult jsResult) {
+            MyDialog.Builder builder = new MyDialog.Builder(SettingBrowserActivity.this);
+            builder.setTitle("提示")
+                    .setMessage(s1)
+                    .setPositiveButton("确定",
+                            new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    jsResult.confirm();
+                                    dialog.dismiss();
+                                }
+                            })
+                    .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            jsResult.cancel();
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+            return true;
+        }
+
+//        @Override
+//        public void openFileChooser(ValueCallback<Uri> valueCallback, String s, String s1) {
+//            super.openFileChooser(valueCallback, s, s1);
+//            Logger.d("上传图片开始：" + valueCallback);
+//            if (mUploadMessage != null) return;
+//            Logger.d("上传图片开始2：");
+//
+//            mUploadMessage = valueCallback;
+//            MyPictureSelector pictureSelector = new MyPictureSelector(SettingBrowserActivity.this);
+//            pictureSelector.selectorSinglePicture();
+//        }
+
+        /**
+         * 全屏播放配置
+         */
+        @Override
+        public void onShowCustomView(View view, IX5WebChromeClient.CustomViewCallback customViewCallback) {
+            mViewParent.removeView(mWebView);
+            mViewParent.addView(view);
+            myVideoView = view;
+            myNormalView = mWebView;
+            callback = customViewCallback;
+        }
+
+        @Override
+        public void onHideCustomView() {
+            if (callback != null) {
+                callback.onCustomViewHidden();
+                callback = null;
+            }
+            if (myVideoView != null) {
+                ViewGroup viewGroup = (ViewGroup) myVideoView.getParent();
+                viewGroup.removeView(myVideoView);
+                viewGroup.addView(myNormalView);
+            }
+        }
+
+        @Override
+        public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String captureType) {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(Intent.createChooser(intent, "choose files"), 1);
+            super.openFileChooser(uploadFile, acceptType, captureType);
+        }
+
+        /**
+         * webview 的窗口转移
+         */
+        @Override
+        public boolean onCreateWindow(WebView arg0, boolean arg1, boolean arg2, Message msg) {
+            if (X5WebView.isSmallWebViewDisplayed()) {
+
+                WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) msg.obj;
+                WebView webView = new WebView(SettingBrowserActivity.this) {
+
+                    protected void onDraw(Canvas canvas) {
+                        super.onDraw(canvas);
+                        Paint paint = new Paint();
+                        paint.setColor(Color.GREEN);
+                        paint.setTextSize(15);
+                        canvas.drawText("新建窗口", 10, 10, paint);
+                    }
+                };
+                webView.setWebViewClient(new WebViewClient() {
+                    public boolean shouldOverrideUrlLoading(WebView arg0, String arg1) {
+                        arg0.loadUrl(arg1);
+                        return true;
+                    }
+                });
+                FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(400, 600);
+                lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+                mWebView.addView(webView, lp);
+                webViewTransport.setWebView(webView);
+                msg.sendToTarget();
+            }
+            return true;
+        }
+    }
+
+    class MyWebViewClient extends WebViewClient {
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            view.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+            //如果不需要其他对点击链接事件的处理返回true，否则返回false
+            return false;
+        }
+
+        @Override
+        public void onPageStarted(WebView webView, String s, Bitmap bitmap) {
+            super.onPageStarted(webView, s, bitmap);
+            isLoadError = false;
+        }
+
+        @Override
+        public void onPageFinished(WebView webView, String url) {
+            super.onPageFinished(webView, url);
+            if (mIntentTitle == null) {
+                String title = webView.getTitle();
+                toolbarTitle.setText(title);
+            }
+            addJsFunction();
+            webView.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        public void onReceivedError(WebView webView, WebResourceRequest webResourceRequest, WebResourceError webResourceError) {
+            super.onReceivedError(webView, webResourceRequest, webResourceError);
+            if (webResourceError.getErrorCode() != -6) {
+                contentEmpty.setVisibility(View.VISIBLE);
+                isLoadError = true;
+            }
+        }
+    }
+
+    private class WebAppJsInterface {
         Context mContext;
 
         WebAppJsInterface(Context c) {
@@ -344,8 +545,7 @@ public class SettingBrowserActivity extends BaseActivity {
 //            Toast.makeText(mContext, "获取用户信息，需要去实现", Toast.LENGTH_SHORT).show();
             //返回UserInfo！
             WebAppUserInfo webAppUserInfo = Hawk.get(APPS.WEB_APP_USER_INFO);
-            String jsonStr = new Gson().toJson(webAppUserInfo);
-            return jsonStr;
+            return new Gson().toJson(webAppUserInfo);
         }
 
         @JavascriptInterface
@@ -407,8 +607,7 @@ public class SettingBrowserActivity extends BaseActivity {
         @JavascriptInterface
         public void goURL(String url, boolean isNewWin, String a) {
             Toast.makeText(mContext, "进入链接，暂未实现，URL：" + url + ",是否新窗口：" + isNewWin + ",未知参数：" + a, Toast.LENGTH_SHORT).show();
-            if (isNewWin) {
-            }
+
         }
 
         @JavascriptInterface
@@ -465,74 +664,21 @@ public class SettingBrowserActivity extends BaseActivity {
                     });
             return "{\"err\":\"0\"}";
         }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_refresh, menu);
-        return true;
-    }
+        @JavascriptInterface
+        public void createString(String title, boolean isShow) {
+//            Toast.makeText(mContext, "创建名称为"+title+"的按钮", Toast.LENGTH_SHORT).show();
+            mIntentTitle = title;
+            isShowToolbarAction = true;
+            invalidateOptionsMenu();//重新绘制optionsMenu
+            String infoJson = "{\"err\":0,\n" +
+                    "\"title\":" + title + "}";
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.action_refresh:
-                if (isLoadError) {
-                    mWebView.setVisibility(View.GONE);
-                }
-                mWebView.reload();
-                contentEmpty.setVisibility(View.GONE);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mWebView != null && mWebView.canGoBack()) {
-//            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-            if (isLoadError) {
-                mWebView.setVisibility(View.GONE);
+            try {
+                infoJSONObject = new JSONObject(infoJson);
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            mWebView.goBack();
-            contentEmpty.setVisibility(View.GONE);
-        } else {
-            super.onBackPressed();
         }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (mWebView == null)
-            return;
-        if (intent == null || intent.getData() == null) {
-            mWebView.reload();
-        } else {
-            mWebView.loadUrl(intent.getData().toString());
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mWebView != null)
-            mWebView.destroy();
-        super.onDestroy();
-    }
-
-    // 注入js函数监听
-    private void addJsFunction() {
-        int themeColor = ThemeUtils.getColorById(this, R.color.theme_color_primary);
-        String themeJsColor = "#" + Integer.toHexString(themeColor).substring(2);
-        // 这段js函数的功能就是，改变web界面的主题颜色
-        mWebView.loadUrl("javascript:(function() {" +
-                "    var a,b,c,d ;" +
-                "    for (b = $('.btn-primary'),a = 0; a < b.length; a++) b[a].style.background = '" + themeJsColor + "', b[a].style.borderColor = '" + themeJsColor + "';" +
-                "    for (c = $('.statusMsg'), a = 0; a < c.length; a++) c[a].style.background = '"+themeJsColor+"';" +
-                "    for (d = $('div [style*=#36c]'), a = 0; a < d.length; a++) d[a].style.background = '"+themeJsColor+"';" +
-                "})();");
     }
 }

@@ -19,6 +19,7 @@ import android.widget.RatingBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.bilibili.magicasakura.widgets.TintButton;
 import com.bumptech.glide.Glide;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
@@ -26,7 +27,6 @@ import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.base.WebViewActivity;
@@ -59,6 +59,9 @@ import rx.schedulers.Schedulers;
  */
 
 public class ProductListActivity extends BackActivity {
+    public static final String VILLAGE_ID = "village_id";
+    public static final String VILLAGE_NAME = "village_name";
+    final private static int PAGE_SIZE = 10;
     @Bind(R.id.m_x_recyclerview)
     XRecyclerView mXRecyclerView;
     @Bind(R.id.m_refresh_layout)
@@ -73,20 +76,11 @@ public class ProductListActivity extends BackActivity {
     RelativeLayout layoutAll;
     @Bind(R.id.badge)
     TextView mBadge;
-
-    public static final String VILLAGE_ID = "village_id";
-    public static final String VILLAGE_NAME = "village_name";
-
     private String vid;//村id
     private String vName;//村名称
-
-
     private List<ProductList.DataBean.ListBean> mList = new ArrayList<>();
     private ProductListAdapter mAdapter;
-
     private int page = 1;
-    final private static int PAGE_SIZE = 10;
-
     private SparseArray<ProductList.DataBean.ListBean> buyProductList;//已买商品列表
     private BigDecimal pricePay;//支付价格
 
@@ -95,8 +89,8 @@ public class ProductListActivity extends BackActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
         ButterKnife.bind(this);
-        vName=getIntent().getStringExtra(VILLAGE_NAME);
-        setToolbarTitle(vName+"特产");
+        vName = getIntent().getStringExtra(VILLAGE_NAME);
+        setToolbarTitle(vName + "特产");
         EventBus.getDefault().register(this);
 
         vid = getIntent().getStringExtra(VILLAGE_ID);
@@ -104,9 +98,8 @@ public class ProductListActivity extends BackActivity {
         initData(page);
 
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(this, R.color.theme_color_primary);
+        mRefreshLayout.setColorSchemeColors(themeColor);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

@@ -3,7 +3,7 @@ package com.ming.slove.mvnew.model.bean;
 /**
  * Created by Ming on 2016/8/1.
  */
-public class AddFriendRequest {
+public class JsonMsg_NewFriend {
 
     /**
      * msg : 姓名:哎呀不错,手机号：19910001004 请求加您为好友，是否同意？

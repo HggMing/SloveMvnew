@@ -76,6 +76,12 @@
             tools:ignore="ContentDescription"
             tools:src="@mipmap/default_village" />
 
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/m_x_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+
         <RelativeLayout
             android:id="@+id/layout_share"
             android:layout_width="wrap_content"

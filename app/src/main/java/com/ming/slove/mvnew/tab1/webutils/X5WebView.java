@@ -268,6 +268,10 @@ public class X5WebView extends WebView {
         isSmallWebViewDisplayed = enabled;
     }
 
+    public static boolean isSmallWebViewDisplayed() {
+        return isSmallWebViewDisplayed;
+    }
+
     public void addJavascriptBridge(SecurityJsBridgeBundle jsBridgeBundle) {
         if (this.mJsBridges == null) {
             this.mJsBridges = new HashMap<String, Object>(5);

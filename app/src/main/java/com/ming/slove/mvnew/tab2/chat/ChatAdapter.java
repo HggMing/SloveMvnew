@@ -3,6 +3,9 @@ package com.ming.slove.mvnew.tab2.chat;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,13 +19,18 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.gson.Gson;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.utils.BaseTools;
+import com.ming.slove.mvnew.common.utils.MyItemDecoration2;
 import com.ming.slove.mvnew.model.bean.BBSDetail;
 import com.ming.slove.mvnew.model.bean.BBSList;
+import com.ming.slove.mvnew.model.bean.JsonMsg_Paimai;
+import com.ming.slove.mvnew.model.bean.JsonMsg_Share;
+import com.ming.slove.mvnew.model.bean.JsonMsg_Tuiguang;
 import com.ming.slove.mvnew.model.database.ChatMsgModel;
 import com.ming.slove.mvnew.model.database.FriendsModel;
 import com.ming.slove.mvnew.model.database.MyDB;
@@ -46,6 +54,11 @@ import rx.schedulers.Schedulers;
  * Created by Ming on 2016/5/5.
  */
 public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerView.ViewHolder> {
+
+    private JsonMsg_Paimai paimaiMsg;//拍卖成功消息
+    private JsonMsg_Share shareMsg;//分享消息
+    private JsonMsg_Tuiguang tuiguangMsg;//推广产品消息
+
 
     public void addData(List<ChatMsgModel> data) {
         if (data == null || data.size() == 0) {
@@ -118,7 +131,9 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
     public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
         final Context mContext = holder.itemView.getContext();
         final ChatMsgModel data = mList.get(position);
+
         if (holder instanceof LeftViewHolder) {//接收消息布局
+            Gson gson = new Gson();
 
             //消息时间
             final String date = data.getSt();
@@ -134,12 +149,14 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                     .into(((LeftViewHolder) holder).icon);
             //消息显示
             switch (data.getCt()) {
+                default:
                 case "0"://文字消息
                     ((LeftViewHolder) holder).resend.setVisibility(View.GONE);//其他消息，不显示红点
                     ((LeftViewHolder) holder).content.setVisibility(View.VISIBLE);
                     ((LeftViewHolder) holder).msgImage.setVisibility(View.GONE);
                     ((LeftViewHolder) holder).voicePlay.setVisibility(View.GONE);
                     ((LeftViewHolder) holder).shareLayout.setVisibility(View.GONE);
+
                     String content = data.getTxt();
                     ((LeftViewHolder) holder).content.setText(content);
                     break;
@@ -149,6 +166,8 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                     ((LeftViewHolder) holder).msgImage.setVisibility(View.VISIBLE);
                     ((LeftViewHolder) holder).voicePlay.setVisibility(View.GONE);
                     ((LeftViewHolder) holder).shareLayout.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).mXRecyclerView2.setVisibility(View.GONE);
+
                     String imageUrl = APPS.CHAT_BASE_URL + data.getLink();
                     Glide.with(mContext)
                             .load(imageUrl)
@@ -176,6 +195,22 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                     ((LeftViewHolder) holder).msgImage.setVisibility(View.GONE);
                     ((LeftViewHolder) holder).voicePlay.setVisibility(View.VISIBLE);
                     ((LeftViewHolder) holder).shareLayout.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).mXRecyclerView2.setVisibility(View.GONE);
+
+                    break;
+                case "9"://拍卖成功消息
+                    ((LeftViewHolder) holder).resend.setVisibility(View.GONE);//其他消息，不显示红点
+                    ((LeftViewHolder) holder).content.setVisibility(View.VISIBLE);
+                    ((LeftViewHolder) holder).msgImage.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).voicePlay.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).shareLayout.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).mXRecyclerView2.setVisibility(View.GONE);
+
+                    paimaiMsg = gson.fromJson(data.getJsonString(), JsonMsg_Paimai.class);
+                    String paimaiContent = paimaiMsg.getContent();
+                    ((LeftViewHolder) holder).content.setText(paimaiContent);
+                    int blue = ContextCompat.getColor(mContext, R.color.color03_dark);
+                    ((LeftViewHolder) holder).content.setTextColor(blue);
                     break;
                 case "100"://来自我们村的分享消息
                     ((LeftViewHolder) holder).resend.setVisibility(View.GONE);//其他消息，不显示红点
@@ -183,15 +218,30 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                     ((LeftViewHolder) holder).msgImage.setVisibility(View.GONE);
                     ((LeftViewHolder) holder).voicePlay.setVisibility(View.GONE);
                     ((LeftViewHolder) holder).shareLayout.setVisibility(View.VISIBLE);
+                    ((LeftViewHolder) holder).mXRecyclerView2.setVisibility(View.GONE);
 
+                    shareMsg = gson.fromJson(data.getJsonString(), JsonMsg_Share.class);
                     Glide.with(mContext)
-                            .load(data.getShare_image())
+                            .load(shareMsg.getImage())
                             .error(R.drawable.shape_picture_background)
                             .into(((LeftViewHolder) holder).shareImg);
-                    ((LeftViewHolder) holder).shareTitle.setText(data.getShare_title());
-                    ((LeftViewHolder) holder).shareDetail.setText(data.getShare_detail());
+                    ((LeftViewHolder) holder).shareTitle.setText(shareMsg.getTitle());
+                    ((LeftViewHolder) holder).shareDetail.setText(shareMsg.getDetail());
                     break;
-                case "3"://html
+                case "1000"://推广消息
+                    ((LeftViewHolder) holder).resend.setVisibility(View.GONE);//其他消息，不显示红点
+                    ((LeftViewHolder) holder).content.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).msgImage.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).voicePlay.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).shareLayout.setVisibility(View.GONE);
+                    ((LeftViewHolder) holder).mXRecyclerView2.setVisibility(View.VISIBLE);
+
+                    tuiguangMsg = gson.fromJson(data.getJsonString(), JsonMsg_Tuiguang.class);
+                    //内置recycleView配置
+                    ((LeftViewHolder) holder).configXRecyclerView(mContext);
+                    ((LeftViewHolder) holder).mAdapter.setItem(tuiguangMsg.getList());
+                    break;
+                /*case "3"://html
                     break;
                 case "4"://内部消息json格式
                     break;
@@ -200,7 +250,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                 case "6"://应用透传消息json格式
                     break;
                 case "7"://朋友系统消息json
-                    break;
+                    break;*/
             }
             //点击事件
             ((LeftViewHolder) holder).item.setOnClickListener(new View.OnClickListener() {
@@ -265,8 +315,13 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                         case "2"://声音消息
 
                             break;
+                        case "9"://拍卖成功消息
+                            Intent intent = new Intent(mContext, BrowserActivity.class);
+                            intent.putExtra(BrowserActivity.KEY_URL, paimaiMsg.getUrl());
+                            mContext.startActivity(intent);
+                            break;
                         case "100"://点击分享的消息
-                            String s = data.getShare_link();
+                            String s = shareMsg.getLink();
                             if (s != null) {
                                 String auth = Hawk.get(APPS.USER_AUTH);
                                 int isBbs = s.indexOf("bbs/bbsinfo");//分享我们村帖子
@@ -310,7 +365,7 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
                                                 }
                                             });
                                 } else {//分享村特产
-                                    String url = s+"&auth="+auth+"&device_type=1";
+                                    String url = s + "&auth=" + auth + "&device_type=1";
                                     Intent intent3 = new Intent(mContext, BrowserActivity.class);
                                     intent3.putExtra(BrowserActivity.KEY_URL, url);
                                     mContext.startActivity(intent3);
@@ -491,11 +546,26 @@ public class ChatAdapter extends BaseRecyclerViewAdapter<ChatMsgModel, RecyclerV
         TextView shareTitle;
         @Bind(R.id.share_detail)
         TextView shareDetail;
+        @Bind(R.id.m_x_recyclerview)
+        RecyclerView mXRecyclerView2;
 
+        private ChatAdapter_Tuiguang mAdapter;
 
         LeftViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
+        }
+
+        //配置RecyclerView
+        private void configXRecyclerView(Context context) {
+            //设置布局和adapter
+            mXRecyclerView2.setLayoutManager(new LinearLayoutManager(context));
+            mAdapter = new ChatAdapter_Tuiguang();
+            mXRecyclerView2.setAdapter(mAdapter);
+
+            mXRecyclerView2.addItemDecoration(new MyItemDecoration2(context));//添加分割线
+            mXRecyclerView2.setHasFixedSize(true);//保持固定的大小,这样会提高RecyclerView的性能
+            mXRecyclerView2.setItemAnimator(new DefaultItemAnimator());//设置Item增加、移除动画
         }
     }
 

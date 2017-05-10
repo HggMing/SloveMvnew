@@ -97,9 +97,8 @@ public class BackActivity extends BaseActivity {
     public void showRefresh(SwipeRefreshLayout.OnRefreshListener listener) {
         mRefresh.setEnabled(true);
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(this);
-        int themeColorRes = getResources().getIdentifier(theme, "color", getPackageName());
-        mRefresh.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(this, R.color.theme_color_primary);
+        mRefresh.setColorSchemeColors(themeColor);
 
         mRefresh.setOnRefreshListener(listener);
     }

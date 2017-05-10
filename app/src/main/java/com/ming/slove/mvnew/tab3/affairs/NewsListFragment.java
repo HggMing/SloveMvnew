@@ -8,11 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.view.View;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.MyItemDecoration;
 import com.ming.slove.mvnew.model.bean.NewsList;
@@ -30,17 +30,15 @@ import rx.schedulers.Schedulers;
  * 政务相关：
  */
 public class NewsListFragment extends LazyLoadFragment implements NewsListAdapter.OnItemClickListener {
+    final private static int PAGE_SIZE = 20;
     @Bind(R.id.g_affairs_list)
     XRecyclerView mXRecyclerView;
     @Bind(R.id.content_empty)
     TextView contentEmpty;
     @Bind(R.id.m_refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
-
-    private NewsListAdapter mAdapter = new NewsListAdapter();
     List<NewsList.DataBean.ListBean> mList = new ArrayList<>();
-
-    final private static int PAGE_SIZE = 20;
+    private NewsListAdapter mAdapter = new NewsListAdapter();
     private int page = 1;
     private int type;
 
@@ -135,9 +133,8 @@ public class NewsListFragment extends LazyLoadFragment implements NewsListAdapte
         configXRecyclerView();//XRecyclerView配置
 
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(getContext());
-        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
+        mRefreshLayout.setColorSchemeColors(themeColor);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

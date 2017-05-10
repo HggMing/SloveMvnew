@@ -6,13 +6,20 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.widget.Toolbar;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.widget.FrameLayout;
@@ -35,12 +42,14 @@ import com.ming.slove.mvnew.tab2.chat.ChatActivity;
 import com.ming.slove.mvnew.tab3.product.ChooseAddressActivity;
 import com.ming.slove.mvnew.tab3.product.ProductListActivity;
 import com.orhanobut.hawk.Hawk;
+import com.tencent.smtt.export.external.interfaces.IX5WebChromeClient.CustomViewCallback;
 import com.tencent.smtt.export.external.interfaces.JsResult;
 import com.tencent.smtt.export.external.interfaces.WebResourceError;
 import com.tencent.smtt.export.external.interfaces.WebResourceRequest;
 import com.tencent.smtt.export.external.interfaces.WebResourceResponse;
 import com.tencent.smtt.sdk.CookieSyncManager;
 import com.tencent.smtt.sdk.DownloadListener;
+import com.tencent.smtt.sdk.ValueCallback;
 import com.tencent.smtt.sdk.WebChromeClient;
 import com.tencent.smtt.sdk.WebSettings;
 import com.tencent.smtt.sdk.WebSettings.LayoutAlgorithm;
@@ -58,20 +67,17 @@ import static com.ming.slove.mvnew.tab3.product.ProductPayActivity.KEY_USER_ADDR
 
 
 public class BrowserActivity extends BaseActivity {
+    private static final int REQUEST_ADD = 123;
+    public static String KEY_URL = "key_url";
+    public static String WEB_TITLE = "the_title";
+    WebSettings webSetting;
     private TextView toolbarTitle;
     private Toolbar toolbar;
     private X5WebView mWebView;
     private FrameLayout contentEmpty;
     private ProgressBar mPageLoadingProgressBar = null;
     private FrameLayout mViewParent;
-
-    private static final int REQUEST_ADD = 123;
-    WebSettings webSetting;
-
-    public static String KEY_URL = "key_url";
     private String mIntentUrl;
-
-    public static String WEB_TITLE = "the_title";
     private String mIntentTitle;
     private boolean isLoadError;
 
@@ -185,6 +191,11 @@ public class BrowserActivity extends BaseActivity {
         });
 
         mWebView.setWebChromeClient(new WebChromeClient() {
+            ///////////////////////////////////////////////////////////
+            View myVideoView;
+            View myNormalView;
+            CustomViewCallback callback;
+
             @Override
             public void onReceivedTitle(WebView webView, String title) {
                 super.onReceivedTitle(webView, title);
@@ -248,6 +259,73 @@ public class BrowserActivity extends BaseActivity {
                             }
                         })
                         .create().show();
+                return true;
+            }
+
+            /**
+             * 全屏播放配置
+             */
+            @Override
+            public void onShowCustomView(View view, CustomViewCallback customViewCallback) {
+                mViewParent.removeView(mWebView);
+                mViewParent.addView(view);
+                myVideoView = view;
+                myNormalView = mWebView;
+                callback = customViewCallback;
+            }
+
+            @Override
+            public void onHideCustomView() {
+                if (callback != null) {
+                    callback.onCustomViewHidden();
+                    callback = null;
+                }
+                if (myVideoView != null) {
+                    ViewGroup viewGroup = (ViewGroup) myVideoView.getParent();
+                    viewGroup.removeView(myVideoView);
+                    viewGroup.addView(myNormalView);
+                }
+            }
+
+            @Override
+            public void openFileChooser(ValueCallback<Uri> uploadFile, String acceptType, String captureType) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("*/*");
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                startActivityForResult(Intent.createChooser(intent, "choose files"), 1);
+                super.openFileChooser(uploadFile, acceptType, captureType);
+            }
+
+            /**
+             * webview 的窗口转移
+             */
+            @Override
+            public boolean onCreateWindow(WebView arg0, boolean arg1, boolean arg2, Message msg) {
+                if (X5WebView.isSmallWebViewDisplayed()) {
+
+                    WebView.WebViewTransport webViewTransport = (WebView.WebViewTransport) msg.obj;
+                    WebView webView = new WebView(BrowserActivity.this) {
+
+                        protected void onDraw(Canvas canvas) {
+                            super.onDraw(canvas);
+                            Paint paint = new Paint();
+                            paint.setColor(Color.GREEN);
+                            paint.setTextSize(15);
+                            canvas.drawText("新建窗口", 10, 10, paint);
+                        }
+                    };
+                    webView.setWebViewClient(new WebViewClient() {
+                        public boolean shouldOverrideUrlLoading(WebView arg0, String arg1) {
+                            arg0.loadUrl(arg1);
+                            return true;
+                        }
+                    });
+                    FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(400, 600);
+                    lp.gravity = Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL;
+                    mWebView.addView(webView, lp);
+                    webViewTransport.setWebView(webView);
+                    msg.sendToTarget();
+                }
                 return true;
             }
         });
@@ -320,14 +398,89 @@ public class BrowserActivity extends BaseActivity {
         CookieSyncManager.getInstance().sync();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_refresh, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.action_refresh:
+                if (isLoadError) {
+                    mWebView.setVisibility(View.GONE);
+                }
+                mWebView.reload();
+                contentEmpty.setVisibility(View.GONE);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mWebView != null && mWebView.canGoBack()) {
+//            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+            if (isLoadError) {
+                mWebView.setVisibility(View.GONE);
+            }
+            mWebView.goBack();
+            contentEmpty.setVisibility(View.GONE);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        if (intent == null || mWebView == null || intent.getData() == null)
+            return;
+        mWebView.loadUrl(intent.getData().toString());
+    }
+
+    @Override
+    protected void onDestroy() {
+        if (mWebView != null)
+            mWebView.destroy();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+                case REQUEST_ADD://选择收货地址后，返回数据
+                    ShoppingAddress.DataBean userAddrInfo = data.getParcelableExtra(KEY_USER_ADDR_INFO);
+                    ;//用户地址信息
+                    String addrJson = "{\"err\":0,\n" +
+                            "\"type\":1,\n" +
+                            "\"phone\":" + userAddrInfo.getTel() + ",\n" +
+                            "\"name\":" + userAddrInfo.getUname() + ",\n" +
+                            "\"addr\":" + userAddrInfo.getAddr() + "}";
+                    try {
+                        JSONObject addJSONObject = new JSONObject(addrJson);
+                        mWebView.loadUrl("javascript:RetChooseAddress(" + addJSONObject + ")");
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
+    }
+
     class WebAppInterface {
         Context mContext;
+        String auth = Hawk.get(APPS.USER_AUTH);
 
         WebAppInterface(Context context) {
             mContext = context;
         }
-
-        String auth = Hawk.get(APPS.USER_AUTH);
 
         @JavascriptInterface
         public String setTitle(String title, String isHomepage) {
@@ -410,81 +563,5 @@ public class BrowserActivity extends BaseActivity {
             return "{\"err\":\"0\"}";
         }
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_refresh, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-            case R.id.action_refresh:
-                if (isLoadError) {
-                    mWebView.setVisibility(View.GONE);
-                }
-                mWebView.reload();
-                contentEmpty.setVisibility(View.GONE);
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (mWebView != null && mWebView.canGoBack()) {
-//            webSetting.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-            if (isLoadError) {
-                mWebView.setVisibility(View.GONE);
-            }
-            mWebView.goBack();
-            contentEmpty.setVisibility(View.GONE);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        if (intent == null || mWebView == null || intent.getData() == null)
-            return;
-        mWebView.loadUrl(intent.getData().toString());
-    }
-
-    @Override
-    protected void onDestroy() {
-        if (mWebView != null)
-            mWebView.destroy();
-        super.onDestroy();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case REQUEST_ADD://选择收货地址后，返回数据
-                    ShoppingAddress.DataBean userAddrInfo = data.getParcelableExtra(KEY_USER_ADDR_INFO);
-                    ;//用户地址信息
-                    String addrJson = "{\"err\":0,\n" +
-                            "\"type\":1,\n" +
-                            "\"phone\":" + userAddrInfo.getTel() + ",\n" +
-                            "\"name\":" + userAddrInfo.getUname() + ",\n" +
-                            "\"addr\":" + userAddrInfo.getAddr() + "}";
-                    try {
-                        JSONObject addJSONObject = new JSONObject(addrJson);
-                        mWebView.loadUrl("javascript:RetChooseAddress(" + addJSONObject + ")");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-                    break;
-            }
-        }
     }
 }

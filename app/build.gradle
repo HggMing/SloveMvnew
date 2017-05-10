@@ -94,9 +94,9 @@ android {
         })
         testCompile 'junit:junit:4.12'
         //内存泄露检测
-        debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
-        releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
-        testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+//        debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
+//        releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
+//        testCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
         // log工具
         compile 'com.orhanobut:logger:1.15'
         compile 'com.androidadvance:topsnackbar:1.1.1'

@@ -12,10 +12,10 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -39,19 +39,17 @@ import rx.schedulers.Schedulers;
  * Created by Ming on 2016/8/22.
  */
 public class ExpressSendFragment extends LazyLoadFragment implements BaseRecyclerViewAdapter.OnItemClickListener {
+    private final int REQUEST_CODE = 1231;
     @Bind(R.id.m_x_recyclerview)
     RecyclerView mXRecyclerView;
     @Bind(R.id.content_empty)
     TextView contentEmpty;
     @Bind(R.id.m_refresh_layout)
     SwipeRefreshLayout mRefreshLayout;
-
     private ExpressSendAdapter mAdapter = new ExpressSendAdapter();
     private List<ExpressList.DataBean.ListBean> mList0 = new ArrayList<>();
     private List<ExpressList.DataBean.ListBean> mList1 = new ArrayList<>();
-
     private int expressStatus;
-    private final int REQUEST_CODE = 1231;
 
     //配置RecyclerView
     private void configXRecyclerView() {
@@ -162,9 +160,8 @@ public class ExpressSendFragment extends LazyLoadFragment implements BaseRecycle
         configXRecyclerView();//XRecyclerView配置
 
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(getContext());
-        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
+        mRefreshLayout.setColorSchemeColors(themeColor);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

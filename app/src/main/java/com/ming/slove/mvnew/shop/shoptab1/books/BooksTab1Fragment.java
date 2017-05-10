@@ -69,9 +69,8 @@ public class BooksTab1Fragment extends LazyLoadFragment {
     public void initViews(View view) {
         config();
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(getContext());
-        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
+        mRefreshLayout.setColorSchemeColors(themeColor);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

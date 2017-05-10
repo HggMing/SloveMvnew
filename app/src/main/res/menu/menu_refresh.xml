@@ -4,6 +4,12 @@
         android:id="@+id/action_refresh"
         android:orderInCategory="100"
         android:title="刷新页面"
-        android:icon="@mipmap/main_action_friendlist"
+        android:icon="@drawable/aic_refresh"
         app:showAsAction="withText|never" />
+    <item
+        android:id="@+id/action_other"
+        android:orderInCategory="1"
+        android:title="功能键"
+        android:visible="false"
+        app:showAsAction="always" />
 </menu>

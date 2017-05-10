@@ -26,14 +26,15 @@ import com.igexin.sdk.PushManager;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
+import com.ming.slove.mvnew.common.receiver.MsgHelper;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.StringUtils;
-import com.ming.slove.mvnew.model.bean.AddFriendRequest;
+import com.ming.slove.mvnew.model.bean.JsonMsg_NewFriend;
 import com.ming.slove.mvnew.model.bean.EbankWifiConnect;
 import com.ming.slove.mvnew.model.bean.FriendDetail;
 import com.ming.slove.mvnew.model.bean.IpPort;
 import com.ming.slove.mvnew.model.bean.MessageList;
-import com.ming.slove.mvnew.model.bean.ShareMsg;
+import com.ming.slove.mvnew.model.bean.JsonMsg_Share;
 import com.ming.slove.mvnew.model.database.ChatMsgModel;
 import com.ming.slove.mvnew.model.database.FriendsModel;
 import com.ming.slove.mvnew.model.database.InstantMsgModel;
@@ -135,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
 
         initView();
         //登录后，向后台获取消息
-        getMessageList(this);
+        MsgHelper.getInstance().getMessageList(this,false);
         //WiFi连接到ebank网络的认证
 //        autoConnect();
     }
@@ -172,143 +173,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onNext(EbankWifiConnect ebankWifiConnect) {
                         if ("1".equals(ebankWifiConnect.getStatus()))
                             Toast.makeText(MainActivity.this, "恭喜你上网认证通过,获得两小时上网时间!", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
-
-    /**
-     * 获取消息，并本地保存，发出通知
-     *
-     * @param context
-     */
-    private void getMessageList(final Context context) {
-        //请求消息
-        final String me_uid = Hawk.get(APPS.ME_UID, "");
-        OtherApi.getService()
-                .get_MessageList(me_uid, "yxj", 1)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<MessageList>() {
-                    @Override
-                    public void onCompleted() {
-
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(MessageList messageList) {
-                        //接收到新消息！！
-                        List<MessageList.LBean> lBeanList = messageList.getL();
-                        //列表反向
-                        Collections.reverse(lBeanList);
-                        //消息通知
-                        for (MessageList.LBean lBean : lBeanList) {
-                            if ("21".equals(lBean.getCt())) {//系统消息
-                                if ("1".equals(lBean.getFrom())) {//添加好友请求消息
-                                    String jsonString = lBean.getTxt();
-                                    Gson gson = new Gson();
-                                    AddFriendRequest addFriendRequest = gson.fromJson(jsonString, AddFriendRequest.class);
-
-                                    //好友请求保存到数据库
-                                    AddFriendRequest.UinfoBean uinfo = addFriendRequest.getUinfo();
-                                    String uicon = APPS.BASE_URL + uinfo.getHead();
-                                    NewFriendModel newFriend = new NewFriendModel(uinfo.getUid(), uicon, uinfo.getUname(), uinfo.getSex(), uinfo.getPhone(), 1);
-                                    MyDB.insert(newFriend);
-                                    EventBus.getDefault().post(new NewFriendEvent());
-                                }
-                            } else {
-
-                                final ChatMsgModel chatMsg = new ChatMsgModel();
-                                chatMsg.setType(ChatMsgModel.ITEM_TYPE_LEFT);//接收消息
-                                if ("1".equals(lBean.getFrom())) {
-                                    chatMsg.setFrom("10001");//系统消息由"我们村客服"发来
-                                } else {
-                                    chatMsg.setFrom(lBean.getFrom());//消息来源用户id
-                                }
-                                chatMsg.setTo(me_uid);
-                                chatMsg.setSt(lBean.getSt());//消息时间
-                                chatMsg.setCt(lBean.getCt());//消息类型
-                                switch (lBean.getCt()) {
-                                    case "1":
-                                        chatMsg.setTxt("[图片]");
-                                        break;
-                                    case "2":
-                                        chatMsg.setTxt("[语音]");
-                                        break;
-                                    case "100":
-                                        String jsonString = lBean.getTxt();
-                                        Gson gson = new Gson();
-                                        ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
-
-                                        chatMsg.setTxt("[分享]:\"" + shareMsg.getTitle() + "\"");
-
-                                        chatMsg.setShareMsg(shareMsg.getTitle(), shareMsg.getDetail(), shareMsg.getImage(), shareMsg.getLink());
-                                        break;
-                                    default:
-                                        chatMsg.setTxt(lBean.getTxt());//类型：文字
-                                        break;
-                                }
-                                chatMsg.setLink(lBean.getLink());//类型：图片or语音
-                                MyDB.insert(chatMsg);//保存到数据库
-
-                                final String uid = chatMsg.getFrom();
-                                final FriendsModel friend = MyDB.getInstance().queryById(uid, FriendsModel.class);
-
-                                if (friend != null) {
-                                    //新消息条数，读取及更新
-                                    int count = friend.getCount() + 1;
-                                    friend.setCount(count);
-                                    MyDB.update(friend);
-                                    //保存动态并刷新
-                                    InstantMsgModel msgModel = new InstantMsgModel(uid, friend.getUicon(), friend.getUname(), chatMsg.getSt(), chatMsg.getTxt(), count);
-                                    MyDB.insert(msgModel);
-                                    EventBus.getDefault().post(new InstantMsgEvent());
-                                } else {//如果消息来自非好友（新增：客户联系店长）
-                                    String auth = Hawk.get(APPS.USER_AUTH);
-                                    OtherApi.getService().get_FriendDetail(auth, uid)
-                                            .subscribeOn(Schedulers.io())
-                                            .observeOn(AndroidSchedulers.mainThread())
-                                            .subscribe(new Subscriber<FriendDetail>() {
-                                                @Override
-                                                public void onCompleted() {
-
-                                                }
-
-                                                @Override
-                                                public void onError(Throwable e) {
-
-                                                }
-
-                                                @Override
-                                                public void onNext(FriendDetail friendDetail) {
-                                                    FriendDetail.DataBean.UserinfoBean userinfoBean = friendDetail.getData().getUserinfo();
-                                                    //存储陌生消息人信息到本地好友数据库，标识isFriend为false
-                                                    String save_uicon = APPS.BASE_URL + userinfoBean.getHead();
-                                                    String save_uname = userinfoBean.getUname();//昵称
-                                                    String iphone = userinfoBean.getPhone();
-                                                    if (StringUtils.isEmpty(save_uname)) {
-                                                        save_uname = iphone;//昵称为空，显示手机号
-                                                    }
-                                                    FriendsModel friendsModel = new FriendsModel(uid, save_uname, save_uicon, false);
-                                                    MyDB.insert(friendsModel);
-                                                    //处理后续消息
-                                                    //新消息条数，读取及更新
-                                                    int count = friendsModel.getCount() + 1;
-                                                    friendsModel.setCount(count);
-                                                    MyDB.update(friendsModel);
-                                                    //保存动态并刷新
-                                                    InstantMsgModel msgModel = new InstantMsgModel(uid, friendsModel.getUicon(), friendsModel.getUname(), chatMsg.getSt(), chatMsg.getTxt(), count);
-                                                    MyDB.insert(msgModel);
-                                                    EventBus.getDefault().post(new InstantMsgEvent());
-                                                }
-                                            });
-                                }
-                            }
-                        }
                     }
                 });
     }

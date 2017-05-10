@@ -4,6 +4,12 @@
         <!--<item name="colorPrimary">@color/colorPrimary</item>-->
         <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
         <!--<item name="colorAccent">@color/colorAccent</item>-->
+        <item name="colorPrimary">@color/theme_color_primary</item>
+        <item name="colorPrimaryDark">@color/theme_color_primary</item>
+        <item name="colorAccent">@color/theme_color_primary_dark</item>
+        <item name="colorControlActivated">@color/theme_color_primary</item>
+        <item name="colorControlHighlight">@color/gray_trans</item>
+        <item name="colorControlNormal">@android:color/white</item>
         <!--用于滑动返回的设置:背景透明，不设滑动关闭时背景就是黑的-->
         <item name="android:windowIsTranslucent">true</item>
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->

@@ -11,13 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.melnykov.fab.FloatingActionButton;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.utils.BaseTools;
@@ -40,6 +40,7 @@ import rx.schedulers.Schedulers;
  */
 public class BooksTab2Fragment extends LazyLoadFragment {
 
+    final private static int PAGE_SIZE = 10;
     @Bind(R.id.m_x_recyclerview)
     XRecyclerView mXRecyclerView;
     @Bind(R.id.m_refresh_layout)
@@ -48,11 +49,8 @@ public class BooksTab2Fragment extends LazyLoadFragment {
     TextView contentEmpty;
     @Bind(R.id.fab)
     FloatingActionButton fab;
-
     private BooksAdapter mAdapter;
     private List<Book2List.DataBean.ListBean> mList = new ArrayList<>();
-
-    final private static int PAGE_SIZE = 10;
     private int page = 1;
 
     @Override
@@ -64,9 +62,8 @@ public class BooksTab2Fragment extends LazyLoadFragment {
     public void initViews(View view) {
         config();
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(getContext());
-        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
+        mRefreshLayout.setColorSchemeColors(themeColor);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {

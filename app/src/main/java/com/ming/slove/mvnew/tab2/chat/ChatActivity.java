@@ -26,6 +26,7 @@ import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
 import com.ming.slove.mvnew.common.base.BackActivity;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
+import com.ming.slove.mvnew.common.receiver.MsgHelper;
 import com.ming.slove.mvnew.common.utils.BaseTools;
 import com.ming.slove.mvnew.common.utils.MyPictureSelector;
 import com.ming.slove.mvnew.common.utils.NotifyUtil;
@@ -34,7 +35,7 @@ import com.ming.slove.mvnew.common.utils.StringUtils;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
 import com.ming.slove.mvnew.model.bean.FriendDetail;
 import com.ming.slove.mvnew.model.bean.Result;
-import com.ming.slove.mvnew.model.bean.ShareMsg;
+import com.ming.slove.mvnew.model.bean.JsonMsg_Share;
 import com.ming.slove.mvnew.model.database.ChatMsgModel;
 import com.ming.slove.mvnew.model.database.FriendsModel;
 import com.ming.slove.mvnew.model.database.InstantMsgModel;
@@ -188,7 +189,7 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
                                                         case "100":
                                                             String jsonString = lastItem.getTxt();
                                                             Gson gson = new Gson();
-                                                            ShareMsg shareMsg = gson.fromJson(jsonString, ShareMsg.class);
+                                                            JsonMsg_Share shareMsg = gson.fromJson(jsonString, JsonMsg_Share.class);
                                                             msg = "[分享]:\"" + shareMsg.getTitle() + "\"";
                                                             break;
                                                         default:
@@ -232,73 +233,8 @@ public class ChatActivity extends BackActivity implements FuncLayout.OnFuncKeyBo
             mXRecyclerView.smoothScrollToPosition(mAdapter.getItemCount());
         } else {
             //其他好友消息发送通知
-            final String uid = chatMsg.getFrom();
-            FriendsModel friend = MyDB.getInstance().queryById(uid, FriendsModel.class);
-            if (friend == null) {//如果消息来自非好友（新增：客户联系店长）
-                String auth = Hawk.get(APPS.USER_AUTH);
-                OtherApi.getService().get_FriendDetail(auth, uid)
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new Subscriber<FriendDetail>() {
-                            @Override
-                            public void onCompleted() {
-
-                            }
-
-                            @Override
-                            public void onError(Throwable e) {
-
-                            }
-
-                            @Override
-                            public void onNext(FriendDetail friendDetail) {
-                                FriendDetail.DataBean.UserinfoBean userinfoBean = friendDetail.getData().getUserinfo();
-                                //存储陌生消息人信息到本地好友数据库，标识isFriend为false
-                                String save_uicon = APPS.BASE_URL + userinfoBean.getHead();
-                                String save_uname = userinfoBean.getUname();//昵称
-                                String iphone = userinfoBean.getPhone();
-                                if (StringUtils.isEmpty(save_uname)) {
-                                    save_uname = iphone;//昵称为空，显示手机号
-                                }
-                                FriendsModel friendsModel = new FriendsModel(uid, save_uname, save_uicon, false);
-                                MyDB.insert(friendsModel);
-                                //处理后续消息
-                                makeMsg(chatMsg, uid, friendsModel);
-                            }
-                        });
-            } else {
-                makeMsg(chatMsg, uid, friend);
-            }
+            MsgHelper.getInstance().showNotify(chatMsg,this,true);
         }
-    }
-
-    private void makeMsg(ChatMsgModel chatMsg, String uid, FriendsModel friend) {
-        int requestCode = Integer.parseInt(uid);//唯一标识通知
-        //点击通知后操作
-        Intent intent2 = new Intent(this, ChatActivity.class);
-        intent2.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent2.putExtra(ChatActivity.UID, uid);
-        intent2.putExtra(ChatActivity.USER_NAME, friend.getUname());
-        PendingIntent pIntent = PendingIntent.getActivity(this, requestCode, intent2, PendingIntent.FLAG_UPDATE_CURRENT);
-
-        //构建通知
-        int largeIcon = R.mipmap.ic_message_notification;
-        int smallIcon = R.mipmap.tab2_btn1;
-        String title = friend.getUname();
-        String ticker = title + ": " + chatMsg.getTxt();
-        //新消息条数，读取及更新
-        int count = friend.getCount() + 1;
-        friend.setCount(count);
-        MyDB.update(friend);
-        String content = "[" + count + "条]" + ": " + chatMsg.getTxt();
-        //实例化工具类，并且调用接口
-        NotifyUtil notify3 = new NotifyUtil(this, requestCode);
-        notify3.notify_msg(pIntent, smallIcon, largeIcon, ticker, title, content, true, true, false);
-
-        //保存动态并刷新
-        InstantMsgModel msgModel = new InstantMsgModel(uid, friend.getUicon(), title, chatMsg.getSt(), chatMsg.getTxt(), count);
-        MyDB.insert(msgModel);
-        EventBus.getDefault().post(new InstantMsgEvent());
     }
 
     //配置表情键盘

@@ -16,16 +16,22 @@
 
 package com.ming.slove.mvnew.app;
 
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
+import android.os.Build;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
+import android.view.View;
 
 import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.ming.slove.mvnew.R;
+import com.ming.slove.mvnew.common.widgets.dialog.CardPickerDialog;
+import com.ming.slove.mvnew.model.event.ChangeThemeColorEvent;
+
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * 主题颜色切换工具类
@@ -40,31 +46,23 @@ public class ThemeHelper {
     public static final int CARD_07 = 0x7;
     public static final int CARD_08 = 0x8;
     private static final String CURRENT_THEME = "theme_current";
-    private static ThemeUtils.switchColor mSwitchColor;
+
 
     static ThemeUtils.switchColor getSwitchColor() {
-        if (mSwitchColor == null) {
-            createSwitchColor();
-        }
-        return mSwitchColor;
-    }
-
-    private static ThemeUtils.switchColor createSwitchColor() {
-        mSwitchColor = new ThemeUtils.switchColor() {
+        return new ThemeUtils.switchColor() {
             @Override
             public int replaceColorById(Context context, @ColorRes int colorId) {
                 if (isDefaultTheme(context)) {
-                    return ContextCompat.getColor(context,colorId);
+                    return ContextCompat.getColor(context, colorId);
                 }
                 String colorName = getThemeColorName(context);
                 if (colorName != null) {
                     colorId = getThemeColorId(context, colorId, colorName);
                 }
-                return ContextCompat.getColor(context,colorId);
+                return ContextCompat.getColor(context, colorId);
             }
 
-            @ColorRes
-            int getThemeColorId(Context context, int colorId, String theme) {
+            private int getThemeColorId(Context context, int colorId, String theme) {
                 switch (colorId) {
                     case R.color.theme_color_primary:
                         return context.getResources().getIdentifier(theme, "color", context.getPackageName());
@@ -84,46 +82,47 @@ public class ThemeHelper {
                 String colorName = getThemeColorName(context);
                 int colorId = -1;
                 if (colorName != null) {
-                    colorId = getThemeColor(context, color, colorName);
+                    colorId = getThemeColorIdByColor(context, color, colorName);
                 }
-                return colorId != -1 ? ContextCompat.getColor(context,colorId) : color;
+                return colorId != -1 ? ContextCompat.getColor(context, colorId) : color;
             }
 
-            private
-            @ColorRes
-            int getThemeColor(Context context, int color, String theme) {
+            private int getThemeColorIdByColor(Context context, int color, String colorName) {
                 switch (color) {
                     case 0xff009688:
-                        return context.getResources().getIdentifier(theme, "color", context.getPackageName());
+                        return context.getResources().getIdentifier(colorName, "color", context.getPackageName());
                     case 0xff00796B:
-                        return context.getResources().getIdentifier(theme + "_dark", "color", context.getPackageName());
+                        return context.getResources().getIdentifier(colorName + "_dark", "color", context.getPackageName());
                     case 0x99049184:
-                        return context.getResources().getIdentifier(theme + "_trans", "color", context.getPackageName());
+                        return context.getResources().getIdentifier(colorName + "_trans", "color", context.getPackageName());
                 }
                 return -1;
             }
         };
-        return mSwitchColor;
     }
 
-    public static String getThemeColorName(Context context) {
+    private static String getThemeColorName(Context context) {
         String[] themeColors = context.getResources().getStringArray(R.array.theme_colors);
-        if (getTheme(context) == CARD_02) {
-            return themeColors[1];
-        } else if (getTheme(context) == CARD_03) {
-            return themeColors[2];
-        } else if (getTheme(context) == CARD_04) {
-            return themeColors[3];
-        } else if (getTheme(context) == CARD_05) {
-            return themeColors[4];
-        } else if (getTheme(context) == CARD_06) {
-            return themeColors[5];
-        } else if (getTheme(context) == CARD_07) {
-            return themeColors[6];
-        } else if (getTheme(context) == CARD_08) {
-            return themeColors[7];
+        switch (getTheme(context)) {
+            case CARD_01:
+                return themeColors[0];
+            case CARD_02:
+                return themeColors[1];
+            case CARD_03:
+                return themeColors[2];
+            case CARD_04:
+                return themeColors[3];
+            case CARD_05:
+                return themeColors[4];
+            case CARD_06:
+                return themeColors[5];
+            case CARD_07:
+                return themeColors[6];
+            case CARD_08:
+                return themeColors[7];
+            default:
+                return themeColors[0];
         }
-        return themeColors[0];
     }
 
     private static SharedPreferences getSharePreference(Context context) {
@@ -144,4 +143,31 @@ public class ThemeHelper {
         return getTheme(context) == CARD_01;
     }
 
+    public static CardPickerDialog.ClickListener getCardPickerListener(final Context context) {
+        return new CardPickerDialog.ClickListener() {
+            @Override
+            public void onConfirm(int currentTheme) {
+                if (ThemeHelper.getTheme(context) != currentTheme) {
+                    ThemeHelper.setTheme(context, currentTheme);
+                    ThemeUtils.refreshUI(context, new ThemeUtils.ExtraRefreshable() {
+                        @Override
+                        public void refreshGlobal(Activity activity) {
+                            if (Build.VERSION.SDK_INT >= 21) {
+                                ActivityManager.TaskDescription taskDescription = new ActivityManager
+                                        .TaskDescription(null, null, ThemeUtils.getThemeAttrColor(context, android.R.attr.colorPrimary));
+                                activity.setTaskDescription(taskDescription);
+                                activity.getWindow().setStatusBarColor(ThemeUtils.getColorById(context, R.color.theme_color_primary));
+                            }
+                        }
+
+                        @Override
+                        public void refreshSpecificView(View view) {
+                        }
+                    });
+                    //通知MainActivity更换主题
+                    EventBus.getDefault().post(new ChangeThemeColorEvent());
+                }
+            }
+        };
+    }
 }

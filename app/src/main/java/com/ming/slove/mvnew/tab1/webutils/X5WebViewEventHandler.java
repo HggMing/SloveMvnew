@@ -290,14 +290,4 @@ public class X5WebViewEventHandler extends ProxyWebViewClientExtension implement
 	public void jsRequestFullScreen() {
 
 	}
-
-
-
-
-
-
-
-
-	
-
 }

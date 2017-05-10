@@ -47,6 +47,7 @@ public class MessageAdapter extends BaseRecyclerViewAdapter<InstantMsgModel, Mes
                     .bitmapTransform(new CropCircleTransformation(mContext))
                     .into(holder.icon);
         } else {
+            holder.item.setTag(null);
             Glide.with(mContext).load(imageUrl)
                     .bitmapTransform(new CropCircleTransformation(mContext))
                     .placeholder(R.mipmap.defalt_user_circle)

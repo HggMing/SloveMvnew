@@ -9,13 +9,13 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bilibili.magicasakura.utils.ThemeUtils;
 import com.bilibili.magicasakura.widgets.TintProgressBar;
 import com.jcodecraeer.xrecyclerview.ProgressStyle;
 import com.jcodecraeer.xrecyclerview.XRecyclerView;
 import com.ming.slove.mvnew.R;
 import com.ming.slove.mvnew.api.other.OtherApi;
 import com.ming.slove.mvnew.app.APPS;
-import com.ming.slove.mvnew.app.ThemeHelper;
 import com.ming.slove.mvnew.common.base.BaseRecyclerViewAdapter;
 import com.ming.slove.mvnew.common.base.LazyLoadFragment;
 import com.ming.slove.mvnew.common.widgets.dialog.MyDialog;
@@ -50,6 +50,7 @@ import rx.schedulers.Schedulers;
  */
 public class MyOrderListFragment extends LazyLoadFragment {
 
+    final private static int PAGE_SIZE = 10;
     @Bind(R.id.m_x_recyclerview)
     XRecyclerView mXRecyclerView;
     @Bind(R.id.m_refresh_layout)
@@ -58,12 +59,9 @@ public class MyOrderListFragment extends LazyLoadFragment {
     TextView contentEmpty;
     @Bind(R.id.progressBar)
     TintProgressBar mProgressBar;
-
     private List<MyOrderList.DataBean.ListBean> mList = new ArrayList<>();
     private MyOrderAdapter mAdapter;
-
     private int page = 1;
-    final private static int PAGE_SIZE = 10;
     private String notify_url;
     private String auth;
 
@@ -104,9 +102,8 @@ public class MyOrderListFragment extends LazyLoadFragment {
         }
 
         // 刷新时，指示器旋转后变化的颜色
-        String theme = ThemeHelper.getThemeColorName(getContext());
-        int themeColorRes = getResources().getIdentifier(theme, "color", getContext().getPackageName());
-        mRefreshLayout.setColorSchemeResources(themeColorRes);
+        int themeColor = ThemeUtils.getColorById(getContext(), R.color.theme_color_primary);
+        mRefreshLayout.setColorSchemeColors(themeColor);
         mRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
